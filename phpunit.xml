@@ -1,0 +1,10 @@
+<phpunit
+    strict="true"
+    verbose="true"
+>
+    <testsuites>
+        <testsuite name="Components">
+            <directory>./test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
