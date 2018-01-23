@@ -1,13 +1,14 @@
 <?php
 require_once 'ChiliUtil.php';
 require_once 'Side.php';
+require_once 'Pot.php';
 
 class Board
 {
-    /** @var int */
+    /** @var array */
     private $pots;
 
-    private function GetNextPotIndex( Side $active_side ) : int
+    private function GetNextPotIndex( Pot $pot,Side $active_side ) : int
     {
         
     }

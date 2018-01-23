@@ -57,6 +57,11 @@ class SideTest extends PHPUnit\Framework\TestCase
         $this->assertEquals( 0,$this->top->GetIndex() );        
         $this->assertEquals( 1,$this->bottom->GetIndex() );
     }
-}
 
+    public function testtoString()
+    {
+        $this->assertEquals( '{TOP}',(string)Side::Top() );
+        $this->assertEquals( '{BOT}',(string)Side::Bottom() );
+    }
+}
 ?>

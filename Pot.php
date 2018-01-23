@@ -22,6 +22,19 @@ class Pot
         return $this->index;
     }
 
+    public function GetNext( Side $side ) : Pot
+    {
+        assert( !($this->GetSide() != $side && $this->IsMancala()),'Next origin cannot be other mancala' );
+        if( $this->GetOffset() == 5 && $this->GetSide() != $side )
+        {
+            return new Pot( ($this->index + 2) % 14 );
+        }
+        else
+        {
+            return new Pot( ($this->index + 1) % 14 );
+        }
+    }
+
     public function GetOffset() : int
     {
         return $this->index % 7;
@@ -31,6 +44,11 @@ class Pot
     {
         assert( !$this->IsMancala(),'Cannot get opposite of mancala' );
         return new Pot( 12 - $this->index );
+    }
+
+    public function __toString() : string
+    {
+        return brace( $this->index.$this->GetSide().$this->GetOffset().($this->IsMancala() ? '(MAN)' : '') );
     }
     
     public function __construct( int $index )

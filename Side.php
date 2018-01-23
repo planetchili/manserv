@@ -41,5 +41,10 @@ class Side
         assert( in_range( $side,0,1 ),'Side value must be 0 or 1' );
         $this->side = $side;
     }
+
+    public function __toString() : string
+    {
+        return $this->side == 0 ? '{TOP}' : '{BOT}';
+    }
 }
 ?>

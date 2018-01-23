@@ -23,4 +23,10 @@ function in_range( int $val,int $min,int $max ) : bool
 {
     return ($val >= $min) && ($val <= $max);
 }
+
+// surround stuff in {} for toString purposes
+function brace( string $s ) : string
+{
+	return '{'.$s.'}';
+}
 ?>

@@ -4,6 +4,50 @@ require_once 'Pot.php';
 class PotTest extends PHPUnit\Framework\TestCase
 {
     /**
+     * @dataProvider datatoString
+     */
+    public function testtoString( Pot $pot,string $str )
+    {
+        $this->assertEquals( $str,(string)$pot );
+    }
+    public function datatoString() : array
+    {
+        return [
+            [new Pot( 0 ),  '{0{TOP}0}'],
+            [new Pot( 3  ), '{3{TOP}3}'],
+            [new Pot( 6  ), '{6{TOP}6(MAN)}'],
+            [new Pot( 12 ), '{12{BOT}5}'],
+            [new Pot( 13 ), '{13{BOT}6(MAN)}'],
+            [new Pot( 10 ), '{10{BOT}3}']
+        ];
+    }
+
+    /**
+     * @dataProvider dataGetNext
+     */
+    public function testGetNext( Pot $pot,Side $side,Pot $next )
+    {
+        $this->assertEquals( $next,$pot->GetNext( $side ) );
+    }
+    public function dataGetNext() : array
+    {
+        return [
+            [new Pot( 12 ),Side::Top(),     new Pot( 0 )],
+            [new Pot( 3  ),Side::Top(),     new Pot( 4 )],
+            [new Pot( 6  ),Side::Top(),     new Pot( 7 )],
+            [new Pot( 12  ),Side::Bottom(), new Pot( 13 )],
+            [new Pot( 13  ),Side::Bottom(), new Pot( 0 )],
+            [new Pot( 10  ),Side::Bottom(), new Pot( 11 )]
+        ];
+    }
+
+    public function testFailGetNext()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        (new Pot( 6 ))->GetNext( Side::Bottom() );        
+    }
+
+    /**
      * @dataProvider dataGetOffset
      */
     public function testGetOffset( Pot $pot,int $offset )
