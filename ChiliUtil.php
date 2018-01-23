@@ -23,5 +23,4 @@ function in_range( int $val,int $min,int $max ) : bool
 {
     return ($val >= $min) && ($val <= $max);
 }
-
 ?>

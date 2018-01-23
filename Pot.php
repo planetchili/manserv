@@ -29,8 +29,8 @@ class Pot
 
     public function GetOpposite() : Pot
     {
-        assert( $this->index != 0 && $this->index != 6,'Cannot get opposite of mancala' );
-        return 12 - $this->index;
+        assert( !$this->IsMancala(),'Cannot get opposite of mancala' );
+        return new Pot( 12 - $this->index );
     }
     
     public function __construct( int $index )
@@ -41,7 +41,8 @@ class Pot
 
     public static function FromSideOffset( Side $side,int $offset ) : Pot
     {
-        return new Pot( $side-> )
+        assert( in_range( $offset,0,6 ),'Offset must be 0~6' );
+        return new Pot( $side->GetIndex() * 7 + $offset );
     }
 }
 ?>

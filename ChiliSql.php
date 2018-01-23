@@ -19,5 +19,4 @@ class ChiliSql extends PDO
         return parent::query( $sql )->fetchAll();
     }
 }
-
 ?>

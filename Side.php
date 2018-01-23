@@ -42,5 +42,4 @@ class Side
         $this->side = $side;
     }
 }
-
 ?>

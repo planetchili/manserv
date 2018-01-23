@@ -22,13 +22,13 @@ class SideTest extends PHPUnit\Framework\TestCase
 
     public function testFailConstructIntLow()
     {
-        $this->expectException( PHPUnit\Framework\Error::class );
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
         $dummy = new Side( -42 );
     }
 
     public function testFailConstructIntHigh()
     {
-        $this->expectException( PHPUnit\Framework\Error::class );
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
         $dummy = new Side( 69 );
     }
 
