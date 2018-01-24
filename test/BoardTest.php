@@ -49,5 +49,101 @@ class BoardTest extends PHPUnit\Framework\TestCase
         $this->assertEquals( 0,$this->fresh->TakeAllPot( $zero ) );
         $this->assertEquals( 0,$this->fresh->GetPot( $zero ) );
     }
+
+    public function testDumpInMancala()
+    {
+        $man = new Pot( 6 );
+        $this->assertEquals( 5,$this->fresh->DumpInMancala( Side::Top(),5 ) );
+        $this->assertEquals( 5,$this->fresh->GetPot( $man ) );
+        $this->assertEquals( 8,$this->fresh->DumpInMancala( Side::Top(),3 ) );
+        $this->assertEquals( 8,$this->fresh->GetPot( $man ) );
+    }
+
+    public function testFailDumpInMancala()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->DumpInMancala( Side::Top(),25 );
+    }
+
+    /**
+     * @dataProvider dataDoMove
+     */
+    public function testDoMove( Board $board,Side $active_side,Pot $move,
+        Board $expected_board,bool $extra_turn_expected )
+    {
+        $this->assertEquals( $extra_turn_expected,
+            $board->DoMove( $move,$active_side )
+        );
+        $this->assertEquals( $expected_board,$board );
+    }
+    public function dataDoMove() : array
+    {
+        return [
+            'Top Mancala'=>
+            [Board::MakeFresh(),Side::Top(),new Pot( 2 ),
+             new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),true
+            ],
+            'Top Around Own'=>
+            [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),Side::Top(),new Pot( 5 ),
+             new Board([4,4,0,5,5,0,2,5,5,5,5,4,4,0]),false
+            ],
+            'Bottom Mancala'=>
+            [new Board([4,4,0,5,5,0,2,5,5,5,5,4,4,0]),Side::Bottom(),new Pot( 8 ),
+             new Board([4,4,0,5,5,0,2,5,0,6,6,5,5,1]),true
+            ],
+            'Bottom Around Own'=>
+            [new Board([4,4,0,5,5,0,2,5,0,6,6,5,5,1]),Side::Bottom(),new Pot( 12 ),
+             new Board([5,5,1,6,5,0,2,5,0,6,6,5,0,2]),false
+            ],
+            'Top Steal'=>
+            [new Board([5,5,1,6,5,0,2,5,0,6,6,5,0,2]),Side::Top(),new Pot( 0 ),
+             new Board([0,6,2,7,6,0,8,0,0,6,6,5,0,2]),false
+            ],
+            'Bottom Steal (Empty)'=>
+            [new Board([2,8,0,2,9,2,9,1,1,1,0,7,2,4]),Side::Bottom(),new Pot( 9 ),
+             new Board([2,8,0,2,9,2,9,1,1,0,0,7,2,5]),false
+            ],
+            'Top Around World'=>
+            [new Board([3,8,0,0,1,4,10,2,2,1,0,9,3,5]),Side::Bottom(),new Pot( 11 ),
+             new Board([4,9,1,1,2,5,10,3,2,1,0,0,4,6]),false
+            ],
+            'Bottom Around Own (Otherside Empty)'=>
+            [new Board([0,0,2,0,0,2,15,1,5,0,3,13,3,5]),Side::Bottom(),new Pot( 12 ),
+             new Board([1,1,2,0,0,2,15,1,5,0,3,13,0,6]),false
+            ],
+            'Bottom Around World (Return)'=>
+            [new Board([1,1,2,0,0,2,15,1,5,0,3,13,0,6]),Side::Bottom(),new Pot( 11 ),
+             new Board([2,0,3,1,1,3,15,2,6,1,4,0 ,1,10]),false
+            ]
+        ];
+    }
+
+    public function testFailSideDoMove1()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->DoMove( new Pot( 7 ),Side::Top() );
+    }
+    public function testFailSideDoMove2()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->DoMove( new Pot( 0 ),Side::Bottom() );
+    }
+    public function testFailMancalaDoMove1()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->DoMove( new Pot( 6 ),Side::Top() );
+    }
+    public function testFailMancalaDoMove2()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->DoMove( new Pot( 13 ),Side::Bottom() );
+    }
+    public function testFailEmptyDoMove()
+    {
+        $zero = new Pot( 0 );
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->TakeAllPot( $zero );
+        $this->fresh->DoMove( $zero,Side::Top() );
+    }
 }
 ?>
