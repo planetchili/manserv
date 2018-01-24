@@ -34,6 +34,48 @@ class Board
         return $cur->IsMancala();
     }
 
+    public function CheckIfSideEmpty( Side $side ) : bool
+    {
+        for( $offset = 0; $offset < 6; $offset++ )
+        {
+            if( $this->GetPot( Pot::FromSideOffset( $side,$offset ) ) != 0 )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function CollectSide( Side $side ) : int
+    {
+        $sum = 0;
+        for( $offset = 0; $offset < 6; $offset++ )
+        {
+            $sum += $this->TakeAllPot( Pot::FromSideOffset( $side,$offset ) );
+        }
+        return $sum;
+    }
+
+    /** sweeps side if necessary and returns true if game over */
+    public function ProcessSweep() : bool
+    {
+        if( $this->CheckIfSideEmpty( Side::Top() ) )
+        {
+            $this->DumpInMancala( Side::Bottom(),
+                $this->CollectSide( Side::Bottom() )
+            );
+            return true;
+        }
+        else if( $this->CheckIfSideEmpty( Side::Bottom() ) )
+        {
+            $this->DumpInMancala( Side::Top(),
+                $this->CollectSide( Side::Top() )
+            );
+            return true;
+        }
+        return false;
+    }
+
     public function GetPot( Pot $pot ) : int
     {
         return $this->pots[$pot->GetIndex()];

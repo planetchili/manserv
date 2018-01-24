@@ -145,5 +145,65 @@ class BoardTest extends PHPUnit\Framework\TestCase
         $this->fresh->TakeAllPot( $zero );
         $this->fresh->DoMove( $zero,Side::Top() );
     }
+
+    /**
+     * @dataProvider dataCheckIfSideEmpty
+     */
+    public function testCheckIfSideEmpty( Board $board,Side $side,bool $expect_empty )
+    {
+        $this->assertEquals( $expect_empty,$board->CheckIfSideEmpty( $side ) );
+    }
+    public function dataCheckIfSideEmpty() : array
+    {
+        return [
+            [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),Side::Top(),false],
+            [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),Side::Bottom(),false],
+            [new Board([0,0,0,1,0,0,23,4,4,4,4,4,4,0]),Side::Top(),false],
+            [new Board([4,4,4,4,4,4,0,0,0,0,1,0,0,23]),Side::Bottom(),false],
+            [new Board([0,0,0,0,0,0,24,4,4,4,4,4,4,0]),Side::Top(),true],
+            [new Board([4,4,4,4,4,4,0,0,0,0,0,0,0,24]),Side::Bottom(),true]
+        ];
+    }
+
+    /**
+     * @dataProvider dataCollectSide
+     */
+    public function testCollectSide( Board $board,Side $side,int $expected_beads )
+    {
+        $this->assertEquals( $expected_beads,$board->CollectSide( $side ) );
+    }
+    public function dataCollectSide() : array
+    {
+        return [
+            [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]), Side::Top(),23],
+            [new Board([4,4,0,2,5,5,1,4,1,10,4,4,4,0]), Side::Bottom(),27],
+            [new Board([0,0,0,0,0,0,23,4,4,4,4,4,4,0]),Side::Top(),0],
+            [new Board([4,4,4,4,4,4,0,0,0,0,0,0,0,23]),Side::Bottom(),0]
+        ];
+    }
+
+    /**
+     * @dataProvider dataProcessSweep
+     */
+    public function testProcessSweep( Board $board,Board $expected_board,
+        bool $expected_state )
+    {
+        $this->assertEquals( $expected_state,$board->ProcessSweep() );
+        $this->assertEquals( $expected_board,$board );
+    }
+    public function dataProcessSweep() : array
+    {
+        return [
+            [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),
+             new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),false
+            ],
+            [new Board([0,0,0,0,0,0,1,4,4,4,4,4,4,0 ]),
+             new Board([0,0,0,0,0,0,1,0,0,0,0,0,0,24]),true
+            ],
+            [new Board([4,4,4,4,4,4,0 ,0,0,0,0,0,0,1]),
+             new Board([0,0,0,0,0,0,24,0,0,0,0,0,0,1]),true
+            ],
+        ];
+    }
 }
 ?>
