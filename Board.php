@@ -2,6 +2,7 @@
 require_once 'ChiliUtil.php';
 require_once 'Side.php';
 require_once 'Pot.php';
+require_once 'WinState.php';
 
 class Board
 {
@@ -74,6 +75,26 @@ class Board
             return true;
         }
         return false;
+    }
+
+    /** Game must be over to call GetWinState() */
+    public function GetWinState() : int
+    {
+        assert( $this->CheckIfSideEmpty( Side::Top() ) && 
+            $this->CheckIfSideEmpty( Side::Bottom() )
+        );
+
+        $mantop = $this->GetPot( new Pot( 6 ) );
+        $manbot = $this->GetPot( new Pot( 13 ) );
+        if( $mantop > $manbot )
+        {
+            return WinState::TopWins;
+        }
+        else if( $manbot > $mantop )
+        {            
+            return WinState::BottomWins;
+        }
+        return WinState::Tie;
     }
 
     public function GetPot( Pot $pot ) : int

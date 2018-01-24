@@ -205,5 +205,27 @@ class BoardTest extends PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider dataGetWinState
+     */
+    public function testGetWinState( Board $board,int $expected_state )
+    {
+        $this->assertEquals( $expected_state,$board->GetWinState() );
+    }
+    public function dataGetWinState() : array
+    {
+        return [
+            [new Board([0,0,0,0,0,0,24,0,0,0,0,0,0,1]),WinState::TopWins],
+            [new Board([0,0,0,0,0,0,1,0,0,0,0,0,0,24]),WinState::BottomWins],
+            [new Board([0,0,0,0,0,0,12,0,0,0,0,0,0,12]),WinState::Tie]
+        ];
+    }
+
+    public function testFailGetWinState()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->fresh->GetWinState();
+    }
 }
 ?>
