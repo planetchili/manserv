@@ -176,7 +176,7 @@ class BoardTest extends PHPUnit\Framework\TestCase
     {
         return [
             [new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]), Side::Top(),23],
-            [new Board([4,4,0,2,5,5,1,4,1,10,4,4,4,0]), Side::Bottom(),27],
+            [new Board([4,4,0,2,5,5,1,4,1,10,4,4,4,0]),Side::Bottom(),27],
             [new Board([0,0,0,0,0,0,23,4,4,4,4,4,4,0]),Side::Top(),0],
             [new Board([4,4,4,4,4,4,0,0,0,0,0,0,0,23]),Side::Bottom(),0]
         ];

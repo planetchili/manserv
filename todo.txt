@@ -1,3 +1,3 @@
-Current: implement game class
+Current: game class needs to record actions in db
 TODO: install xdebug and get it working with phpunit
 TODO: move actual sources into own directory
