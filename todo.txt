@@ -1,2 +1,3 @@
+Current: implement basic mancala database
 TODO: install xdebug and get it working with phpunit
 TODO: move actual sources into own directory
