@@ -42,27 +42,44 @@ class GameTest extends PHPUnit\Framework\TestCase
     public function testDoMove( Board $board,Side $activeSide,Pot $move,Board $expected_board,bool $expect_end,Side $expected_side )
     {
         $gameId = 69;
+        $turn = 43;
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
-                        ->setMethods( ['LoadGame','LoadBoard'] )
+                        ->setMethods( ['LoadGame','LoadBoard','StoreBoard','UpdateGame'] )
                         ->getMock();
         $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $this->equalTo( $gameId ) )
                ->willReturn(
                 [
-                    'turn' => 0,
+                    'turn' => $turn,
                     'playerIds' => [420,1337],
                     'activeSide' => $activeSide
-                ] );
+                ]
+        );
         $dbMock->expects( $this->once() )
                ->method( 'LoadBoard' )
                ->with( $this->equalTo( $gameId ) )
-               ->willReturn( $board );    
+               ->willReturn( $board );
+        $dbMock->expects( $this->once() )
+               ->method( 'StoreBoard' )
+               ->with( 
+                    $this->equalTo( $gameId ),
+                    $this->equalTo( $expected_board )
+        );
+        $dbMock->expects( $this->once() )
+               ->method( 'UpdateGame' )
+               ->with(
+                   $this->equalTo( $gameId ),
+                   $this->equalTo( $turn + 1 ),
+                   $this->equalTo( $expected_side )
+        );
         
         $game = new Game( $dbMock,$gameId );
         
         $this->assertEquals( $expect_end,$game->DoMove( $move ) );
         $this->assertAttributeEquals( $expected_board,'board',$game );
+        $this->assertAttributeEquals( $turn + 1,'turn',$game );
+        $this->assertAttributeEquals( $expected_side,'activeSide',$game );
     }
     public function dataDoMove() : array
     {

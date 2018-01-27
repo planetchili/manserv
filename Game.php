@@ -4,6 +4,8 @@ require_once 'MancalaDatabase.php';
 
 class Game
 {
+    /** @var MancalaDatabase */
+    private $db;
     /** @var Board */
     private $board;
     /** @var int */
@@ -17,8 +19,9 @@ class Game
 
     public function __construct( MancalaDatabase $db,int $gameId )
     {
-        // game id set from ctor
+        // set members from ctor params
         $this->gameId = $gameId;
+        $this->db = $db;
         // load game info
         $gameInfo = $db->LoadGame( $gameId );
         $this->turn = $gameInfo['turn'];
@@ -40,7 +43,12 @@ class Game
             $this->activeSide = $this->activeSide->GetOpposite();
         }
         // process sweeping, rval is true if game over
-        return $this->board->ProcessSweep();
+        $isOver = $this->board->ProcessSweep();
+        // update board and game
+        $this->db->StoreBoard( $this->gameId,$this->board );
+        $this->db->UpdateGame( $this->gameId,$this->turn,$this->activeSide );
+        // return true if game is over
+        return $isOver;
     }
 
     public function GetWinState() : WinState
