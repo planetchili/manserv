@@ -49,12 +49,12 @@ class GameInfo
 
 class MancalaDatabase
 {
-    // /** @var ChiliSql */
-    // private $conn;
+    /** @var ChiliSql */
+    private $conn;
 
-    // public function LoadGame( int $gameId ) : GameInfo 
-    // {
+    public function LoadGame( int $gameId ) : GameInfo 
+    {
         
-    // }
+    }
 }
 ?>
