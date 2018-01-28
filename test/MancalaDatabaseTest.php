@@ -1,7 +1,7 @@
 <?php
 require_once 'MancalaDatabase.php';
 
-class MancalaDatabase extends PHPUnit\Framework\TestCase
+class MancalaDatabaseTest extends PHPUnit\Framework\TestCase
 {
     
 }

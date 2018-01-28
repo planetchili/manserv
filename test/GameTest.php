@@ -16,12 +16,9 @@ class GameTest extends PHPUnit\Framework\TestCase
         $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $this->equalTo( $gameId ) )
-               ->willReturn(
-                [
-                    'turn' => $turn,
-                    'playerIds' => $playerIds,
-                    'activeSide' => $activeSide
-                ] );
+               ->willReturn( new GameInfo( 
+                    $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
+                ) );
         $dbMock->expects( $this->once() )
                ->method( 'LoadBoard' )
                ->with( $this->equalTo( $gameId ) )
@@ -35,6 +32,28 @@ class GameTest extends PHPUnit\Framework\TestCase
         $this->assertAttributeEquals( $activeSide,'activeSide',$game );
         $this->assertAttributeEquals( $board,'board',$game );
     }
+
+    public function testFailCtor()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+
+        $gameId = 69;
+        $turn = 0;
+        $playerIds = [420,420];
+        $activeSide = Side::Top();
+        $board = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['LoadGame'] )
+                        ->getMock();
+        $dbMock->expects( $this->once() )
+               ->method( 'LoadGame' )
+               ->with( $this->equalTo( $gameId ) )
+               ->willReturn( new GameInfo( 
+                   $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
+               ) );
+        
+        $game = new Game( $dbMock,$gameId );
+    }
     
     /**
      * @dataProvider dataDoMove
@@ -43,19 +62,16 @@ class GameTest extends PHPUnit\Framework\TestCase
     {
         $gameId = 69;
         $turn = 43;
+        $playerIds = [420,1337];
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['LoadGame','LoadBoard','StoreBoard','UpdateGame'] )
                         ->getMock();
         $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $this->equalTo( $gameId ) )
-               ->willReturn(
-                [
-                    'turn' => $turn,
-                    'playerIds' => [420,1337],
-                    'activeSide' => $activeSide
-                ]
-        );
+               ->willReturn( new GameInfo( 
+                    $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
+               ) );
         $dbMock->expects( $this->once() )
                ->method( 'LoadBoard' )
                ->with( $this->equalTo( $gameId ) )
@@ -65,14 +81,14 @@ class GameTest extends PHPUnit\Framework\TestCase
                ->with( 
                     $this->equalTo( $gameId ),
                     $this->equalTo( $expected_board )
-        );
+               );
         $dbMock->expects( $this->once() )
                ->method( 'UpdateGame' )
                ->with(
                    $this->equalTo( $gameId ),
                    $this->equalTo( $turn + 1 ),
                    $this->equalTo( $expected_side )
-        );
+               );
         
         $game = new Game( $dbMock,$gameId );
         

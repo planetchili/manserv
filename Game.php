@@ -2,20 +2,12 @@
 require_once 'Board.php';
 require_once 'MancalaDatabase.php';
 
-class Game
+class Game extends GameInfo
 {
     /** @var MancalaDatabase */
     private $db;
     /** @var Board */
     private $board;
-    /** @var int */
-    private $turn;
-    /** @var int */
-    private $gameId;
-    /** @var int[] */
-    private $playerIds;
-    /** @var Side */
-    private $activeSide;
 
     public function __construct( MancalaDatabase $db,int $gameId )
     {
@@ -24,10 +16,10 @@ class Game
         $this->db = $db;
         // load game info
         $gameInfo = $db->LoadGame( $gameId );
-        $this->turn = $gameInfo['turn'];
-        $this->playerIds = $gameInfo['playerIds'];
-        $this->activeSide = $gameInfo['activeSide'];
-        assert( $this->playerIds[0] != $this->playerIds[1] );
+        $this->turn = $gameInfo->GetTurn();
+        $this->playerIds = $gameInfo->GetPlayerIds();
+        $this->activeSide = $gameInfo->GetActiveSide();
+        assert( $this->playerIds[0] != $this->playerIds[1],"same player may not occupy both slots!" );
         // load board state
         $this->board = $db->LoadBoard( $gameId );
     }
@@ -54,26 +46,6 @@ class Game
     public function GetWinState() : WinState
     {
         return $this->board->GetWinState();
-    }
-
-    public function GetActiveSide() : Side
-    {
-        return $this->activeSide;
-    }
-
-    public function GetTurn() : int
-    {
-        return $this->turn;
-    }
-
-    public function GetGameId() : int
-    {
-        return $this->gameId;
-    }
-
-    public function GetPlayerId( Side $side ) : int
-    {
-        return $this->playerIds[$side->GetIndex()];
     }
 }
 ?>
