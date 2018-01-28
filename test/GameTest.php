@@ -10,15 +10,16 @@ class GameTest extends PHPUnit\Framework\TestCase
         $playerIds = [420,1337];
         $activeSide = Side::Top();
         $board = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
+        $gameInfo = new GameInfo( 
+            $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
+        );
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['LoadGame','LoadBoard'] )
                         ->getMock();
         $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $this->equalTo( $gameId ) )
-               ->willReturn( new GameInfo( 
-                    $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
-                ) );
+               ->willReturn( $gameInfo );
         $dbMock->expects( $this->once() )
                ->method( 'LoadBoard' )
                ->with( $this->equalTo( $gameId ) )

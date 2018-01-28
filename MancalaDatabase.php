@@ -5,13 +5,13 @@ require_once 'Side.php';
 class GameInfo
 {
     /** @var int */
-    private $id;
+    protected $id;
     /** @var int */
-    private $turn;
+    protected $turn;
     /** @var int[] */
-    private $playerIds;
+    protected $playerIds;
     /** @var Side */
-    private $activeSide;
+    protected $activeSide;
 
     public function GetActiveSide() : Side
     {
@@ -49,12 +49,12 @@ class GameInfo
 
 class MancalaDatabase
 {
-    /** @var ChiliSql */
-    private $conn;
+    // /** @var ChiliSql */
+    // private $conn;
 
-    public function LoadGame( int $gameId ) : GameInfo 
-    {
+    // public function LoadGame( int $gameId ) : GameInfo 
+    // {
         
-    }
+    // }
 }
 ?>
