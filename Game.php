@@ -1,4 +1,5 @@
 <?php
+require_once 'GameInfo.php';
 require_once 'Board.php';
 require_once 'MancalaDatabase.php';
 
