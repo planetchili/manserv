@@ -62,5 +62,13 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
             [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ) )]
         ];
     }
+
+    public function testFailLoadGame()
+    {
+        $this->expectException( PHPUnit\Framework\Error\Error::class );
+
+        $gameId = 1337;
+        $this->mdb->LoadGame( 1 );
+    }
 }
 ?>
