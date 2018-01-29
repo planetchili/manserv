@@ -28,7 +28,7 @@ class GameTest extends PHPUnit\Framework\TestCase
         
         $game = new Game( $dbMock,$gameId );
         
-        $this->assertAttributeEquals( $gameId,'gameId',$game );
+        $this->assertAttributeEquals( $gameId,'id',$game );
         $this->assertAttributeEquals( $turn,'turn',$game );
         $this->assertAttributeEquals( $playerIds,'playerIds',$game );
         $this->assertAttributeEquals( $activeSide,'activeSide',$game );

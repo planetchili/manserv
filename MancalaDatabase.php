@@ -25,7 +25,12 @@ class MancalaDatabase
 
     public function UpdateGame( GameInfo $gameInfo ) : void
     {
-
+        $this->conn->exec( 
+            "UPDATE games
+             set    activeSide = {$gameInfo->GetActiveSide()->GetIndex()},
+                    turn = turn + 1
+             where  id = {$gameInfo->GetGameId()}"
+        );
     }
 
     public function __construct( ChiliSql $conn )

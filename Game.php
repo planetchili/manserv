@@ -13,7 +13,7 @@ class Game extends GameInfo
     public function __construct( MancalaDatabase $db,int $gameId )
     {
         // set members from ctor params
-        $this->gameId = $gameId;
+        $this->id = $gameId;
         $this->db = $db;
         // load game info
         $gameInfo = $db->LoadGame( $gameId );
@@ -38,7 +38,7 @@ class Game extends GameInfo
         // process sweeping, rval is true if game over
         $isOver = $this->board->ProcessSweep();
         // update board and game
-        $this->db->StoreBoard( $this->gameId,$this->board );
+        $this->db->StoreBoard( $this->id,$this->board );
         $this->db->UpdateGame( $this );
         // return true if game is over
         return $isOver;

@@ -70,5 +70,15 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $gameId = 1337;
         $this->mdb->LoadGame( $gameId );
     }
+
+    public function testUpdateGame()
+    {
+        $gameInfo = new GameInfo( 1,1,6969,6969,Side::Bottom() );
+        $this->mdb->UpdateGame( $gameInfo );
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml" );
+        $dataSet = $this->getConnection()->createDataSet( ['games'] );
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
 }
 ?>

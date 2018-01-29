@@ -24,7 +24,7 @@ class GameInfo
 
     public function GetGameId() : int
     {
-        return $this->gameId;
+        return $this->id;
     }
 
     public function GetPlayerId( Side $side ) : int
