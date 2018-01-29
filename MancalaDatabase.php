@@ -11,7 +11,7 @@ class MancalaDatabase
 
     public function LoadGame( int $gameId ) : GameInfo 
     {
-        $gameDataArray = $this->conn->qfetch( 'SELECT * FROM games WHERE id = '.$gameId );
+        $gameDataArray = $this->conn->qfetch( 'SELECT * from games where id = '.$gameId );
         assert( count( $gameDataArray ) > 0,"LoadGame id not found" );
 
         $gameData = $gameDataArray[0];
@@ -44,9 +44,24 @@ class MancalaDatabase
 
         for( $i = 0; $i < 14; $i++ )
         {
-            $pots[] = $qresult[$i][0];
+            $pots[] = (int)$qresult[$i][0];
         }
         return new Board( $pots );
+    }
+
+    public function UpdateBoard( Board $board,int $gameId ) : void
+    {
+        // build sql to update all pots on board
+        $sql = 'INSERT into boards (gameId,potId,beads) values ';
+        for( $i = 0; $i < 14; $i++ )
+        {
+            $sql .= '('.$gameId.','.$i.','.$board->GetPot( new Pot( $i ) ).'),';
+        }
+        // (trim trailing comma)
+        $sql = substr( $sql,0,-1 );
+        $sql .= ' on duplicate key update beads = values(beads);';
+        // execute sql command
+        $nRowsAffected = $this->conn->exec( $sql );
     }
 
     public function __construct( ChiliSql $conn )

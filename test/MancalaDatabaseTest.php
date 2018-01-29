@@ -86,8 +86,8 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet( ['games'] );
-        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertTablesEqual( $expectedDataSet->getTable( 'games' ),$dataSet->getTable( 'games' ) );
     }
 
     public function testLoadBoard()
@@ -103,6 +103,19 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->expectException( AssertionError::class );
         $gameId = 4444;
         $board = $this->mdb->LoadBoard( $gameId );
+    }
+
+    public function testUpdateBoard()
+    {
+        $gameId = 1;
+        $board = new Board( [0,5,5,5,5,4,0,4,4,4,4,4,4,0] );
+        $this->mdb->UpdateBoard( $board,$gameId );
+
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertTablesEqual( $expectedDataSet->getTable( 'boards' ),$dataSet->getTable( 'boards' ) );
     }
 }
 ?>

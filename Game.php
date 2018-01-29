@@ -38,7 +38,7 @@ class Game extends GameInfo
         // process sweeping, rval is true if game over
         $isOver = $this->board->ProcessSweep();
         // update board and game
-        $this->db->StoreBoard( $this->id,$this->board );
+        $this->db->UpdateBoard( $this->board,$this->id );
         $this->db->UpdateGame( $this );
         // return true if game is over
         return $isOver;
