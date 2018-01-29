@@ -46,12 +46,21 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->mdb = new MancalaDatabase( self::$dbc );
     }
     
-    public function testLoadGame()
+    /**
+     * @dataProvider dataLoadGame
+     */
+    public function testLoadGame( int $gameId,GameInfo $gameInfoExpected )
     {
-        $gameId = 1;
         $gameInfoActual = $this->mdb->LoadGame( $gameId );
-        $gameInfoExpected = new GameInfo( 1,0,69,420,new Side( 0 ) );
         $this->assertEquals( $gameInfoExpected,$gameInfoActual );
+    }
+    public function dataLoadGame() : array
+    {
+        return [
+            [1,new GameInfo( 1,0,69,420,new Side( 0 ) )],
+            [42,new GameInfo( 42,13,11,17,new Side( 1 ) )],
+            [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ) )]
+        ];
     }
 }
 ?>
