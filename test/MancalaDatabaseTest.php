@@ -65,10 +65,10 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testFailLoadGame()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
 
         $gameId = 1337;
-        $this->mdb->LoadGame( 1 );
+        $this->mdb->LoadGame( $gameId );
     }
 }
 ?>

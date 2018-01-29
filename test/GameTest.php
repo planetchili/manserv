@@ -37,7 +37,7 @@ class GameTest extends PHPUnit\Framework\TestCase
 
     public function testFailCtor()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
 
         $gameId = 69;
         $turn = 0;

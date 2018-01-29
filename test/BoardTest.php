@@ -26,7 +26,7 @@ class BoardTest extends PHPUnit\Framework\TestCase
 
     public function testFailSetPot()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->SetPot( new Pot( 6 ),25 );
     }
 
@@ -61,7 +61,7 @@ class BoardTest extends PHPUnit\Framework\TestCase
 
     public function testFailDumpInMancala()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->DumpInMancala( Side::Top(),25 );
     }
 
@@ -120,28 +120,28 @@ class BoardTest extends PHPUnit\Framework\TestCase
 
     public function testFailSideDoMove1()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->DoMove( new Pot( 7 ),Side::Top() );
     }
     public function testFailSideDoMove2()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->DoMove( new Pot( 0 ),Side::Bottom() );
     }
     public function testFailMancalaDoMove1()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->DoMove( new Pot( 6 ),Side::Top() );
     }
     public function testFailMancalaDoMove2()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->DoMove( new Pot( 13 ),Side::Bottom() );
     }
     public function testFailEmptyDoMove()
     {
         $zero = new Pot( 0 );
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->TakeAllPot( $zero );
         $this->fresh->DoMove( $zero,Side::Top() );
     }
@@ -224,7 +224,7 @@ class BoardTest extends PHPUnit\Framework\TestCase
 
     public function testFailGetWinState()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         $this->fresh->GetWinState();
     }
 }

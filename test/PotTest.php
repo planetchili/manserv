@@ -43,7 +43,7 @@ class PotTest extends PHPUnit\Framework\TestCase
 
     public function testFailGetNext()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         (new Pot( 6 ))->GetNext( Side::Bottom() );        
     }
 
@@ -116,7 +116,7 @@ class PotTest extends PHPUnit\Framework\TestCase
 
     public function testFailGetOpposite()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         (new Pot( 6 ))->GetOpposite();
     }
     
@@ -143,7 +143,7 @@ class PotTest extends PHPUnit\Framework\TestCase
 
     public function testFailFromSide()
     {
-        $this->expectException( PHPUnit\Framework\Error\Error::class );
+        $this->expectException( AssertionError::class );
         Pot::FromSideOffset( Side::Top(),7 );
     }
 }
