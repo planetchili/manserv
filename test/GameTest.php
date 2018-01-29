@@ -97,8 +97,6 @@ class GameTest extends PHPUnit\Framework\TestCase
         
         $this->assertEquals( $expect_end,$game->DoMove( $move ) );
         $this->assertAttributeEquals( $expected_board,'board',$game );
-        $this->assertAttributeEquals( $turn + 1,'turn',$game );
-        $this->assertAttributeEquals( $expected_side,'activeSide',$game );
     }
     public function dataDoMove() : array
     {
