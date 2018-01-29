@@ -1,0 +1,7 @@
+games:
+  -
+    id: 1
+    turn: 0
+    player0Id: 69
+    player1Id: 420
+    activeSide: 0
