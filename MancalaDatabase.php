@@ -10,15 +10,22 @@ class MancalaDatabase
 
     public function LoadGame( int $gameId ) : GameInfo 
     {
-        $gameData = $this->conn->qfetch( 'SELECT * FROM games WHERE id = '.$gameId );
-        assert( count( $gameData ) > 0,"LoadGame id not found" );
+        $gameDataArray = $this->conn->qfetch( 'SELECT * FROM games WHERE id = '.$gameId );
+        assert( count( $gameDataArray ) > 0,"LoadGame id not found" );
+
+        $gameData = $gameDataArray[0];
         return new GameInfo( 
-            (int)$gameData[0]['id'],
-            (int)$gameData[0]['turn'],
-            (int)$gameData[0]['player0Id'],
-            (int)$gameData[0]['player1Id'],
-            new Side( (int)$gameData[0]['activeSide'] )
+            (int)$gameData['id'],
+            (int)$gameData['turn'],
+            (int)$gameData['player0Id'],
+            (int)$gameData['player1Id'],
+            new Side( (int)$gameData['activeSide'] )
         );
+    }
+
+    public function UpdateGame( GameInfo $gameInfo ) : void
+    {
+
     }
 
     public function __construct( ChiliSql $conn )

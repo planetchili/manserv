@@ -85,7 +85,13 @@ class GameTest extends PHPUnit\Framework\TestCase
                ->with( $gameId,$expected_board );
         $dbMock->expects( $this->once() )
                ->method( 'UpdateGame' )
-               ->with( $gameId,$turn + 1,$expected_side );
+               ->with( $this->callback( function( GameInfo $actualGame )
+                    use ( $gameId,$turn,$expected_side )
+               {
+                    return $actualGame->GetGameId() === $gameId &&
+                        $actualGame->GetTurn() === $turn + 1 &&
+                        $actualGame->GetActiveSide() == $expected_side;
+               } ) );
         
         $game = new Game( $dbMock,$gameId );
         

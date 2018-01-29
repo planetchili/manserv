@@ -39,7 +39,7 @@ class Game extends GameInfo
         $isOver = $this->board->ProcessSweep();
         // update board and game
         $this->db->StoreBoard( $this->gameId,$this->board );
-        $this->db->UpdateGame( $this->gameId,$this->turn,$this->activeSide );
+        $this->db->UpdateGame( $this );
         // return true if game is over
         return $isOver;
     }
