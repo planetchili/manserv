@@ -17,11 +17,19 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         // games table
         self::$dbc->exec(
             'CREATE table games(
-                id int primary key,
+                id int primary key auto_increment,
                 turn int not null,
                 player0Id int not null,
                 player1Id int not null,
                 activeSide int not null
+            );'
+        );
+        self::$dbc->exec(
+            'CREATE table boards(
+                gameId int not null,
+                potId int not null,
+                beads int not null,
+                primary key( gameId,potId )
             );'
         );
     }
@@ -29,8 +37,8 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     public static function tearDownAfterClass()
     {
         // cleanup schema
-        // games table
-        self::$dbc->query( 'DROP TABLE games' );
+        // drop games,boards
+        self::$dbc->query( 'DROP TABLE games,boards' );
         // cleanup SUT conn
         self::$dbc = null;
     }
@@ -76,9 +84,25 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $gameInfo = new GameInfo( 1,1,6969,6969,Side::Bottom() );
         $this->mdb->UpdateGame( $gameInfo );
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml" );
+            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
+        );
         $dataSet = $this->getConnection()->createDataSet( ['games'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
+
+    public function testLoadBoard()
+    {
+        $gameId = 1;
+        $board = $this->mdb->LoadBoard( $gameId );
+        $expected = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
+        $this->assertEquals( $expected,$board );
+    }
+
+    public function testFailLoadBoard()
+    {
+        $this->expectException( AssertionError::class );
+        $gameId = 4444;
+        $board = $this->mdb->LoadBoard( $gameId );
     }
 }
 ?>
