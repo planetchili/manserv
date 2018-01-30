@@ -20,7 +20,8 @@ class MancalaDatabase
             (int)$gameData['turn'],
             (int)$gameData['player0Id'],
             (int)$gameData['player1Id'],
-            new Side( (int)$gameData['activeSide'] )
+            new Side( (int)$gameData['activeSide'],
+            (int)$gameData['winState'] )
         );
     }
 
@@ -29,7 +30,8 @@ class MancalaDatabase
         $this->conn->exec( 
             "UPDATE games
              set    activeSide = {$gameInfo->GetActiveSide()->GetIndex()},
-                    turn = turn + 1
+                    turn = turn + 1,
+                    winState = {$gameInfo->GetWinState()}
              where  id = {$gameInfo->GetGameId()}"
         );
     }
@@ -72,7 +74,8 @@ class MancalaDatabase
                 turn int not null,
                 player0Id int not null,
                 player1Id int not null,
-                activeSide int not null
+                activeSide int not null,
+                winState int not null default 1
             );'
         );
         $this->conn->exec(

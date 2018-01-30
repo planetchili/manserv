@@ -21,6 +21,7 @@ class Game extends GameInfo
         $this->playerIds = $gameInfo->GetPlayerIds();
         $this->activeSide = $gameInfo->GetActiveSide();
         assert( $this->playerIds[0] != $this->playerIds[1],"same player may not occupy both slots!" );
+        $this->winState = $gameInfo->GetWinState();
         // load board state
         $this->board = $db->LoadBoard( $gameId );
     }
@@ -28,6 +29,7 @@ class Game extends GameInfo
     /** returns true if game ended */
     public function DoMove( Pot $move ) : bool
     {
+        assert( $this->GetWinState() === WinState::InProgress );
         // advance turn counter
         $this->turn++;
         // execute move and switch sides if not mancala
@@ -37,16 +39,16 @@ class Game extends GameInfo
         }
         // process sweeping, rval is true if game over
         $isOver = $this->board->ProcessSweep();
+        // set winstate
+        if( $isOver )
+        {
+            $this->winState = $this->board->GetWinState();
+        }
         // update board and game
         $this->db->UpdateBoard( $this->board,$this->id );
         $this->db->UpdateGame( $this );
         // return true if game is over
         return $isOver;
-    }
-
-    public function GetWinState() : WinState
-    {
-        return $this->board->GetWinState();
     }
 }
 ?>

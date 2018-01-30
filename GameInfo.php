@@ -11,6 +11,8 @@ class GameInfo
     protected $playerIds;
     /** @var Side */
     protected $activeSide;
+    /** @var int */
+    protected $winState;
 
     public function GetActiveSide() : Side
     {
@@ -37,12 +39,19 @@ class GameInfo
         return $this->playerIds;
     }
 
-    public function __construct( int $id,int $turn,int $player0Id,int $player1Id,Side $activeSide )
+    public function GetWinState() : int
+    {
+        return $this->winState;
+    }
+
+    public function __construct( int $id,int $turn,int $player0Id,int $player1Id,
+        Side $activeSide,int $winState = WinState::InProgress )
     {
         $this->id = $id;
         $this->turn = $turn;
         $this->playerIds = [$player0Id,$player1Id];
         $this->activeSide = $activeSide;
+        $this->winState = $winState;
     }
 }
 ?>

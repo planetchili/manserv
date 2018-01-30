@@ -61,7 +61,7 @@ class GameTest extends PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataDoMove
      */
-    public function testDoMove( Board $board,Side $activeSide,Pot $move,Board $expected_board,bool $expect_end,Side $expected_side )
+    public function testDoMove( Board $board,Side $activeSide,Pot $move,Board $expected_board,int $expect_winState,Side $expected_side )
     {
         $gameId = 69;
         $turn = 43;
@@ -95,7 +95,8 @@ class GameTest extends PHPUnit\Framework\TestCase
         
         $game = new Game( $dbMock,$gameId );
         
-        $this->assertEquals( $expect_end,$game->DoMove( $move ) );
+        $this->assertEquals( $expect_winState != WinState::InProgress,$game->DoMove( $move ) );
+        $this->assertEquals( $expect_winState,$game->GetWinState() );
         $this->assertAttributeEquals( $expected_board,'board',$game );
     }
     public function dataDoMove() : array
@@ -103,15 +104,15 @@ class GameTest extends PHPUnit\Framework\TestCase
         return [
             'Mancala' =>
             [new Board([4,4,4,4,4,4,0,4,4,4,4,4,4,0]),Side::Top(),new Pot( 2 ),
-             new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),false,Side::Top()
+             new Board([4,4,0,5,5,5,1,4,4,4,4,4,4,0]),WinState::InProgress,Side::Top()
             ],
             'Normile' =>
             [new Board([4,4,4,4,4,4,0,4,4,4,4,4,4,0]),Side::Top(),new Pot( 0 ),
-             new Board([0,5,5,5,5,4,0,4,4,4,4,4,4,0]),false,Side::Bottom()
+             new Board([0,5,5,5,5,4,0,4,4,4,4,4,4,0]),WinState::InProgress,Side::Bottom()
             ],
             'Game Overd' =>
             [new Board([0,0,0,0,0,1,12,0,0,1,1,1,0,12]),Side::Top(),new Pot( 5 ),
-             new Board([0,0,0,0,0,0,13,0,0,0,0,0,0,15]),true,Side::Top()
+             new Board([0,0,0,0,0,0,13,0,0,0,0,0,0,15]),WinState::BottomWins,Side::Top()
             ],
         ];
     }
