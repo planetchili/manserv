@@ -4,44 +4,26 @@ require_once 'ChiliTest.php';
 
 class MancalaDatabaseTest extends ChiliDatabaseTest
 {
-    /** @var ChiliSql */
-    private static $dbc;
     /** @var MancalaDatabase */
     private $mdb;
 
     public static function setUpBeforeClass()
     {
         // create SUT conn (also doubles as schema setup conn)
-        self::$dbc = new ChiliSql( self::SCHEMA,self::USER,self::PASSWORD );
+        self::$pdo = new ChiliSql( self::SCHEMA,self::USER,self::PASSWORD );
         // clear schema
-        self::$dbc->exec( 'DROP table if exists games,boards;' );
+        self::$pdo->exec( 'DROP table if exists games,boards;' );
         // setup schema
-        self::$dbc->exec(
-            'CREATE table games(
-                id int primary key auto_increment,
-                turn int not null,
-                player0Id int not null,
-                player1Id int not null,
-                activeSide int not null
-            );'
-        );
-        self::$dbc->exec(
-            'CREATE table boards(
-                gameId int not null,
-                potId int not null,
-                beads int not null,
-                primary key( gameId,potId )
-            );'
-        );
+        (new MancalaDatabase( self::$pdo ))->SetupSchema();
     }
 
     public static function tearDownAfterClass()
     {
         // cleanup schema
         // drop games,boards
-        self::$dbc->query( 'DROP TABLE games,boards' );
+        self::$pdo->query( 'DROP TABLE games,boards' );
         // cleanup SUT conn
-        self::$dbc = null;
+        self::$pdo = null;
     }
 
     protected function getDataSet()
@@ -52,7 +34,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     public function setUp()
     {
         parent::setUp();
-        $this->mdb = new MancalaDatabase( self::$dbc );
+        $this->mdb = new MancalaDatabase( self::$pdo );
     }
     
     /**
@@ -130,6 +112,11 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         );
         $dataSet = $this->getConnection()->createDataSet();
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
+
+    public function testCreateNewGame()
+    {
+        
     }
 }
 ?>

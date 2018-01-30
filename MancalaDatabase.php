@@ -64,6 +64,41 @@ class MancalaDatabase
         $nRowsAffected = $this->conn->exec( $sql );
     }
 
+    public function SetupSchema() : void
+    {
+        $this->conn->exec(
+            'CREATE table if not exists games(
+                id int primary key auto_increment,
+                turn int not null,
+                player0Id int not null,
+                player1Id int not null,
+                activeSide int not null
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists boards(
+                gameId int not null,
+                potId int not null,
+                beads int not null,
+                primary key( gameId,potId )
+            );'
+        );
+    }
+
+    public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
+    {
+        $gameId = $this->query( 
+            "INSERT into games set 
+                player0Id = {$player0Id},
+                player1Id = {$player1Id},
+                turn = 0,
+                side = {$startSide->GetIndex()};
+             SELECT LAST_INSERT_ID();"
+        );
+        $this->UpdateBoard( Board::MakeFresh(),$gameId );
+        return $gameId;
+    }
+
     public function __construct( ChiliSql $conn )
     {
         $this->conn = $conn;

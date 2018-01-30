@@ -13,7 +13,7 @@ abstract class ChiliDatabaseTest extends TestCase
     /** @var string */
     protected const PASSWORD = 'password';
     /** @var ChiliSql */
-    static private $pdo = null;
+    static protected $pdo = null;
     /** @var PHPUnit_Extensions_Database_DB_IDatabaseConnection */
     private $conn = null;
 
