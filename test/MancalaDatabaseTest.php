@@ -116,7 +116,13 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testCreateNewGame()
     {
+        $this->mdb->CreateNewGame( 1,2,Side::Top() );
         
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectNewGame.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 }
 ?>

@@ -87,14 +87,14 @@ class MancalaDatabase
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
     {
-        $gameId = $this->query( 
+        $result = $this->conn->exec( 
             "INSERT into games set 
                 player0Id = {$player0Id},
                 player1Id = {$player1Id},
                 turn = 0,
-                side = {$startSide->GetIndex()};
-             SELECT LAST_INSERT_ID();"
+                activeSide = {$startSide->GetIndex()};"
         );
+        $gameId = $this->conn->lastInsertId();
         $this->UpdateBoard( Board::MakeFresh(),$gameId );
         return $gameId;
     }
