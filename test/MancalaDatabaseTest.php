@@ -13,8 +13,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     {
         // create SUT conn (also doubles as schema setup conn)
         self::$dbc = new ChiliSql( self::SCHEMA,self::USER,self::PASSWORD );
+        // clear schema
+        self::$dbc->exec( 'DROP table if exists games,boards;' );
         // setup schema
-        // games table
         self::$dbc->exec(
             'CREATE table games(
                 id int primary key auto_increment,
@@ -118,7 +119,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertTablesEqual( $expectedDataSet->getTable( 'boards' ),$dataSet->getTable( 'boards' ) );
     }
 
-    public function testGamePlusDb()
+    public function testGameWithDb()
     {
         $gameId = 1;
         $game = new Game( $this->mdb,$gameId );
