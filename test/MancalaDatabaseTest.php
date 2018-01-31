@@ -53,11 +53,10 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
             [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ),WinState::InProgress )]
         ];
     }
-
+    
+    /** @expectedException AssertionError */
     public function testFailLoadGame()
     {
-        $this->expectException( AssertionError::class );
-
         $gameId = 1337;
         $this->mdb->LoadGame( $gameId );
     }
@@ -81,9 +80,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( $expected,$board );
     }
 
+    /** @expectedException AssertionError */
     public function testFailLoadBoard()
     {
-        $this->expectException( AssertionError::class );
         $gameId = 4444;
         $board = $this->mdb->LoadBoard( $gameId );
     }
@@ -124,6 +123,23 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $dataSet = $this->getConnection()->createDataSet();
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
         $this->assertEquals( $gameId,1666667 );
+    }
+
+    public function testClearBoard()
+    {
+        $this->mdb->ClearBoard( 1 );
+        
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectClearBoard.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
+
+    /** @expectedException AssertionError */
+    public function testFailClearBoard()
+    {
+        $this->mdb->ClearBoard( 6969 );
     }
 }
 ?>

@@ -114,6 +114,14 @@ class MancalaDatabase
         return $gameId;
     }
 
+    public function ClearBoard( int $gameId ) : void
+    {
+        $nRowsAffected = $this->conn->exec(
+            "DELETE from boards where gameId = {$gameId};"
+        );
+        assert( $nRowsAffected === 14,'Wrong number of pots for ClearBoard()' );
+    }
+
     public function __construct( ChiliSql $conn )
     {
         $this->conn = $conn;

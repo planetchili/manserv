@@ -79,6 +79,64 @@ boards:
     potId: 13
     beads: 0
 
+    
+  -
+    gameId: 42
+    potId: 0
+    beads: 4  
+  -
+    gameId: 42
+    potId: 1
+    beads: 4
+  -
+    gameId: 42
+    potId: 2
+    beads: 4
+  -
+    gameId: 42
+    potId: 3
+    beads: 4
+  -
+    gameId: 42
+    potId: 4
+    beads: 4
+  -
+    gameId: 42
+    potId: 5
+    beads: 4
+  -
+    gameId: 42
+    potId: 6
+    beads: 0
+  -
+    gameId: 42
+    potId: 7
+    beads: 4  
+  -
+    gameId: 42
+    potId: 8
+    beads: 4
+  -
+    gameId: 42
+    potId: 9
+    beads: 4
+  -
+    gameId: 42
+    potId: 10
+    beads: 4
+  -
+    gameId: 42
+    potId: 11
+    beads: 4
+  -
+    gameId: 42
+    potId: 12
+    beads: 4
+  -
+    gameId: 42
+    potId: 13
+    beads: 0
+
 histories:
   -
     gameId: 42

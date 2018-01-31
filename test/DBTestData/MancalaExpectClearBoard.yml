@@ -1,10 +1,10 @@
 games:
   -
     id: 1
-    turn: 1
+    turn: 0
     player0Id: 69
     player1Id: 420
-    activeSide: 1
+    activeSide: 0
     winState: 1
   -
     id: 42
@@ -22,63 +22,6 @@ games:
     winState: 1
 
 boards:
-  -
-    gameId: 1
-    potId: 0
-    beads: 0  
-  -
-    gameId: 1
-    potId: 1
-    beads: 5
-  -
-    gameId: 1
-    potId: 2
-    beads: 5
-  -
-    gameId: 1
-    potId: 3
-    beads: 5
-  -
-    gameId: 1
-    potId: 4
-    beads: 5
-  -
-    gameId: 1
-    potId: 5
-    beads: 4
-  -
-    gameId: 1
-    potId: 6
-    beads: 0
-  -
-    gameId: 1
-    potId: 7
-    beads: 4  
-  -
-    gameId: 1
-    potId: 8
-    beads: 4
-  -
-    gameId: 1
-    potId: 9
-    beads: 4
-  -
-    gameId: 1
-    potId: 10
-    beads: 4
-  -
-    gameId: 1
-    potId: 11
-    beads: 4
-  -
-    gameId: 1
-    potId: 12
-    beads: 4
-  -
-    gameId: 1
-    potId: 13
-    beads: 0
-    
   -
     gameId: 42
     potId: 0
