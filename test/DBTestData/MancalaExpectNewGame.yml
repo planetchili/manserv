@@ -143,3 +143,9 @@ boards:
     gameId: 1666667
     potId: 13
     beads: 0
+
+histories:
+  -
+    gameId: 42
+    turn: 0
+    pot: 4

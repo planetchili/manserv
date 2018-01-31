@@ -1,4 +1,5 @@
-Current: DoMove needs to update WinState
+Current: Add move history table
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops
+TODO: encode board state as single row

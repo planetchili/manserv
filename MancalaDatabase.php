@@ -86,6 +86,19 @@ class MancalaDatabase
                 primary key( gameId,potId )
             );'
         );
+        $this->conn->exec(
+            'CREATE table if not exists histories(
+                gameId int not null,
+                turn int not null,
+                pot int not null,
+                primary key( gameId,turn )
+            );'
+        );
+    }
+
+    public function ClearSchema() : void
+    {
+        $this->conn->exec( 'DROP table games,boards,histories;' );
     }
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int

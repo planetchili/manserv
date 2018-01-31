@@ -21,7 +21,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     {
         // cleanup schema
         // drop games,boards
-        self::$pdo->query( 'DROP TABLE games,boards' );
+        (new MancalaDatabase( self::$pdo ))->ClearSchema();
         // cleanup SUT conn
         self::$pdo = null;
     }
