@@ -141,5 +141,19 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     {
         $this->mdb->ClearBoard( 6969 );
     }
+
+    public function testAddHistoryMove()
+    {
+        $this->mdb->AddHistoryMove(
+            new GameInfo( 1,0,0,0,Side::Top() ),
+            new Pot( 3 )
+        );
+        
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectAddHistoryMove.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
 }
 ?>

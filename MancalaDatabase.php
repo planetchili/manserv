@@ -122,6 +122,16 @@ class MancalaDatabase
         assert( $nRowsAffected === 14,'Wrong number of pots for ClearBoard()' );
     }
 
+    public function AddHistoryMove( GameInfo $game,Pot $move ) : void
+    {
+        $this->conn->exec(
+            "INSERT into histories set
+                gameId = {$game->GetGameId()},
+                turn = {$game->GetTurn()},
+                pot = {$move->GetIndex()};"
+        );
+    }
+
     public function __construct( ChiliSql $conn )
     {
         $this->conn = $conn;
