@@ -1,4 +1,4 @@
-Current: Add move history table
+Current: Incorporate history registration into game::domove
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops

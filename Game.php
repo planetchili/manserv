@@ -44,9 +44,10 @@ class Game extends GameInfo
         {
             $this->winState = $this->board->GetWinState();
         }
-        // update board and game
+        // update board and game, add to move history
         $this->db->UpdateBoard( $this->board,$this->id );
         $this->db->UpdateGame( $this );
+        $this->db->AddHistoryMove( $this,$move );
         // return true if game is over
         return $isOver;
     }

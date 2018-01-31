@@ -67,9 +67,18 @@ class GameTest extends PHPUnit\Framework\TestCase
         $turn = 43;
         $playerIds = [420,1337];
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
-                        ->setMethods( ['LoadGame','LoadBoard','UpdateBoard','UpdateGame'] )
+                        ->setMethods( ['AddHistoryMove','LoadGame','LoadBoard','UpdateBoard','UpdateGame'] )
                         ->disableOriginalConstructor()
                         ->getMock();
+        $dbMock->expects( $this->once() )
+                ->method( 'AddHistoryMove' )
+                ->with( $this->callback( function( GameInfo $actualGame )
+                    use ( $gameId,$turn )
+                    {
+                        return $actualGame->GetGameId() === $gameId &&
+                            $actualGame->GetTurn() === $turn;
+                    } ),
+                    $this->equalTo($move) );
         $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $gameId )
