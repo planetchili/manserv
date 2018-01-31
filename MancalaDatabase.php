@@ -122,12 +122,12 @@ class MancalaDatabase
         assert( $nRowsAffected === 14,'Wrong number of pots for ClearBoard()' );
     }
 
-    public function AddHistoryMove( GameInfo $game,Pot $move ) : void
+    public function AddHistoryMove( int $gameId,int $turn,Pot $move ) : void
     {
         $this->conn->exec(
             "INSERT into histories set
-                gameId = {$game->GetGameId()},
-                turn = {$game->GetTurn()},
+                gameId = {$gameId},
+                turn = {$turn},
                 pot = {$move->GetIndex()};"
         );
     }

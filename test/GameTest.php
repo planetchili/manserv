@@ -71,15 +71,6 @@ class GameTest extends PHPUnit\Framework\TestCase
                         ->disableOriginalConstructor()
                         ->getMock();
         $dbMock->expects( $this->once() )
-                ->method( 'AddHistoryMove' )
-                ->with( $this->callback( function( GameInfo $actualGame )
-                    use ( $gameId,$turn )
-                    {
-                        return $actualGame->GetGameId() === $gameId &&
-                            $actualGame->GetTurn() === $turn;
-                    } ),
-                    $this->equalTo($move) );
-        $dbMock->expects( $this->once() )
                ->method( 'LoadGame' )
                ->with( $gameId )
                ->willReturn( new GameInfo( 
@@ -101,6 +92,9 @@ class GameTest extends PHPUnit\Framework\TestCase
                         $actualGame->GetTurn() === $turn + 1 &&
                         $actualGame->GetActiveSide() == $expected_side;
                } ) );
+        $dbMock->expects( $this->once() )
+                ->method( 'AddHistoryMove' )
+                ->with( $gameId,$turn,$move );
         
         $game = new Game( $dbMock,$gameId );
         

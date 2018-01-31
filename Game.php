@@ -30,6 +30,8 @@ class Game extends GameInfo
     public function DoMove( Pot $move ) : bool
     {
         assert( $this->GetWinState() === WinState::InProgress );
+        // remember number for this turn
+        $curTurn = $this->GetTurn();
         // advance turn counter
         $this->turn++;
         // execute move and switch sides if not mancala
@@ -47,7 +49,7 @@ class Game extends GameInfo
         // update board and game, add to move history
         $this->db->UpdateBoard( $this->board,$this->id );
         $this->db->UpdateGame( $this );
-        $this->db->AddHistoryMove( $this,$move );
+        $this->db->AddHistoryMove( $this->GetGameId(),$curTurn,$move );
         // return true if game is over
         return $isOver;
     }

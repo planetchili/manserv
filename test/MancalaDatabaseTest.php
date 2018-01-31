@@ -107,7 +107,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $game->DoMove( new Pot( 0 ) );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
+            dirname(__FILE__)."/DBTestData/MancalaExpectAddHistoryMoveFull.yml"
         );
         $dataSet = $this->getConnection()->createDataSet();
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
@@ -144,10 +144,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testAddHistoryMove()
     {
-        $this->mdb->AddHistoryMove(
-            new GameInfo( 1,0,0,0,Side::Top() ),
-            new Pot( 3 )
-        );
+        $this->mdb->AddHistoryMove( 1,0,new Pot( 3 ) );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/DBTestData/MancalaExpectAddHistoryMove.yml"
