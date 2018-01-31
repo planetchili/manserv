@@ -12,7 +12,7 @@ games:
     player0Id: 11
     player1Id: 17
     activeSide: 1
-    winState: 1
+    winState: 2
   -
     id: 1666666
     turn: 24

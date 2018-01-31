@@ -20,8 +20,8 @@ class MancalaDatabase
             (int)$gameData['turn'],
             (int)$gameData['player0Id'],
             (int)$gameData['player1Id'],
-            new Side( (int)$gameData['activeSide'],
-            (int)$gameData['winState'] )
+            new Side( (int)$gameData['activeSide'] ),
+            (int)$gameData['winState']
         );
     }
 

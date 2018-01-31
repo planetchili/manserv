@@ -48,9 +48,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     public function dataLoadGame() : array
     {
         return [
-            [1,new GameInfo( 1,0,69,420,new Side( 0 ) )],
-            [42,new GameInfo( 42,13,11,17,new Side( 1 ) )],
-            [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ) )]
+            [1,new GameInfo( 1,0,69,420,new Side( 0 ),WinState::InProgress )],
+            [42,new GameInfo( 42,13,11,17,new Side( 1 ),WinState::TopWins )],
+            [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ),WinState::InProgress )]
         ];
     }
 
@@ -116,13 +116,14 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testCreateNewGame()
     {
-        $this->mdb->CreateNewGame( 1,2,Side::Top() );
+        $gameId = $this->mdb->CreateNewGame( 1,2,Side::Top() );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/DBTestData/MancalaExpectNewGame.yml"
         );
         $dataSet = $this->getConnection()->createDataSet();
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+        $this->assertEquals( $gameId,1666667 );
     }
 }
 ?>
