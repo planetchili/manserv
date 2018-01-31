@@ -71,7 +71,7 @@ class MancalaDatabase
         $this->conn->exec(
             'CREATE table if not exists games(
                 id int primary key auto_increment,
-                turn int not null,
+                turn int not null default 0,
                 player0Id int not null,
                 player1Id int not null,
                 activeSide int not null,
@@ -94,7 +94,6 @@ class MancalaDatabase
             "INSERT into games set 
                 player0Id = {$player0Id},
                 player1Id = {$player1Id},
-                turn = 0,
                 activeSide = {$startSide->GetIndex()};"
         );
         $gameId = $this->conn->lastInsertId();
