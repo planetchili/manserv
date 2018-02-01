@@ -152,5 +152,30 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $dataSet = $this->getConnection()->createDataSet();
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
+
+    /** @expectedException PDOException */
+    public function testFailAddHistoryMove()
+    {
+        $this->mdb->AddHistoryMove( 42,0,new Pot( 3 ) );
+    }
+
+    public function testAddUser()
+    {
+        $user = new User( -1,'sPoot','spoot@hotmail.cOm','passwordp',true );
+        $this->mdb->AddUser( $user );
+        
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/DBTestData/MancalaExpectAddUser.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet();
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
+
+    /** @expectedException PDOException */
+    public function testFailAddUser()
+    {
+        $user = new User( -1,'chili','chili@planetchili.net','nothashedohshitwhatup',true );
+        $this->mdb->AddUser( $user );
+    }
 }
 ?>

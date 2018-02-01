@@ -98,8 +98,8 @@ class MancalaDatabase
         $this->conn->exec(
             'CREATE table if not exists users (
                 id int primary key auto_increment,
-                `name` varchar (32) not null,
-                email varchar (255) not null,
+                `name` varchar (32) not null unique key,
+                email varchar (255) not null unique key,
                 passwordHash varchar (255) not null
             );'
         );
@@ -145,13 +145,17 @@ class MancalaDatabase
 
     public function AddUser( User $user ) : void
     {
-        $nRowsAffected = $this->conn->exec(
-            "INSERT into users set
-                `name` = {$user->GetId()},
-                email = {$user->GetEmail()},
-                passwordHash = {$user->GetPasswordHash()};"
+        $stmt = $this->conn->prepare(
+            'INSERT into users set
+                `name` = :n,
+                email = :e,
+                passwordHash = :p;'
         );
-        assert( $nRowsAffected === 1 );
+        $stmt->execute( [
+            ':n'=>$user->GetName(),
+            ':e'=>$user->GetEmail(),
+            ':p'=>$user->GetPasswordHash()
+        ] );
     }
 
     public function __construct( ChiliSql $conn )
