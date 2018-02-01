@@ -39,5 +39,10 @@ class User
     {
         return $this->passwordHash;
     }
+
+    public function VerifyPassword( string $password ) : bool
+    {
+        return password_verify( $password,$this->GetPasswordHash() );
+    }
 }
 ?>
