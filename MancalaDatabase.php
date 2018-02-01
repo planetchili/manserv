@@ -64,7 +64,7 @@ class MancalaDatabase
         $sql = substr( $sql,0,-1 );
         $sql .= ' on duplicate key update beads = values(beads);';
         // execute sql command
-        $nRowsAffected = $this->conn->exec( $sql );
+        $this->conn->exec( $sql );
     }
 
     public function SetupSchema() : void
@@ -112,13 +112,12 @@ class MancalaDatabase
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
     {
-        $nRowsAffected = $this->conn->exec( 
+        $this->conn->exec( 
             "INSERT into games set 
                 player0Id = {$player0Id},
                 player1Id = {$player1Id},
                 activeSide = {$startSide->GetIndex()};"
         );
-        assert( $nRowsAffected === 1 );
         $gameId = $this->conn->lastInsertId();
         $this->UpdateBoard( Board::MakeFresh(),$gameId );
         return $gameId;
@@ -134,13 +133,12 @@ class MancalaDatabase
 
     public function AddHistoryMove( int $gameId,int $turn,Pot $move ) : void
     {
-        $nRowsAffected = $this->conn->exec(
+        $this->conn->exec(
             "INSERT into histories set
                 gameId = {$gameId},
                 turn = {$turn},
                 pot = {$move->GetIndex()};"
         );
-        assert( $nRowsAffected === 1 );
     }
 
     public function AddUser( User $user ) : void
