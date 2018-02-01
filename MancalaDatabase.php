@@ -165,6 +165,18 @@ class MancalaDatabase
         return new User( $userId,$data['name'],$data['email'],$data['passwordHash'],true );
     }
 
+    public function LoadUserByName( string $name ) : User
+    {        
+        $name = strtolower( $name );
+        $stmt = $this->conn->prepare( 'SELECT * from users where `name` = :n;' );
+        $stmt->execute( [':n'=>$name] );
+        $qres = $stmt->fetchAll( PDO::FETCH_ASSOC );
+        assert( count( $qres ) === 1 );
+
+        $data = $qres[0];
+        return new User( $data['id'],$name,$data['email'],$data['passwordHash'],true );
+    }
+
     public function __construct( ChiliSql $conn )
     {
         $this->conn = $conn;
