@@ -1,4 +1,4 @@
-Current: ???
+Current: Basic Test Interface
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops

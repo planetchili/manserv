@@ -107,7 +107,7 @@ class MancalaDatabase
 
     public function ClearSchema() : void
     {
-        $this->conn->exec( 'DROP table games,boards,histories,users;' );
+        $this->conn->exec( 'DROP table if exists games,boards,histories,users;' );
     }
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
