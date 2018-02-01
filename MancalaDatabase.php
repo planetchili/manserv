@@ -156,6 +156,15 @@ class MancalaDatabase
         ] );
     }
 
+    public function LoadUserById( int $userId ) : User
+    {
+        $qres = $this->conn->qfetch( 'SELECT * from users where id = '.$userId );
+        assert( count( $qres ) === 1 );
+
+        $data = $qres[0];
+        return new User( $userId,$data['name'],$data['email'],$data['passwordHash'],true );
+    }
+
     public function __construct( ChiliSql $conn )
     {
         $this->conn = $conn;

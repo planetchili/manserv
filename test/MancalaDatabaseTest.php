@@ -177,5 +177,18 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $user = new User( -1,'chili','chili@planetchili.net','nothashedohshitwhatup',true );
         $this->mdb->AddUser( $user );
     }
+
+    public function testLoadUserById()
+    {
+        $exp = new User( 3,'chili','chili@planetchili.net','nothashedohshitwhatup',true );
+        $act = $this->mdb->LoadUserById( $exp->GetId() );
+        $this->assertEquals( $exp,$act );
+    }
+
+    /** @expectedException AssertionError */
+    public function testFailLoadUserById()
+    {
+        $act = $this->mdb->LoadUserById( 69 );
+    }
 }
 ?>
