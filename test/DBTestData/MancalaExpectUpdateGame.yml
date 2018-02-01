@@ -141,3 +141,10 @@ histories:
     gameId: 42
     turn: 0
     pot: 4
+
+users:
+  -
+    id: 3
+    name: chili
+    email: chili@planetchili.net
+    passwordHash: nothashedohshitwhatup

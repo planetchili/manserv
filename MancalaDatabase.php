@@ -3,6 +3,7 @@ require_once 'ChiliSql.php';
 require_once 'Side.php';
 require_once 'GameInfo.php';
 require_once 'Board.php';
+require_once 'User.php';
 
 class MancalaDatabase
 {
@@ -94,21 +95,30 @@ class MancalaDatabase
                 primary key( gameId,turn )
             );'
         );
+        $this->conn->exec(
+            'CREATE table if not exists users (
+                id int primary key auto_increment,
+                `name` varchar (32) not null,
+                email varchar (255) not null,
+                passwordHash varchar (255) not null
+            );'
+        );
     }
 
     public function ClearSchema() : void
     {
-        $this->conn->exec( 'DROP table games,boards,histories;' );
+        $this->conn->exec( 'DROP table games,boards,histories,users;' );
     }
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
     {
-        $result = $this->conn->exec( 
+        $nRowsAffected = $this->conn->exec( 
             "INSERT into games set 
                 player0Id = {$player0Id},
                 player1Id = {$player1Id},
                 activeSide = {$startSide->GetIndex()};"
         );
+        assert( $nRowsAffected === 1 );
         $gameId = $this->conn->lastInsertId();
         $this->UpdateBoard( Board::MakeFresh(),$gameId );
         return $gameId;
@@ -124,12 +134,24 @@ class MancalaDatabase
 
     public function AddHistoryMove( int $gameId,int $turn,Pot $move ) : void
     {
-        $this->conn->exec(
+        $nRowsAffected = $this->conn->exec(
             "INSERT into histories set
                 gameId = {$gameId},
                 turn = {$turn},
                 pot = {$move->GetIndex()};"
         );
+        assert( $nRowsAffected === 1 );
+    }
+
+    public function AddUser( User $user ) : void
+    {
+        $nRowsAffected = $this->conn->exec(
+            "INSERT into users set
+                `name` = {$user->GetId()},
+                email = {$user->GetEmail()},
+                passwordHash = {$user->GetPasswordHash()};"
+        );
+        assert( $nRowsAffected === 1 );
     }
 
     public function __construct( ChiliSql $conn )
