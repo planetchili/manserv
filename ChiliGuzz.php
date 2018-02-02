@@ -7,7 +7,7 @@ function GuzzPost( string $page,array $params = [] ) : array
         // Base URI is used with relative requests
         'base_uri' => 'http://localhost/manserv/',
         // You can set any number of default request options.
-        'timeout'  => 2.0
+        'timeout'  => 300.0
     ]);
 
     $response = $client->request( 'POST',$page,
