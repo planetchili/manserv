@@ -65,6 +65,8 @@ boards:
     potId: 13
     beads: 0
 
+histories:
+
 users:
   -
     id: 1

@@ -31,6 +31,9 @@ try
 
 		// verify game is still in progress
 		assert( $game->GetWinState() == WinState::InProgress,"cannot move: game over in gc" );
+
+		// execute the move
+		$game->DoMove( new Pot( (int)$_POST['pot'] ) );
 		
 		// respond with current game state (changes only)
 		$resp = [

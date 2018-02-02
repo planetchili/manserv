@@ -78,5 +78,51 @@ class GameControllerTest extends ChiliDatabaseTest
 			[['cmd' => 'query','userId' => 1               ],'gameId not set']
 		];
 	}
+
+	/** @dataProvider dataMove */
+	public function testMove( array $sequence )
+	{
+		foreach( $sequence as $move )
+		{
+			$req = $move['req'];
+			$exp = $move['exp'];
+
+			$resp = GuzzPost( 'GameController.php',$req );
+			if( $resp['status']['isFail'] )
+			{
+				$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
+			}
+			
+			$payload = $resp['payload'];
+			$this->assertEquals( $exp['turn'],$payload['turn'],'bad turn #' );
+			$this->assertEquals( $exp['activeSide'],$payload['activeSide'],'wrong active side #' );
+			$this->assertEquals( $exp['winState'],$payload['winState'],'wrong win state #' );
+			$this->assertEquals( $exp['board'],$payload['board'],'board does not match' );
+		}
+	}
+	public function dataMove() : array
+	{
+		return [
+			'simple one move' =>
+			[
+				[
+					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 0],
+					'exp' => ['turn' => 1,'activeSide' => 1,'winState' => 1,'board' =>
+						[0,5,5,5,5,4,0,4,4,4,4,4,4,0]]]
+				]
+			],
+			'mancala open' =>
+			[
+				[
+					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2],
+					'exp' => ['turn' => 1,'activeSide' => 0,'winState' => 1,'board' =>
+						[4,4,0,5,5,5,1,4,4,4,4,4,4,0]]],
+					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5],
+					'exp' => ['turn' => 2,'activeSide' => 1,'winState' => 1,'board' =>
+						[4,4,0,5,5,0,2,5,5,5,5,4,4,0]]]
+				]
+			]
+		];
+	}
 }
 ?>
