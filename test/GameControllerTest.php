@@ -186,7 +186,12 @@ class GameControllerTest extends ChiliDatabaseTest
 		// verify results
 		$payload = $resp['payload'];
 		$this->assertFalse( $payload['upToDate'],'bad upToDate' );
-		$this->assertEquals( ['turn' => 0,'pot' => 2],$payload['moves'][0],'bad first history move' );		
+		$this->assertEquals( ['turn' => 0,'pot' => 2],$payload['moves'][0],'bad first history move' );
+		$this->assertEquals( ['turn' => 1,'pot' => 5],$payload['moves'][1],'bad second history move' );
+		$this->assertEquals( [4,4,0,5,5,0,2,5,5,5,5,4,4,0],$payload['state']['board'],'bad board state' );
+		$this->assertEquals( 1,$payload['state']['activeSide'],'bad active side' );	
+		$this->assertEquals( 2,$payload['state']['turn'],'bad turn' );
+		$this->assertEquals( 1,$payload['state']['winState'],'bad win state' );	
 	}
 }
 ?>
