@@ -143,5 +143,31 @@ class GameControllerTest extends ChiliDatabaseTest
 			]
 		];
 	}
+
+	/** @dataProvider dataFailMove */
+	public function testFailMove( array $req,string $diag )
+	{
+		$resp = GuzzPost( 'GameController.php',$req );
+		if( $resp['status']['isFail'] )
+		{
+			$this->assertContains( $diag,$resp['status']['message'],
+				'failure diagnostic not appropriate',true
+			);	
+		}
+		else 
+		{
+			$this->fail( 'expected error not emitted' );
+		}
+	}
+	public function dataFailMove() : array
+	{
+		return [
+			'bad userId' 		=> [['cmd' => 'move','userId' => 8,'gameId' => 1,'pot' => 0],'user'],
+			'not player pot'	=> [['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 8],'pot'],
+			'not player turn' 	=> [['cmd' => 'move','userId' => 2,'gameId' => 1,'pot' => 8],'turn'],
+			'no pot'	 		=> [['cmd' => 'move','userId' => 2,'gameId' => 1           ],'pot'],
+			'bad gameId'	 	=> [['cmd' => 'move','userId' => 1,'gameId' =>69,'pot' => 0],'LoadGame id']
+		];
+	}
 }
 ?>
