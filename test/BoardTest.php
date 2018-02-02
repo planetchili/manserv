@@ -227,5 +227,12 @@ class BoardTest extends PHPUnit\Framework\TestCase
         $this->expectException( AssertionError::class );
         $this->fresh->GetWinState();
     }
+
+    public function testToArray()
+    {
+        $array = [4,4,4,4,4,4,0,4,4,4,4,4,4,0];
+        $board = new Board( $array );
+        $this->assertEquals( $array,$board->ToArray() );
+    }
 }
 ?>

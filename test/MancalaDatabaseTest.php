@@ -1,6 +1,6 @@
 <?php
 require_once 'MancalaDatabase.php';
-require_once 'ChiliTest.php';
+require_once 'test/ChiliTest.php';
 
 class MancalaDatabaseTest extends ChiliDatabaseTest
 {

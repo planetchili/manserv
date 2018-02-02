@@ -39,6 +39,22 @@ class GameInfo
         return $this->playerIds;
     }
 
+    public function GetSideFromId( int $userId ) : ?Side
+    {
+        if( $userId === $this->playerIds[0] )
+        {
+            return Side::Top();
+        }
+        else if( $userId === $this->playerIds[1] )
+        {
+            return Side::Bottom();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public function GetWinState() : int
     {
         return $this->winState;

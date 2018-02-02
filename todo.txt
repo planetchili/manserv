@@ -1,5 +1,9 @@
-Current: Basic Test Interface
+Current: Basic Test Interface (game controller can either do move or query (or update))
+
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
+
+
+TODO: GET WAMP PHP DEBUG WORKING! (maybe try disable local first...)

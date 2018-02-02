@@ -53,5 +53,10 @@ class Game extends GameInfo
         // return true if game is over
         return $isOver;
     }
+
+    public function DumpBoard() : array
+    {
+        return $this->board->ToArray();
+    }
 }
 ?>

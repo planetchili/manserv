@@ -139,6 +139,11 @@ class Board
         ] );
     }
 
+    public function ToArray() : array
+    {
+        return $this->pots;
+    }
+
     public function __construct( array $pots )
     {
         assert( count( $pots ) == 14 );

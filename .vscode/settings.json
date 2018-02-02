@@ -1,4 +1,5 @@
 {
     "php.suggest.basic":false,
-    "explorer.sortOrder": "type"
+    "explorer.sortOrder": "type",
+    "editor.insertSpaces": false
 }

@@ -1,16 +1,16 @@
 <?php
 
 // when shit hits the fan
-function failout( string $msg,any $payload = null ) : void
+function failout( string $msg ) : void
 {
-	$ret = ['payload'=>$payload,'status'=>['isFail'=>true,'message'=>$msg]];
+	$ret = ['status'=>['isFail'=>true,'message'=>$msg]];
 	header( "Content-type: application/json; charset=utf-8" );
 	echo json_encode( $ret );
 	exit;
 }
 
 // return data to the browser (js)
-function submit_json( any $payload ) : void
+function submit_json( $payload ) : void
 {	
 	$ret = array( 'status'=>['isFail'=>false],'payload'=>$payload );
 	header( "Content-type: application/json; charset=utf-8" );
@@ -28,5 +28,18 @@ function in_range( int $val,int $min,int $max ) : bool
 function brace( string $s ) : string
 {
 	return '{'.$s.'}';
+}
+
+class ChiliException extends Exception
+{
+
+}
+
+function check( bool $pred,string $errorString = "ChiliExcpetion: failed runtime check" ) : void
+{
+	if( !$pred )
+	{
+		throw new ChiliException( $errorString );
+	}
 }
 ?>

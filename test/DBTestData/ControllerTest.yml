@@ -1,0 +1,78 @@
+games:
+  -
+    id: 1
+    turn: 0
+    player0Id: 1
+    player1Id: 2
+    activeSide: 0
+    winState: 1
+
+boards:
+  -
+    gameId: 1
+    potId: 0
+    beads: 4  
+  -
+    gameId: 1
+    potId: 1
+    beads: 4
+  -
+    gameId: 1
+    potId: 2
+    beads: 4
+  -
+    gameId: 1
+    potId: 3
+    beads: 4
+  -
+    gameId: 1
+    potId: 4
+    beads: 4
+  -
+    gameId: 1
+    potId: 5
+    beads: 4
+  -
+    gameId: 1
+    potId: 6
+    beads: 0
+  -
+    gameId: 1
+    potId: 7
+    beads: 4  
+  -
+    gameId: 1
+    potId: 8
+    beads: 4
+  -
+    gameId: 1
+    potId: 9
+    beads: 4
+  -
+    gameId: 1
+    potId: 10
+    beads: 4
+  -
+    gameId: 1
+    potId: 11
+    beads: 4
+  -
+    gameId: 1
+    potId: 12
+    beads: 4
+  -
+    gameId: 1
+    potId: 13
+    beads: 0
+
+users:
+  -
+    id: 1
+    name: chili
+    email: chili@planetchili.net
+    passwordHash: $2y$10$3WPh0YJFiKBJTLe8HFPQXuEdb52Cjve9HTxo7Sqf71fLQe4ZZa4Wm
+  -
+    id: 2
+    name: mom
+    email: dimsum@planetchili.net
+    passwordHash: $2y$10$XOZzHRuIfCKde0uFXejjhOyeK35VXzyq4LyOuoJVNtvexbe3ll64y
