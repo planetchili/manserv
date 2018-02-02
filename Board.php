@@ -104,7 +104,7 @@ class Board
 
     public function SetPot( Pot $pot,int $beads ) : void
     {
-        assert( in_range( $beads,0,24 ),'Beads set must be 0~24' );
+        assert( in_range( $beads,0,48 ),'Beads set must be 0~48' );
         $this->pots[$pot->GetIndex()] = $beads;
     }
 
@@ -117,7 +117,7 @@ class Board
 
     public function DumpInMancala( Side $dump_side,int $beads ) : int
     {
-        assert( in_range( $beads,0,24 ),'Beads set must be 0~24' );
+        assert( in_range( $beads,0,48 ),'Beads set must be 0~48' );
         $pot = Pot::FromSideOffset( $dump_side,6 );
         $val = $this->GetPot( $pot ) + $beads;
         $this->SetPot( $pot,$val );

@@ -82,7 +82,7 @@ class GameControllerTest extends ChiliDatabaseTest
 	/** @dataProvider dataMove */
 	public function testMove( array $sequence )
 	{
-		foreach( $sequence as $move )
+		foreach( $sequence as $i => $move )
 		{
 			$req = $move['req'];
 			$exp = $move['exp'];
@@ -94,10 +94,10 @@ class GameControllerTest extends ChiliDatabaseTest
 			}
 			
 			$payload = $resp['payload'];
-			$this->assertEquals( $exp['turn'],$payload['turn'],'bad turn #' );
-			$this->assertEquals( $exp['activeSide'],$payload['activeSide'],'wrong active side #' );
-			$this->assertEquals( $exp['winState'],$payload['winState'],'wrong win state #' );
-			$this->assertEquals( $exp['board'],$payload['board'],'board does not match' );
+			$this->assertEquals( $exp['turn'],$payload['turn'],'bad turn #'.' @seq ('.$i );
+			$this->assertEquals( $exp['activeSide'],$payload['activeSide'],'wrong active side #'.' @seq ('.$i );
+			$this->assertEquals( $exp['winState'],$payload['winState'],'wrong win state #'.' @seq ('.$i );
+			$this->assertEquals( $exp['board'],$payload['board'],'board does not match'.' @seq ('.$i );
 		}
 	}
 	public function dataMove() : array
@@ -120,6 +120,25 @@ class GameControllerTest extends ChiliDatabaseTest
 					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5],
 					'exp' => ['turn' => 2,'activeSide' => 1,'winState' => 1,'board' =>
 						[4,4,0,5,5,0,2,5,5,5,5,4,4,0]]]
+				]
+			],
+			'bottom wins' =>
+			[
+				[
+					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 2,'pot' => 1],
+					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 1,'board' =>
+						[0,0,0,1,0,0,22,0,1,0,0,0,0,24]]],
+					['req' => ['cmd' => 'move','userId' => 2,'gameId' => 2,'pot' => 8],
+					'exp' => ['turn' => 27,'activeSide' => 0,'winState' => 3,'board' =>
+						[0,0,0,0,0,0,22,0,0,0,0,0,0,26]]],
+				]
+			],
+			'tie' =>
+			[
+				[
+					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 2,'pot' => 3],
+					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 4,'board' =>
+						[0,0,0,0,0,0,24,0,0,0,0,0,0,24]]]
 				]
 			]
 		];

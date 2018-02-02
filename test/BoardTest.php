@@ -20,14 +20,14 @@ class BoardTest extends PHPUnit\Framework\TestCase
     public function testSetPot()
     {
         $pot = new Pot( 9 );
-        $this->fresh->setPot( $pot,12 );
-        $this->assertEquals( 12,$this->fresh->GetPot( $pot ) );
+        $this->fresh->setPot( $pot,25 );
+        $this->assertEquals( 25,$this->fresh->GetPot( $pot ) );
     }
 
     public function testFailSetPot()
     {
         $this->expectException( AssertionError::class );
-        $this->fresh->SetPot( new Pot( 6 ),25 );
+        $this->fresh->SetPot( new Pot( 6 ),49 );
     }
 
     public function testIncrementPot()
@@ -55,14 +55,16 @@ class BoardTest extends PHPUnit\Framework\TestCase
         $man = new Pot( 6 );
         $this->assertEquals( 5,$this->fresh->DumpInMancala( Side::Top(),5 ) );
         $this->assertEquals( 5,$this->fresh->GetPot( $man ) );
-        $this->assertEquals( 8,$this->fresh->DumpInMancala( Side::Top(),3 ) );
-        $this->assertEquals( 8,$this->fresh->GetPot( $man ) );
+        $this->assertEquals( 3,$this->fresh->DumpInMancala( Side::Bottom(),3 ) );
+        $this->assertEquals( 3,$this->fresh->GetPot( new Pot( 13 ) ) );
+        $this->assertEquals( 37,$this->fresh->DumpInMancala( Side::Top(),32 ) );
+        $this->assertEquals( 37,$this->fresh->GetPot( $man ) );
     }
 
     public function testFailDumpInMancala()
     {
         $this->expectException( AssertionError::class );
-        $this->fresh->DumpInMancala( Side::Top(),25 );
+        $this->fresh->DumpInMancala( Side::Top(),50 );
     }
 
     /**

@@ -6,6 +6,13 @@ games:
     player1Id: 2
     activeSide: 0
     winState: 1
+  -
+    id: 2
+    turn: 25
+    player0Id: 1
+    player1Id: 2
+    activeSide: 0
+    winState: 1
 
 boards:
   -
@@ -64,6 +71,64 @@ boards:
     gameId: 1
     potId: 13
     beads: 0
+
+    
+  -
+    gameId: 2
+    potId: 0
+    beads: 0  
+  -
+    gameId: 2
+    potId: 1
+    beads: 1
+  -
+    gameId: 2
+    potId: 2
+    beads: 0
+  -
+    gameId: 2
+    potId: 3
+    beads: 1
+  -
+    gameId: 2
+    potId: 4
+    beads: 0
+  -
+    gameId: 2
+    potId: 5
+    beads: 0
+  -
+    gameId: 2
+    potId: 6
+    beads: 21
+  -
+    gameId: 2
+    potId: 7
+    beads: 0  
+  -
+    gameId: 2
+    potId: 8
+    beads: 1
+  -
+    gameId: 2
+    potId: 9
+    beads: 0
+  -
+    gameId: 2
+    potId: 10
+    beads: 0
+  -
+    gameId: 2
+    potId: 11
+    beads: 0
+  -
+    gameId: 2
+    potId: 12
+    beads: 0
+  -
+    gameId: 2
+    potId: 13
+    beads: 24
 
 histories:
 
