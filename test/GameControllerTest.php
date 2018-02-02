@@ -57,5 +57,26 @@ class GameControllerTest extends ChiliDatabaseTest
 		$this->assertEquals( 'chili',$payload['players'][0]['name'],'bad p0 name' );
 		$this->assertEquals( 'mom',$payload['players'][1]['name'],'bad p1 name' );
 	}
+
+	/** @dataProvider dataFailQuery */
+	public function testFailQuery( array $post,string $diag )
+	{
+		$resp = GuzzPost( 'GameController.php',$post );
+		$this->assertTrue( $resp['status']['isFail'],'was supposed to fail' );
+		$this->assertContains( $diag,$resp['status']['message'],
+			'failure diagnostic not appropriate',true
+		);		
+	}
+	public function dataFailQuery() : array
+	{
+		return [
+			[['cmd' => 'butts','userId' => 1,'gameId' => 1],'command'],
+			[['cmd' => 'query','userId' => 69,'gameId' => 1],'user'],
+			[['cmd' => 'query','userId' => 1,'gameId' => 69],'game'],
+			[[                 'userId' => 1,'gameId' => 69],'cmd not set'],
+			[['cmd' => 'query',              'gameId' => 69],'userId not set'],
+			[['cmd' => 'query','userId' => 1               ],'gameId not set']
+		];
+	}
 }
 ?>
