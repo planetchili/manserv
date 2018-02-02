@@ -1,7 +1,8 @@
-Current: test move cmd (more)
+Current: more tests for ctrl-update
 TODO: Basic Test Interface (game controller can either do move or query (or update))
 
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
+TODO: add database test for loadnewmoves()

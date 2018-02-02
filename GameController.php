@@ -19,14 +19,17 @@ try
 	$db = new MancalaDatabase( SqlConnect() );
 	$game = new Game( $db,(int)$_POST['gameId'] );
 
+	// verify user is in game
+	$side = $game->GetSideFromId( (int)$_POST['userId'] );
+	assert( $side != null,'user is not part of game in gc' );
+
 	switch( $_POST['cmd'] )
 	{
 	case 'move':
 		// verify move pot is set
 		assert( isset( $_POST['pot'] ),'pot not set in req to gc' );
-		// verify it is user's turn (and user Id is valid ofc)
-		$side = $game->GetSideFromId( (int)$_POST['userId'] );
-		assert( $side != null,'user is not part of game in gc' );
+
+		// verify user has active turn
 		assert( $game->GetActiveSide() == $side,'not user turn for move in gc' );
 
 		// verify game is still in progress
@@ -68,7 +71,26 @@ try
 		];
 		break;
 	case 'update':
-		throw new ChiliException( 'update unimplemented' );
+		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );
+		$moves = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
+		if( count( $moves ) > 0 )
+		{
+			$resp = [
+				'upToDate' => false,
+				'moves' => $moves,
+				'state' => [
+					'board' => $game->DumpBoard(),
+					'winState' => $game->GetWinState(),
+					'activeSide' => $game->GetActiveSide()->GetIndex(),
+					'turn' => $game->GetTurn()
+				]
+			];
+		}
+		else
+		{
+			$resp = ['upToDate' => true];
+		}
+		break;
 	default:
 		throw new ChiliException( 'bad command in gc' );
 	}

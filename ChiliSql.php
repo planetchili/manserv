@@ -14,9 +14,13 @@ class ChiliSql extends PDO
             PDO::ERRMODE_EXCEPTION
         );
     }
-    public function qfetch( string $sql ) : array
+    public function qfetcha( string $sql ) : array
     {
-        return $this->query( $sql )->fetchAll();
+        return $this->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
+    }
+    public function qfetchi( string $sql ) : array
+    {
+        return $this->query( $sql )->fetchAll( PDO::FETCH_NUM );
     }
 }
 ?>

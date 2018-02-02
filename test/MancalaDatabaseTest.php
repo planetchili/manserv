@@ -203,5 +203,8 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     {
         $act = $this->mdb->LoadUserByName( 'ChiL6i' );
     }
+
+    public function testLoadNewMoves()
+    {}
 }
 ?>

@@ -12,7 +12,7 @@ class MancalaDatabase
 
     public function LoadGame( int $gameId ) : GameInfo 
     {
-        $gameDataArray = $this->conn->qfetch( 'SELECT * from games where id = '.$gameId );
+        $gameDataArray = $this->conn->qfetcha( 'SELECT * from games where id = '.$gameId );
         assert( count( $gameDataArray ) > 0,"LoadGame id not found" );
 
         $gameData = $gameDataArray[0];
@@ -39,7 +39,7 @@ class MancalaDatabase
 
     public function LoadBoard( int $gameId ) : Board
     {
-        $qresult = $this->conn->qfetch(
+        $qresult = $this->conn->qfetchi(
             "SELECT beads from boards where gameId = {$gameId}
              order by potId"
         );
@@ -158,7 +158,7 @@ class MancalaDatabase
 
     public function LoadUserById( int $userId ) : User
     {
-        $qres = $this->conn->qfetch( 'SELECT * from users where id = '.$userId );
+        $qres = $this->conn->qfetcha( 'SELECT * from users where id = '.$userId );
         assert( count( $qres ) === 1 );
 
         $data = $qres[0];
@@ -175,6 +175,11 @@ class MancalaDatabase
 
         $data = $qres[0];
         return new User( $data['id'],$name,$data['email'],$data['passwordHash'],true );
+    }
+
+    public function LoadNewMoves( int $gameId,int $fromTurn ) : array
+    {
+        return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );
     }
 
     public function __construct( ChiliSql $conn )

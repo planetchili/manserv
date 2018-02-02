@@ -169,5 +169,24 @@ class GameControllerTest extends ChiliDatabaseTest
 			'bad gameId'	 	=> [['cmd' => 'move','userId' => 1,'gameId' =>69,'pot' => 0],'LoadGame id']
 		];
 	}
+
+	public function testUpdate()
+	{
+		// setup
+		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2] );
+		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5] );
+
+		// execute command under test, check for error
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','userId' => 2,'gameId' => 1,'turn' => 0] );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
+		}
+		
+		// verify results
+		$payload = $resp['payload'];
+		$this->assertFalse( $payload['upToDate'],'bad upToDate' );
+		$this->assertEquals( ['turn' => 0,'pot' => 2],$payload['moves'][0],'bad first history move' );		
+	}
 }
 ?>
