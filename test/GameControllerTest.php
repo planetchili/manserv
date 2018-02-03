@@ -193,5 +193,47 @@ class GameControllerTest extends ChiliDatabaseTest
 		$this->assertEquals( 2,$payload['state']['turn'],'bad turn' );
 		$this->assertEquals( 1,$payload['state']['winState'],'bad win state' );	
 	}
+
+	public function testUpdateUpToDate()
+	{
+		// setup
+		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2] );
+		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5] );
+
+		// execute command under test, check for error
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','userId' => 2,'gameId' => 1,'turn' => 2] );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
+		}
+		
+		// verify results
+		$this->assertTrue( $resp['payload']['upToDate'],'bad upToDate' );
+	}
+
+	/** @dataProvider dataFailUpdate */
+	public function testFailUpdate( array $req,string $diag )
+	{
+		$resp = GuzzPost( 'GameController.php',$req );
+		if( $resp['status']['isFail'] )
+		{
+			$this->assertContains( $diag,$resp['status']['message'],
+				'failure diagnostic not appropriate',true
+			);	
+		}
+		else 
+		{
+			$this->fail( 'expected error not emitted' );
+		}
+	}
+	public function dataFailUpdate() : array
+	{
+		return [
+			'bad userId' 		=> [['cmd' => 'update','userId' => 8,'gameId' => 1,'turn' => 0],'user'],
+			'bad gameId' 		=> [['cmd' => 'update','userId' => 1,'gameId' => 7,'turn' => 0],'game'],
+			'bad turn'	 		=> [['cmd' => 'update','userId' => 1,'gameId' => 1,'turn' => 9],'turn'],
+			'no turn'	 		=> [['cmd' => 'update','userId' => 1,'gameId' => 1            ],'turn']
+		];
+	}
 }
 ?>

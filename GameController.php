@@ -72,6 +72,7 @@ try
 		break;
 	case 'update':
 		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );
+		assert( $_POST['turn'] <= $game->GetTurn(),'bad turn; client ahead of server' );
 		$moves = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
 		if( count( $moves ) > 0 )
 		{
