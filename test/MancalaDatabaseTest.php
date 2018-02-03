@@ -205,6 +205,11 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     }
 
     public function testLoadNewMoves()
-    {}
+    {
+        $moves = $this->mdb->LoadNewMoves( 42,0 );
+        $this->assertEquals( 1,count( $moves ) );
+        $this->assertEquals( 0,$moves[0]['turn'] );
+        $this->assertEquals( 4,$moves[0]['pot'] );
+    }
 }
 ?>
