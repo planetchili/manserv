@@ -1,4 +1,5 @@
-Current: more tests for ctrl-update
+Current: minimal ajax interface (figure out authentication interface)
+
 TODO: Basic Test Interface (game controller can either do move or query (or update))
 
 TODO: move actual sources into own directory

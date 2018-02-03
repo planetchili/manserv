@@ -1,9 +1,9 @@
 <?php
 
 // when shit hits the fan
-function failout( string $msg ) : void
+function failout( string $msg,int $code = 0 ) : void
 {
-	$ret = ['status'=>['isFail'=>true,'message'=>$msg]];
+	$ret = ['status'=>['isFail'=>true,'message'=>$msg,'code'=>$code]];
 	header( "Content-type: application/json; charset=utf-8" );
 	echo json_encode( $ret );
 	exit;
