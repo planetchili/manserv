@@ -177,6 +177,11 @@ class MancalaDatabase
         return new User( $data['id'],$name,$data['email'],$data['passwordHash'],true );
     }
 
+    public function GetActiveGamesByUserId( int $userId ) : array
+    {
+        return array_column( $this->conn->qfetchi( "SELECT id from games where (player0Id = {$userId} or player1Id = {$userId}) and winState = 1;" ),0 );
+    }
+
     public function LoadNewMoves( int $gameId,int $fromTurn ) : array
     {
         return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );

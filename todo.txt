@@ -1,4 +1,4 @@
-Current: minimal ajax interface (figure out authentication interface)
+Current: minimal ajax interface (make the php/forms for test interface)
 
 TODO: Basic Test Interface (game controller can either do move or query (or update))
 
@@ -6,6 +6,4 @@ TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
-TODO: add database test for loadnewmoves()
-TODO: allow loaduser to return null OR make it throw exception not assert()
-TODO: testing wrong user login for game operations (necessary after authentication additions)
+TODO: testing wrong user login name for game operations (necessary after authentication additions)

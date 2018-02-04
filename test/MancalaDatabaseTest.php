@@ -211,5 +211,11 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( 0,$moves[0]['turn'] );
         $this->assertEquals( 4,$moves[0]['pot'] );
     }
+
+    public function testGetActiveGamesByUserId()
+    {
+        $this->assertEquals( 1,count( $this->mdb->GetActiveGamesByUserId( 69 ) ) );
+        $this->assertEquals( 1,$this->mdb->GetActiveGamesByUserId( 69 )[0] );
+    }
 }
 ?>
