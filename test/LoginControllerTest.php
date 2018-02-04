@@ -2,7 +2,7 @@
 require_once 'ChiliGuzz.php';
 require_once 'test/ChiliTest.php';
 
-class SessionTest extends ChiliDatabaseTest
+class LoginControllerTest extends ChiliDatabaseTest
 {
     /** @var MancalaDatabase */
     private $mdb;
@@ -40,7 +40,7 @@ class SessionTest extends ChiliDatabaseTest
 	public function testLogin()
 	{
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req );
+		$resp = GuzzPost( 'LoginController.php',$req );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
@@ -53,14 +53,14 @@ class SessionTest extends ChiliDatabaseTest
 	{
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
 		$jar = GuzzMakeJar();
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
 		}
 		
 		$req = ['cmd' => 'getuserid'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'getid: response status [fail] with: '.$resp['status']['message'] );
@@ -74,14 +74,14 @@ class SessionTest extends ChiliDatabaseTest
 	{
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
 		$jar = GuzzMakeJar();
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
 		}
 		
 		$req = ['cmd' => 'logout'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'getid: response status [fail] with: '.$resp['status']['message'] );
@@ -91,11 +91,11 @@ class SessionTest extends ChiliDatabaseTest
 	public function testFailLogin()
 	{
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilibutt'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req );
+		$resp = GuzzPost( 'LoginController.php',$req );
 		$this->assertTrue( $resp['status']['isFail'],'should have failed bad pass' );
 
 		$req = ['cmd' => 'login','userName' => 'chirteli','password' => 'chilipass'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req );
+		$resp = GuzzPost( 'LoginController.php',$req );
 		$this->assertTrue( $resp['status']['isFail'],'should have failed bad name' );
 	}
 
@@ -103,11 +103,11 @@ class SessionTest extends ChiliDatabaseTest
 	{
 		$jar = GuzzMakeJar();
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		$this->assertFalse( $resp['status']['isFail'],'failed to login correctly' );
 
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		$this->assertTrue( $resp['status']['isFail'],'should have failed double login' );
 	}
 
@@ -115,7 +115,7 @@ class SessionTest extends ChiliDatabaseTest
 	{
 		$jar = GuzzMakeJar();
 		$req = ['cmd' => 'logout'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		$this->assertTrue( $resp['status']['isFail'],'should have failed logout' );
 	}
 
@@ -123,21 +123,21 @@ class SessionTest extends ChiliDatabaseTest
 	{
 		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
 		$jar = GuzzMakeJar();
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
 		}
 		
 		$req = ['cmd' => 'logout'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'getid: response status [fail] with: '.$resp['status']['message'] );
 		}
 
 		$req = ['cmd' => 'getuserid'];
-		$resp = GuzzPost( 'test/TestSessionCtrl.php',$req,$jar );
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		$this->assertTrue( $resp['status']['isFail'],'should have failed getuid after logout' );		
 	}
 }

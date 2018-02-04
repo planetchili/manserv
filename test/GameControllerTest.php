@@ -40,8 +40,11 @@ class GameControllerTest extends ChiliDatabaseTest
 	
 	public function testQuery()
 	{
+		$jar = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar );
+
 		$req = ['cmd' => 'query','userId' => 1,'gameId' => 1];	
-		$resp = GuzzPost( 'GameController.php',$req );
+		$resp = GuzzPost( 'GameController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
@@ -61,7 +64,10 @@ class GameControllerTest extends ChiliDatabaseTest
 	/** @dataProvider dataFailQuery */
 	public function testFailQuery( array $post,string $diag )
 	{
-		$resp = GuzzPost( 'GameController.php',$post );
+		$jar = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar );
+
+		$resp = GuzzPost( 'GameController.php',$post,$jar );
 		$this->assertTrue( $resp['status']['isFail'],'was supposed to fail' );
 		$this->assertContains( $diag,$resp['status']['message'],
 			'failure diagnostic not appropriate',true
@@ -70,24 +76,26 @@ class GameControllerTest extends ChiliDatabaseTest
 	public function dataFailQuery() : array
 	{
 		return [
-			[['cmd' => 'butts','userId' => 1,'gameId' => 1],'command'],
-			[['cmd' => 'query','userId' => 69,'gameId' => 1],'user'],
-			[['cmd' => 'query','userId' => 1,'gameId' => 69],'game'],
-			[[                 'userId' => 1,'gameId' => 69],'cmd not set'],
-			[['cmd' => 'query',              'gameId' => 69],'userId not set'],
-			[['cmd' => 'query','userId' => 1               ],'gameId not set']
+			[['cmd' => 'butts','gameId' => 1],'command'],
+			[['cmd' => 'query','gameId' => 69],'game'],
+			[[                 'gameId' => 69],'cmd not set'],
+			[['cmd' => 'query',              ],'gameId not set']
 		];
 	}
 
 	/** @dataProvider dataMove */
 	public function testMove( array $sequence )
 	{
+
 		foreach( $sequence as $i => $move )
 		{
+			$jar = GuzzMakeJar();
+			GuzzPost( 'LoginController',['cmd'=>'login','userName'=>$move['username'],'password'=>$move['password']],$jar );
+
 			$req = $move['req'];
 			$exp = $move['exp'];
-
-			$resp = GuzzPost( 'GameController.php',$req );
+	
+			$resp = GuzzPost( 'GameController.php',$req,$jar );
 			if( $resp['status']['isFail'] )
 			{
 				$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
@@ -106,48 +114,51 @@ class GameControllerTest extends ChiliDatabaseTest
 			'simple one move' =>
 			[
 				[
-					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 0],
+					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 0],
 					'exp' => ['turn' => 1,'activeSide' => 1,'winState' => 1,'board' =>
-						[0,5,5,5,5,4,0,4,4,4,4,4,4,0]]]
+						[0,5,5,5,5,4,0,4,4,4,4,4,4,0]],'username'=>'chili','password'=>'chilipass']
 				]
 			],
 			'mancala open' =>
 			[
 				[
-					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2],
+					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 2],
 					'exp' => ['turn' => 1,'activeSide' => 0,'winState' => 1,'board' =>
-						[4,4,0,5,5,5,1,4,4,4,4,4,4,0]]],
-					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5],
+						[4,4,0,5,5,5,1,4,4,4,4,4,4,0]],'username'=>'chili','password'=>'chilipass'],
+					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 5],
 					'exp' => ['turn' => 2,'activeSide' => 1,'winState' => 1,'board' =>
-						[4,4,0,5,5,0,2,5,5,5,5,4,4,0]]]
+						[4,4,0,5,5,0,2,5,5,5,5,4,4,0]],'username'=>'chili','password'=>'chilipass']
 				]
 			],
 			'bottom wins' =>
 			[
 				[
-					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 2,'pot' => 1],
+					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 1],
 					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 1,'board' =>
-						[0,0,0,1,0,0,22,0,1,0,0,0,0,24]]],
-					['req' => ['cmd' => 'move','userId' => 2,'gameId' => 2,'pot' => 8],
+						[0,0,0,1,0,0,22,0,1,0,0,0,0,24]],'username'=>'chili','password'=>'chilipass'],
+					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 8],
 					'exp' => ['turn' => 27,'activeSide' => 0,'winState' => 3,'board' =>
-						[0,0,0,0,0,0,22,0,0,0,0,0,0,26]]],
+						[0,0,0,0,0,0,22,0,0,0,0,0,0,26]],'username'=>'mom','password'=>'mompass'],
 				]
 			],
 			'tie' =>
 			[
 				[
-					['req' => ['cmd' => 'move','userId' => 1,'gameId' => 2,'pot' => 3],
+					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 3],
 					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 4,'board' =>
-						[0,0,0,0,0,0,24,0,0,0,0,0,0,24]]]
+						[0,0,0,0,0,0,24,0,0,0,0,0,0,24]],'username'=>'chili','password'=>'chilipass']
 				]
 			]
 		];
 	}
 
 	/** @dataProvider dataFailMove */
-	public function testFailMove( array $req,string $diag )
+	public function testFailMove( array $req,string $diag,string $username,string $password )
 	{
-		$resp = GuzzPost( 'GameController.php',$req );
+		$jar = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>$username,'password'=>$password],$jar );
+
+		$resp = GuzzPost( 'GameController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->assertContains( $diag,$resp['status']['message'],
@@ -162,22 +173,28 @@ class GameControllerTest extends ChiliDatabaseTest
 	public function dataFailMove() : array
 	{
 		return [
-			'bad userId' 		=> [['cmd' => 'move','userId' => 8,'gameId' => 1,'pot' => 0],'user'],
-			'not player pot'	=> [['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 8],'pot'],
-			'not player turn' 	=> [['cmd' => 'move','userId' => 2,'gameId' => 1,'pot' => 8],'turn'],
-			'no pot'	 		=> [['cmd' => 'move','userId' => 2,'gameId' => 1           ],'pot'],
-			'bad gameId'	 	=> [['cmd' => 'move','userId' => 1,'gameId' =>69,'pot' => 0],'LoadGame id']
+			'not player pot'	=> [['cmd' => 'move','gameId' => 1,'pot' => 8],'pot','chili','chilipass'],
+			'not player turn' 	=> [['cmd' => 'move','gameId' => 1,'pot' => 8],'turn','mom','mompass'],
+			'no pot'	 		=> [['cmd' => 'move','gameId' => 1           ],'pot','chili','chilipass'],
+			'bad gameId'	 	=> [['cmd' => 'move','gameId' =>69,'pot' => 0],'LoadGame id','chili','chilipass']
 		];
 	}
 
 	public function testUpdate()
 	{
+		$jar1 = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar1 );
+
 		// setup
-		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2] );
-		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5] );
+		GuzzPost( 'GameController.php',['cmd' => 'move','gameId' => 1,'pot' => 2],$jar1 );
+		GuzzPost( 'GameController.php',['cmd' => 'move','gameId' => 1,'pot' => 5],$jar1 );
+
+
+		$jar2 = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'mom','password'=>'mompass'],$jar2 );
 
 		// execute command under test, check for error
-		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','userId' => 2,'gameId' => 1,'turn' => 0] );
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','gameId' => 1,'turn' => 0],$jar2  );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
@@ -196,12 +213,19 @@ class GameControllerTest extends ChiliDatabaseTest
 
 	public function testUpdateUpToDate()
 	{
+		$jar1 = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar1 );
+
 		// setup
-		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 2] );
-		GuzzPost( 'GameController.php',['cmd' => 'move','userId' => 1,'gameId' => 1,'pot' => 5] );
+		GuzzPost( 'GameController.php',['cmd' => 'move','gameId' => 1,'pot' => 2],$jar1 );
+		GuzzPost( 'GameController.php',['cmd' => 'move','gameId' => 1,'pot' => 5],$jar1 );
+
+
+		$jar2 = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'mom','password'=>'mompass'],$jar2 );
 
 		// execute command under test, check for error
-		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','userId' => 2,'gameId' => 1,'turn' => 2] );
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','gameId' => 1,'turn' => 2],$jar2 );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
@@ -214,7 +238,10 @@ class GameControllerTest extends ChiliDatabaseTest
 	/** @dataProvider dataFailUpdate */
 	public function testFailUpdate( array $req,string $diag )
 	{
-		$resp = GuzzPost( 'GameController.php',$req );
+		$jar = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar );
+
+		$resp = GuzzPost( 'GameController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->assertContains( $diag,$resp['status']['message'],
@@ -229,10 +256,9 @@ class GameControllerTest extends ChiliDatabaseTest
 	public function dataFailUpdate() : array
 	{
 		return [
-			'bad userId' 		=> [['cmd' => 'update','userId' => 8,'gameId' => 1,'turn' => 0],'user'],
-			'bad gameId' 		=> [['cmd' => 'update','userId' => 1,'gameId' => 7,'turn' => 0],'game'],
-			'bad turn'	 		=> [['cmd' => 'update','userId' => 1,'gameId' => 1,'turn' => 9],'turn'],
-			'no turn'	 		=> [['cmd' => 'update','userId' => 1,'gameId' => 1            ],'turn']
+			'bad gameId' 		=> [['cmd' => 'update','gameId' => 7,'turn' => 0],'game'],
+			'bad turn'	 		=> [['cmd' => 'update','gameId' => 1,'turn' => 9],'turn'],
+			'no turn'	 		=> [['cmd' => 'update','gameId' => 1            ],'turn']
 		];
 	}
 }

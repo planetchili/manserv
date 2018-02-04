@@ -8,19 +8,26 @@ try
 	require_once 'Game.php';
 	require_once 'MancalaDatabase.php';
 	require_once 'SqlConnect.php';
+	require_once 'Session.php';
 
-	// TODO: need to authenticate OR session for such operations
+	// TODO: need to differentiate between authentication lack and other errors
 	// verify that required post params are set
 	assert( isset( $_POST['cmd'] ),'cmd not set in req to gc' );
 	assert( isset( $_POST['gameId'] ),'gameId not set in req to gc' );
-	assert( isset( $_POST['userId'] ),'userId not set in req to gc' );
 
 	// connect to database and load game
 	$db = new MancalaDatabase( SqlConnect() );
+	$s = new Session( $db );
+
+	if( !$s->IsLoggedIn() )
+	{
+		throw new ChiliException( 'Not logged in, cannot take game action' );
+	}
+
 	$game = new Game( $db,(int)$_POST['gameId'] );
 
 	// verify user is in game
-	$side = $game->GetSideFromId( (int)$_POST['userId'] );
+	$side = $game->GetSideFromId( (int)$s->GetUserId() );
 	assert( $side != null,'user is not part of game in gc' );
 
 	switch( $_POST['cmd'] )
@@ -52,8 +59,8 @@ try
 		$player1 = $db->LoadUserById( $game->GetPlayerId( Side::Bottom() ) );
 		
 		// make sure player is in game
-		assert( $player0->GetId() === (int)$_POST['userId'] ||
-				$player1->GetId() === (int)$_POST['userId'],
+		assert( $player0->GetId() === (int)$s->GetUserId() ||
+				$player1->GetId() === (int)$s->GetUserId(),
 				'user does not belong to this game'
 		);
 
@@ -101,10 +108,10 @@ try
 }
 catch( Exception $e )
 {
-	failout( $e->getMessage() );
+	failout( $e );
 }
 catch( Error $e )
 {
-	failout( $e->getMessage() );
+	failout( $e );
 }
 ?>

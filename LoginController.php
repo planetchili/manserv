@@ -2,11 +2,12 @@
 
 try
 {
-	require_once '../Session.php';
-	require_once '../ChiliUtil.php';
-	require_once '../MancalaDatabase.php';
+	require_once 'Session.php';
+	require_once 'ChiliUtil.php';
+	require_once 'MancalaDatabase.php';
+	require_once 'SqlConnect.php';
 
-	$db = new MancalaDatabase( new ChiliSql( 'testschema','testuser','password' ) );
+	$db = new MancalaDatabase( SqlConnect() );
 	$session = new Session( $db );
 
 	// need a cmd at least
