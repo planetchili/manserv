@@ -7,3 +7,4 @@ TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
 TODO: add database test for loadnewmoves()
+TODO: allow loaduser to return null OR make it throw exception not assert()

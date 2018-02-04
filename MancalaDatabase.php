@@ -159,7 +159,7 @@ class MancalaDatabase
     public function LoadUserById( int $userId ) : User
     {
         $qres = $this->conn->qfetcha( 'SELECT * from users where id = '.$userId );
-        assert( count( $qres ) === 1 );
+        check( count( $qres ) === 1,'loaduserbyid no users found' );
 
         $data = $qres[0];
         return new User( $userId,$data['name'],$data['email'],$data['passwordHash'],true );
@@ -171,7 +171,7 @@ class MancalaDatabase
         $stmt = $this->conn->prepare( 'SELECT * from users where `name` = :n;' );
         $stmt->execute( [':n'=>$name] );
         $qres = $stmt->fetchAll( PDO::FETCH_ASSOC );
-        assert( count( $qres ) === 1 );
+        check( count( $qres ) === 1,'loaduserbyname no users found' );
 
         $data = $qres[0];
         return new User( $data['id'],$name,$data['email'],$data['passwordHash'],true );

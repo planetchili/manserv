@@ -185,7 +185,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( $exp,$act );
     }
 
-    /** @expectedException AssertionError */
+    /** @expectedException ChiliException */
     public function testFailLoadUserById()
     {
         $act = $this->mdb->LoadUserById( 69 );
@@ -198,7 +198,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( $exp,$act );
     }
 
-    /** @expectedException AssertionError */
+    /** @expectedException ChiliException */
     public function testFailLoadUserByName()
     {
         $act = $this->mdb->LoadUserByName( 'ChiL6i' );
