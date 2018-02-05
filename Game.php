@@ -1,7 +1,7 @@
 <?php
-require_once 'GameInfo.php';
-require_once 'Board.php';
-require_once 'MancalaDatabase.php';
+require_once __DIR__.'/GameInfo.php';
+require_once __DIR__.'/Board.php';
+require_once __DIR__.'/MancalaDatabase.php';
 
 class Game extends GameInfo
 {

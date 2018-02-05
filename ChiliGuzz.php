@@ -1,6 +1,6 @@
 <?php
-require_once './vendor/autoload.php';
-require_once 'ChiliUtil.php';
+require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/ChiliUtil.php';
 
 function GuzzMakeJar() : GuzzleHttp\Cookie\CookieJar
 {

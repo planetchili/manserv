@@ -2,10 +2,10 @@
 
 try
 {
-	require_once 'Session.php';
-	require_once 'ChiliUtil.php';
-	require_once 'MancalaDatabase.php';
-	require_once 'SqlConnect.php';
+	require_once __DIR__.'/Session.php';
+	require_once __DIR__.'/ChiliUtil.php';
+	require_once __DIR__.'/MancalaDatabase.php';
+	require_once __DIR__.'/SqlConnect.php';
 
 	$db = new MancalaDatabase( SqlConnect() );
 	$s = new Session( $db );

@@ -1,5 +1,5 @@
 <?php
-require_once 'ChiliUtil.php';
+require_once __DIR__.'/ChiliUtil.php';
 
 class Side
 {

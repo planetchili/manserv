@@ -2,13 +2,13 @@
 
 try
 {
-	require_once 'ChiliUtil.php';
-	require_once 'GameInfo.php';
-	require_once 'Board.php';
-	require_once 'Game.php';
-	require_once 'MancalaDatabase.php';
-	require_once 'SqlConnect.php';
-	require_once 'Session.php';
+	require_once __DIR__.'/ChiliUtil.php';
+	require_once __DIR__.'/GameInfo.php';
+	require_once __DIR__.'/Board.php';
+	require_once __DIR__.'/Game.php';
+	require_once __DIR__.'/MancalaDatabase.php';
+	require_once __DIR__.'/SqlConnect.php';
+	require_once __DIR__.'/Session.php';
 
 	class GameSidePair
 	{

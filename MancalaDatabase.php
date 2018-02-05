@@ -1,9 +1,9 @@
 <?php
-require_once 'ChiliSql.php';
-require_once 'Side.php';
-require_once 'GameInfo.php';
-require_once 'Board.php';
-require_once 'User.php';
+require_once __DIR__.'/ChiliSql.php';
+require_once __DIR__.'/Side.php';
+require_once __DIR__.'/GameInfo.php';
+require_once __DIR__.'/Board.php';
+require_once __DIR__.'/User.php';
 
 class MancalaDatabase
 {

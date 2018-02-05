@@ -1,8 +1,8 @@
 <?php
-require_once 'ChiliUtil.php';
-require_once 'Side.php';
-require_once 'Pot.php';
-require_once 'WinState.php';
+require_once __DIR__.'/ChiliUtil.php';
+require_once __DIR__.'/Side.php';
+require_once __DIR__.'/Pot.php';
+require_once __DIR__.'/WinState.php';
 
 class Board
 {

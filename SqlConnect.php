@@ -1,5 +1,5 @@
 <?php
-require_once 'ChiliSql.php';
+require_once __DIR__.'/ChiliSql.php';
 
 function SqlConnect() : ChiliSql
 {

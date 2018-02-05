@@ -1,5 +1,5 @@
 <?php
-require_once 'Side.php';
+require_once __DIR__.'/Side.php';
 
 class GameInfo
 {
