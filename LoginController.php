@@ -8,7 +8,7 @@ try
 	require_once 'SqlConnect.php';
 
 	$db = new MancalaDatabase( SqlConnect() );
-	$session = new Session( $db );
+	$s = new Session( $db );
 
 	// need a cmd at least
 	assert( isset( $_POST['cmd'] ),'cmd not set in req to testsc' );
@@ -16,22 +16,17 @@ try
 	switch( $_POST['cmd'] )
 	{
 	case 'login':		
-		$session->Login( $_POST['userName'],$_POST['password'] );
-
+		$s->Login( $_POST['userName'],$_POST['password'] );
 		// respond with user id
-		$resp = [
-			'userId' => $session->GetUserId()
-		];
+		$resp = $s->GetUser()->ToArray();
 		break;
 	case 'logout':
-		$session->Logout();
+		$s->Logout();
 		$resp = [];
 		break;
-	case 'getuserid':
+	case 'getuser':
 		// respond with user id
-		$resp = [
-			'userId' => $session->GetUserId()
-		];
+		$resp = $s->GetUser()->ToArray();
 		break;
 	default:
 		throw new ChiliException( 'bad command in testsc' );

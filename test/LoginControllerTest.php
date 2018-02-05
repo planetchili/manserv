@@ -46,7 +46,10 @@ class LoginControllerTest extends ChiliDatabaseTest
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
 		}
 		
-		$this->assertEquals( 1,$resp['payload']['userId'] );
+		$this->assertEquals(
+			['id'=>1,'name'=>'chili','email'=>'chili@planetchili.net'],
+			$resp['payload']
+		);
 	}
 
 	public function testGetUserId()
@@ -59,14 +62,17 @@ class LoginControllerTest extends ChiliDatabaseTest
 			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
 		}
 		
-		$req = ['cmd' => 'getuserid'];
+		$req = ['cmd' => 'getuser'];
 		$resp = GuzzPost( 'LoginController.php',$req,$jar );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'getid: response status [fail] with: '.$resp['status']['message'] );
 		}
-
-		$this->assertEquals( 1,$resp['payload']['userId'] );
+		
+		$this->assertEquals(
+			['id'=>1,'name'=>'chili','email'=>'chili@planetchili.net'],
+			$resp['payload']
+		);
 	}
 
 	/** @doesNotPerformAssertions */
