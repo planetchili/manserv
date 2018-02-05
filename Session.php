@@ -3,10 +3,8 @@ require_once 'ChiliSql.php';
 
 class Session
 {	
-	/** @var int */
-	private $userId = null;
-	/** @var string */
-	private $password = null;
+	/** @var User */
+	private $user = null;
 	/** @var MancalaDatabase */
 	private $db = null;
 
@@ -16,22 +14,10 @@ class Session
 		$this->db = $db;
 
 		session_start();
-		if( array_key_exists( 'userId',$_SESSION ) )
+		if( array_key_exists( 'user',$_SESSION ) )
 		{
-			$this->userId = $_SESSION['userId'];
-			$this->password = $_SESSION['password'];
-
-			if( !$this->VerifyPassword() )
-			{
-				$this->ClearSession();
-			}
+			$this->user = $_SESSION['user'];
 		}
-	}
-
-	private function VerifyPassword( ?int $userId = null ) : bool
-	{
-		assert( $this->userId != null,'tried to verify password when login not established' );
-		return password_verify( $this->password,$this->db->LoadUserById( $this->userId )->GetPasswordHash() );
 	}
 
 	public function Login( string $userName,string $password ) : void
@@ -40,13 +26,10 @@ class Session
 		{
 			try
 			{
-				$user = $this->db->LoadUserByName( $userName );
-				$this->userId = $user->GetId();
-				$this->password = $password;
-				if( $this->VerifyPassword() )
+				$this->user = $this->db->LoadUserByName( $userName );
+				if( password_verify( $password,$this->user->GetPasswordHash() ) )
 				{
-					$_SESSION['userId'] = $this->userId;
-					$_SESSION['password'] = $password;
+					$_SESSION['user'] = $this->user;
 					return;
 				}
 			}
@@ -60,10 +43,8 @@ class Session
 
 	private function ClearSession() : void
 	{
-		$this->userId = null;
-		$this->password = null;
-		unset( $_SESSION['userId'] );
-		unset( $_SESSION['password'] );
+		$this->user = null;
+		unset( $_SESSION['user'] );
 	}
 
 	public function Logout() : void
@@ -74,13 +55,18 @@ class Session
 
 	public function IsLoggedIn() : bool
 	{
-		return $this->userId != null;
+		return $this->user != null;
+	}
+
+	public function GetUser() : User
+	{
+		assert( $this->IsLoggedIn(),'getuser when not logged in' );
+		return $this->user;
 	}
 
 	public function GetUserId() : int
 	{
-		assert( $this->IsLoggedIn(),'getuserid when not logged in' );
-		return $this->userId;
+		return $this->user->GetId();
 	}
 }
 ?>
