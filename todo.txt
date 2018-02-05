@@ -1,7 +1,8 @@
-Current: minimal ajax interface (make the php/forms for test interface)
-- get active game(s) from game controllerr
-
-TODO: Basic Test Interface (game controller can either do move or query (or update))
+Current: minimal guzzle interface (make the php/forms for test interface)
+- use update for refresh, query first time only
+- display move history
+- display turn number and win state
+- don't allow invalid move (zero pot moves)
 
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()

@@ -10,8 +10,8 @@ $db = new MancalaDatabase( new ChiliSql( 'testschema','testuser','password' ) );
 $db->ClearSchema();
 $db->SetupSchema();
 
-$db->AddUser( new User( -1,'chili','pubes@me.com','pubes' ) );
-$db->AddUser( new User( -1,'mom','dimsum@me.com','dimsum' ) );
+$db->AddUser( new User( -1,'chili','pubes@me.com','chilipass' ) );
+$db->AddUser( new User( -1,'mom','dimsum@me.com','mompass' ) );
 
 $gid = $db->CreateNewGame(
     $db->LoadUserByName( 'chili' )->GetId(),

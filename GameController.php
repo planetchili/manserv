@@ -99,6 +99,7 @@ try
 			'winState' => $game->GetWinState(),
 			'activeSide' => $game->GetActiveSide()->GetIndex(),
 			'turn' => $game->GetTurn(),
+			'ourSide' => $side->GetIndex(),
 			'players' =>
 			[
 				['name'=>$player0->GetName(),'id'=>$player0->GetId()],
