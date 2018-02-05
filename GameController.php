@@ -134,7 +134,7 @@ try
 		}
 		break;
 	case 'getactive':
-		throw new ChiliException( 'getactive notimple' );
+		$resp = $db->GetActiveGamesByUserId( $s->GetUserId() );
 		break;
 	default:
 		throw new ChiliException( 'bad command in gc' );

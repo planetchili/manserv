@@ -261,5 +261,21 @@ class GameControllerTest extends ChiliDatabaseTest
 			'no turn'	 		=> [['cmd' => 'update','gameId' => 1            ],'turn']
 		];
 	}
+
+	public function testGetActive()
+	{
+		$jar = GuzzMakeJar();
+		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'chili','password'=>'chilipass'],$jar );
+		
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'getactive'],$jar );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );
+		}
+		
+		$payload = $resp['payload'];
+		$this->assertEquals( 2,count( $payload ) );
+		$this->assertEquals( 1,$payload[0] );
+	}
 }
 ?>
