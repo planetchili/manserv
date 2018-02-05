@@ -39,16 +39,28 @@ if( isset( $_SESSION['userData'] ) )
 			$_SESSION['gameData']['activeSide'] = $result['activeSide'];
 			$_SESSION['gameData']['turn'] = $result['turn'];
 		}
-		else
+		else if( !$_SESSION['skipupdate'] )
 		{
-			// TODO: should be using update here, query at login to game only
-			$resp = GuzzPost( 'GameController',['cmd'=>'query','gameId'=>$_SESSION['gameData']['id']],$_SESSION['jar'] );
+			$resp = GuzzPost( 'GameController',
+				[
+					'cmd'=>'update',
+					'gameId'=>$_SESSION['gameData']['id'],
+					'turn'=>$_SESSION['gameData']['turn']
+				],
+				$_SESSION['jar']
+			);
 			if( $resp['status']['isFail'] )
 			{
 				throw new ChiliException( $resp['status']['message'] );
 			}
-			$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload'] );	
+
+			if( !$resp['payload']['upToDate'] )
+			{
+				$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload']['state'] );
+			}
 		}
+
+		$_SESSION['skipupdate'] = false;
 
 		$output .= '<p class="stuff" style="background-color: PaleTurquoise">You are: <strong>'.$_SESSION['userData']['name'].'.</strong></p>';
 		$output .= '<p class="stuff" style="background-color: Salmon">It is: <strong>'
@@ -92,8 +104,15 @@ if( isset( $_SESSION['userData'] ) )
 				$output .= '<h2>No active games for this user!</h2>';
 			}
 			else
-			{				
+			{
+				$resp = GuzzPost( 'GameController',['cmd'=>'query','gameId'=>$activeGameIds[0]],$_SESSION['jar'] );
+				if( $resp['status']['isFail'] )
+				{
+					throw new ChiliException( $resp['status']['message'] );
+				}
+				$_SESSION['gameData'] = $resp['payload'];
 				$_SESSION['gameData']['id'] = $activeGameIds[0];
+				$_SESSION['skipupdate'] = true;
 
 				header( 'Location: '.$_SERVER['PHP_SELF'] );
 				die;
