@@ -44,5 +44,10 @@ class User
     {
         return password_verify( $password,$this->GetPasswordHash() );
     }
+
+    public function ToArray() : array
+    {
+        return ['id'=>$this->id,'name'=>$this->name,'email'=>$this->email];
+    }
 }
 ?>

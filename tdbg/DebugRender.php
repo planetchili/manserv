@@ -1,7 +1,7 @@
 <?php
 require_once '../Board.php';
 
-function DebugRender( Board $board,callback $linker ) : string
+function DebugRender( Board $board,string $path ) : string
 {
     $output = '<table>';
     for( $i = 0; $i < 2; $i++ )

@@ -13,5 +13,17 @@ class UserTest extends PHPUnit\Framework\TestCase
         $this->assertTrue( $user->VerifyPassword( 'password' ) );
         $this->assertFalse( $user->VerifyPassword( 'pissword' ) );
     }
+
+    public function testToArray()
+    {
+        $user = new User( 1,'Chili','chiLi@planetchili.net','password',false );
+        $this->assertEquals(
+            [
+                'id' => 1,
+                'name' => 'chili',
+                'email' => 'chili@planetchili.net'
+            ],$user->ToArray()
+        );
+    }
 }
 ?>
