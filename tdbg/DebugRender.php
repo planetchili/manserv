@@ -24,18 +24,19 @@ function DebugRender( Board $board,Side $ourside,Side $activeSide ) : string
             }
             
             $pot = Pot::FromSideOffset( new Side( $i ),$jm );
+            $beadCount = $board->GetPot( $pot );
 
-            if( $side == $ourside && $ourside == $activeSide )
+            if( $side == $ourside && $ourside == $activeSide && $beadCount > 0 && $jm != 6 )
             {
                 $cell = '
                 <form method="POST">
                     <input type="hidden" name="pot" value='.Pot::FromSideOffset( new Side( $i ),$jm )->GetIndex().'>
-                    <input type="submit" class="pushy" value="'.$board->GetPot( $pot ).'">
+                    <input type="submit" class="pushy" value="'.$beadCount.'">
                 </form>';
             }
             else
             {
-                $cell = '<p>'.$board->GetPot( $pot ).'</p>';
+                $cell = '<p>'.$beadCount.'</p>';
             }
 
             $output .= '<td>'.$cell.'</td>';
