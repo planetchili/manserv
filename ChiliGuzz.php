@@ -37,7 +37,7 @@ function GuzzPost( string $page,array $params = [],?GuzzleHttp\Cookie\CookieJar 
 
     if( $json == null )
     {
-        throw new ChiliException( 'Guzzle response error - invalid JSON - Response from server: '.$body );
+        throw new ChiliException( 'Guzzle response error - invalid JSON - Response from server: '.strip_tags( $body ) );
     }
 
     return $json;

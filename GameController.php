@@ -10,12 +10,37 @@ try
 	require_once 'SqlConnect.php';
 	require_once 'Session.php';
 
+	class GameSidePair
+	{
+		/** @var Side */
+		public $side;
+		/** @var Game */
+		public $game;
+
+		public function __construct( Game $game,Side $side )
+		{
+			$this->side = $side;
+			$this->game = $game;
+		}
+	}
+
+	// function to establish verify game data/entities
+	function SetupGame( MancalaDatabase $db,Session $s ) : GameSidePair
+	{
+		assert( isset( $_POST['gameId'] ),'gameId not set in req to gc' );
+		$game = new Game( $db,(int)$_POST['gameId'] );
+		// verify user is in game
+		$side = $game->GetSideFromId( (int)$s->GetUserId() );
+		assert( $side != null,'user is not part of game in gc' );
+		// return gameinfopair
+		return new GameSidePair( $game,$side );
+	}
+
 	// TODO: need to differentiate between authentication lack and other errors
 	// verify that required post params are set
 	assert( isset( $_POST['cmd'] ),'cmd not set in req to gc' );
-	assert( isset( $_POST['gameId'] ),'gameId not set in req to gc' );
 
-	// connect to database and load game
+	// connect to database
 	$db = new MancalaDatabase( SqlConnect() );
 	$s = new Session( $db );
 
@@ -24,15 +49,14 @@ try
 		throw new ChiliException( 'Not logged in, cannot take game action' );
 	}
 
-	$game = new Game( $db,(int)$_POST['gameId'] );
-
-	// verify user is in game
-	$side = $game->GetSideFromId( (int)$s->GetUserId() );
-	assert( $side != null,'user is not part of game in gc' );
-
 	switch( $_POST['cmd'] )
 	{
 	case 'move':
+		// load game and verify user is part of game, etc.
+		$pair = SetupGame( $db,$s );
+		$game = $pair->game;
+		$side = $pair->side;
+
 		// verify move pot is set
 		assert( isset( $_POST['pot'] ),'pot not set in req to gc' );
 
@@ -54,6 +78,11 @@ try
 		];
 		break;
 	case 'query':
+		// load game and verify user is part of game, etc.
+		$pair = SetupGame( $db,$s );
+		$game = $pair->game;
+		$side = $pair->side;
+
 		// get player names
 		$player0 = $db->LoadUserById( $game->GetPlayerId( Side::Top() ) );
 		$player1 = $db->LoadUserById( $game->GetPlayerId( Side::Bottom() ) );
@@ -78,6 +107,11 @@ try
 		];
 		break;
 	case 'update':
+		// load game and verify user is part of game, etc.
+		$pair = SetupGame( $db,$s );
+		$game = $pair->game;
+		$side = $pair->side;
+
 		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );
 		assert( $_POST['turn'] <= $game->GetTurn(),'bad turn; client ahead of server' );
 		$moves = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
@@ -99,6 +133,9 @@ try
 			$resp = ['upToDate' => true];
 		}
 		break;
+	case 'getactive':
+		throw new ChiliException( 'getactive notimple' );
+		break;
 	default:
 		throw new ChiliException( 'bad command in gc' );
 	}
@@ -108,10 +145,10 @@ try
 }
 catch( Exception $e )
 {
-	failout( $e );
+	failout( strip_tags( $e ) );
 }
 catch( Error $e )
 {
-	failout( $e );
+	failout( strip_tags( $e ) );
 }
 ?>

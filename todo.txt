@@ -1,6 +1,5 @@
 Current: minimal ajax interface (make the php/forms for test interface)
-- logincontroller command returns user info json
-- login command returns user info
+- get active game(s) from game controllerr
 
 TODO: Basic Test Interface (game controller can either do move or query (or update))
 
