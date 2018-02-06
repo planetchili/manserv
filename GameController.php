@@ -71,10 +71,13 @@ try
 		
 		// respond with current game state (changes only)
 		$resp = [
-			'board' => $game->DumpBoard(),
-			'winState' => $game->GetWinState(),
-			'activeSide' => $game->GetActiveSide()->GetIndex(),
-			'turn' => $game->GetTurn()
+			'history' => [['turn' => ($game->GetTurn() - 1),'pot' => (int)$_POST['pot']]],
+			'state' => [
+				'board' => $game->DumpBoard(),
+				'winState' => $game->GetWinState(),
+				'activeSide' => $game->GetActiveSide()->GetIndex(),
+				'turn' => $game->GetTurn()
+			]
 		];
 		break;
 	case 'query':
@@ -100,6 +103,7 @@ try
 			'activeSide' => $game->GetActiveSide()->GetIndex(),
 			'turn' => $game->GetTurn(),
 			'ourSide' => $side->GetIndex(),
+			'history' => $db->LoadNewMoves( $game->GetGameId(),0 ),
 			'players' =>
 			[
 				['name'=>$player0->GetName(),'id'=>$player0->GetId()],
@@ -115,12 +119,12 @@ try
 
 		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );
 		assert( $_POST['turn'] <= $game->GetTurn(),'bad turn; client ahead of server' );
-		$moves = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
-		if( count( $moves ) > 0 )
+		$history = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
+		if( count( $history ) > 0 )
 		{
 			$resp = [
 				'upToDate' => false,
-				'moves' => $moves,
+				'history' => $history,
 				'state' => [
 					'board' => $game->DumpBoard(),
 					'winState' => $game->GetWinState(),

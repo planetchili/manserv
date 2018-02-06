@@ -55,6 +55,7 @@ class GameControllerTest extends ChiliDatabaseTest
 		$this->assertEquals( 0,$payload['activeSide'],'wrong active side #' );
 		$this->assertEquals( 1,$payload['winState'],'wrong win state #' );
 		$this->assertEquals( [4,4,4,4,4,4,0,4,4,4,4,4,4,0],$payload['board'],'board does not match' );
+		$this->assertEquals( [],$payload['history'],'history does not match' );
 		$this->assertEquals( 1,$payload['players'][0]['id'],'bad p0 id' );
 		$this->assertEquals( 2,$payload['players'][1]['id'],'bad p1 id' );
 		$this->assertEquals( 'chili',$payload['players'][0]['name'],'bad p0 name' );
@@ -102,10 +103,11 @@ class GameControllerTest extends ChiliDatabaseTest
 			}
 			
 			$payload = $resp['payload'];
-			$this->assertEquals( $exp['turn'],$payload['turn'],'bad turn #'.' @seq ('.$i );
-			$this->assertEquals( $exp['activeSide'],$payload['activeSide'],'wrong active side #'.' @seq ('.$i );
-			$this->assertEquals( $exp['winState'],$payload['winState'],'wrong win state #'.' @seq ('.$i );
-			$this->assertEquals( $exp['board'],$payload['board'],'board does not match'.' @seq ('.$i );
+			$this->assertEquals( $exp['turn'],$payload['state']['turn'],'bad turn #'.' @seq ('.$i );
+			$this->assertEquals( $exp['activeSide'],$payload['state']['activeSide'],'wrong active side #'.' @seq ('.$i );
+			$this->assertEquals( $exp['winState'],$payload['state']['winState'],'wrong win state #'.' @seq ('.$i );
+			$this->assertEquals( $exp['board'],$payload['state']['board'],'board does not match'.' @seq ('.$i );
+			$this->assertEquals( $exp['history'],$payload['history'],'history does not match'.' @seq ('.$i );
 		}
 	}
 	public function dataMove() : array
@@ -116,7 +118,9 @@ class GameControllerTest extends ChiliDatabaseTest
 				[
 					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 0],
 					'exp' => ['turn' => 1,'activeSide' => 1,'winState' => 1,'board' =>
-						[0,5,5,5,5,4,0,4,4,4,4,4,4,0]],'username'=>'chili','password'=>'chilipass']
+						[0,5,5,5,5,4,0,4,4,4,4,4,4,0],
+						'history' => [['turn' => 0,'pot' => 0]]],
+						'username'=>'chili','password'=>'chilipass']
 				]
 			],
 			'mancala open' =>
@@ -124,10 +128,14 @@ class GameControllerTest extends ChiliDatabaseTest
 				[
 					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 2],
 					'exp' => ['turn' => 1,'activeSide' => 0,'winState' => 1,'board' =>
-						[4,4,0,5,5,5,1,4,4,4,4,4,4,0]],'username'=>'chili','password'=>'chilipass'],
+						[4,4,0,5,5,5,1,4,4,4,4,4,4,0],
+						'history' => [['turn' => 0,'pot' => 2]]],
+						'username'=>'chili','password'=>'chilipass'],
 					['req' => ['cmd' => 'move','gameId' => 1,'pot' => 5],
 					'exp' => ['turn' => 2,'activeSide' => 1,'winState' => 1,'board' =>
-						[4,4,0,5,5,0,2,5,5,5,5,4,4,0]],'username'=>'chili','password'=>'chilipass']
+						[4,4,0,5,5,0,2,5,5,5,5,4,4,0],
+						'history' => [['turn' => 1,'pot' => 5]]],
+						'username'=>'chili','password'=>'chilipass']
 				]
 			],
 			'bottom wins' =>
@@ -135,10 +143,14 @@ class GameControllerTest extends ChiliDatabaseTest
 				[
 					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 1],
 					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 1,'board' =>
-						[0,0,0,1,0,0,22,0,1,0,0,0,0,24]],'username'=>'chili','password'=>'chilipass'],
+						[0,0,0,1,0,0,22,0,1,0,0,0,0,24],
+						'history' => [['turn' => 25,'pot' => 1]]],
+						'username'=>'chili','password'=>'chilipass'],
 					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 8],
 					'exp' => ['turn' => 27,'activeSide' => 0,'winState' => 3,'board' =>
-						[0,0,0,0,0,0,22,0,0,0,0,0,0,26]],'username'=>'mom','password'=>'mompass'],
+						[0,0,0,0,0,0,22,0,0,0,0,0,0,26],
+						'history' => [['turn' => 26,'pot' => 8]]],
+						'username'=>'mom','password'=>'mompass'],
 				]
 			],
 			'tie' =>
@@ -146,7 +158,9 @@ class GameControllerTest extends ChiliDatabaseTest
 				[
 					['req' => ['cmd' => 'move','gameId' => 2,'pot' => 3],
 					'exp' => ['turn' => 26,'activeSide' => 1,'winState' => 4,'board' =>
-						[0,0,0,0,0,0,24,0,0,0,0,0,0,24]],'username'=>'chili','password'=>'chilipass']
+						[0,0,0,0,0,0,24,0,0,0,0,0,0,24],
+						'history' => [['turn' => 25,'pot' => 3]]],
+						'username'=>'chili','password'=>'chilipass']
 				]
 			]
 		];
@@ -203,8 +217,8 @@ class GameControllerTest extends ChiliDatabaseTest
 		// verify results
 		$payload = $resp['payload'];
 		$this->assertFalse( $payload['upToDate'],'bad upToDate' );
-		$this->assertEquals( ['turn' => 0,'pot' => 2],$payload['moves'][0],'bad first history move' );
-		$this->assertEquals( ['turn' => 1,'pot' => 5],$payload['moves'][1],'bad second history move' );
+		$this->assertEquals( ['turn' => 0,'pot' => 2],$payload['history'][0],'bad first history move' );
+		$this->assertEquals( ['turn' => 1,'pot' => 5],$payload['history'][1],'bad second history move' );
 		$this->assertEquals( [4,4,0,5,5,0,2,5,5,5,5,4,4,0],$payload['state']['board'],'bad board state' );
 		$this->assertEquals( 1,$payload['state']['activeSide'],'bad active side' );	
 		$this->assertEquals( 2,$payload['state']['turn'],'bad turn' );
