@@ -87,11 +87,11 @@ if( isset( $_SESSION['userData'] ) )
 			<input type="submit" value="Logout">
 		</form>';
 
-		// refresh button
-		$output .= '<br/>
-		<form method="POST">
-			<input type="submit" value="Refresh">
-		</form>';
+		if( $_SESSION['gameData']['ourSide'] != $_SESSION['gameData']['activeSide'] &&
+			$_SESSION['gameData']['winState'] == 1 )
+		{
+			header( 'Refresh: 0' );
+		}
 	}
 	else
 	{
