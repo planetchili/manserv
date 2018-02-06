@@ -1,6 +1,5 @@
 Current: minimal guzzle interface (make the php/forms for test interface)
 - display move history
-- display turn number and win state
 
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()

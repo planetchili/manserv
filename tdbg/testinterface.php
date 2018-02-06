@@ -7,11 +7,14 @@ session_start();
 $title = 'Mancala Tester';
 $output = '';
 
+$winStateNames = ['in progress','top wins','bottom wins','tie'];
+
 if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'logout' )
 {
 	unset( $_SESSION['userData'] );
 	unset( $_SESSION['gameData'] );
 	unset( $_SESSION['jar'] );
+	unset( $_SESSION['skipupdate'] );
 }
 
 if( isset( $_SESSION['userData'] ) )
@@ -33,11 +36,7 @@ if( isset( $_SESSION['userData'] ) )
 				throw new ChiliException( $resp['status']['message'] );
 			}
 
-			$result = $resp['payload'];
-			$_SESSION['gameData']['board'] = $result['board'];
-			$_SESSION['gameData']['winState'] = $result['winState'];
-			$_SESSION['gameData']['activeSide'] = $result['activeSide'];
-			$_SESSION['gameData']['turn'] = $result['turn'];
+			$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload'] );
 		}
 		else if( !$_SESSION['skipupdate'] )
 		{
@@ -62,10 +61,15 @@ if( isset( $_SESSION['userData'] ) )
 
 		$_SESSION['skipupdate'] = false;
 
-		$output .= '<p class="stuff" style="background-color: PaleTurquoise">You are: <strong>'.$_SESSION['userData']['name'].'.</strong></p>';
-		$output .= '<p class="stuff" style="background-color: Salmon">It is: <strong>'
+		$output .= '<p class="stuff" style="background-color: PaleTurquoise">You are: <strong>'
+			.$_SESSION['userData']['name'].'.</strong></p>';
+		$output .= '<p class="stuff" style="background-color: Salmon">'
+			.'Turn <strong>'.$_SESSION['gameData']['turn'].'</strong>. It is: <strong>'
 			.$_SESSION['gameData']['players'][$_SESSION['gameData']['activeSide']]['name']
-			.'\'s</strong> turn.</p>';
+			.'\'s</strong> turn.</p>';		
+		$output .= '<p class="stuff" style="background-color: CornflowerBlue">Game state: <strong>'
+			.$winStateNames[$_SESSION['gameData']['winState'] - 1]
+			.'</strong>.</p>';
 
 		$output .= '<br/><p>'.$_SESSION['gameData']['players'][0]['name'].'\'s side</p>';
 		// display board
