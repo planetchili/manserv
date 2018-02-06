@@ -1,4 +1,5 @@
 Current: minimal guzzle interface (make the php/forms for test interface)
+- move history should include side of mover
 - display move history
 
 TODO: move actual sources into own directory

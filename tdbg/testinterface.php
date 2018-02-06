@@ -14,7 +14,6 @@ if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'logout' )
 	unset( $_SESSION['userData'] );
 	unset( $_SESSION['gameData'] );
 	unset( $_SESSION['jar'] );
-	unset( $_SESSION['skipupdate'] );
 }
 
 if( isset( $_SESSION['userData'] ) )
@@ -38,7 +37,7 @@ if( isset( $_SESSION['userData'] ) )
 
 			$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload'] );
 		}
-		else if( !$_SESSION['skipupdate'] )
+		else
 		{
 			$resp = GuzzPost( 'GameController',
 				[
@@ -56,10 +55,12 @@ if( isset( $_SESSION['userData'] ) )
 			if( !$resp['payload']['upToDate'] )
 			{
 				$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload']['state'] );
+				$_SESSION['gameData']['history'] = array_merge( 
+					$_SESSION['gameData']['history'],
+					$resp['payload']['moves']
+				);
 			}
 		}
-
-		$_SESSION['skipupdate'] = false;
 
 		$output .= '<p class="stuff" style="background-color: PaleTurquoise">You are: <strong>'
 			.$_SESSION['userData']['name'].'.</strong></p>';
@@ -116,7 +117,6 @@ if( isset( $_SESSION['userData'] ) )
 				}
 				$_SESSION['gameData'] = $resp['payload'];
 				$_SESSION['gameData']['id'] = $activeGameIds[0];
-				$_SESSION['skipupdate'] = true;
 
 				header( 'Location: '.$_SERVER['PHP_SELF'] );
 				die;
