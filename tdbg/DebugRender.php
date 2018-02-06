@@ -3,7 +3,7 @@ require_once '../Board.php';
 
 function DebugRender( Board $board,Side $ourside,Side $activeSide ) : string
 {
-    $output = '<table>';
+    $output = '<table class="board">';
     for( $i = 0; $i < 2; $i++ )
     {
         $side = new Side( $i );

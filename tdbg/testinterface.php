@@ -7,19 +7,30 @@ session_start();
 $title = 'Mancala Tester';
 $output = '';
 
-$winStateNames = ['in progress','top wins','bottom wins','tie'];
+function GetPlayerName( array $gameData,Side $side ) : string
+{
+	return $gameData['players'][$side->GetIndex()]['name'];
+}
 
 if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'logout' )
 {
 	unset( $_SESSION['userData'] );
 	unset( $_SESSION['gameData'] );
 	unset( $_SESSION['jar'] );
+	unset( $_SESSION['skipUpdate'] );
 }
 
 if( isset( $_SESSION['userData'] ) )
 {
 	if( isset( $_SESSION['gameData'] ) )
-	{
+	{		
+		$winStateNames = [
+			'in progress',
+			GetPlayerName( $_SESSION['gameData'],Side::Top() ).' wins',
+			GetPlayerName( $_SESSION['gameData'],Side::Bottom() ).' wins',
+			'tie'
+		];
+
 		if( isset( $_POST['pot'] ) )
 		{
 			$resp = GuzzPost( 'GameController',
@@ -35,9 +46,13 @@ if( isset( $_SESSION['userData'] ) )
 				throw new ChiliException( $resp['status']['message'] );
 			}
 
-			$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload'] );
+			$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload']['state'] );
+			$_SESSION['gameData']['history'] = array_merge(
+				$_SESSION['gameData']['history'],
+				$resp['payload']['history']
+			);
 		}
-		else
+		else if( !$_SESSION['skipUpdate'] )
 		{
 			$resp = GuzzPost( 'GameController',
 				[
@@ -55,12 +70,14 @@ if( isset( $_SESSION['userData'] ) )
 			if( !$resp['payload']['upToDate'] )
 			{
 				$_SESSION['gameData'] = array_merge( $_SESSION['gameData'],$resp['payload']['state'] );
-				$_SESSION['gameData']['history'] = array_merge( 
+				$_SESSION['gameData']['history'] = array_merge(
 					$_SESSION['gameData']['history'],
-					$resp['payload']['moves']
+					$resp['payload']['history']
 				);
 			}
 		}
+		
+		$_SESSION['skipUpdate'] = false;
 
 		$output .= '<p class="stuff" style="background-color: PaleTurquoise">You are: <strong>'
 			.$_SESSION['userData']['name'].'.</strong></p>';
@@ -87,6 +104,19 @@ if( isset( $_SESSION['userData'] ) )
 			<input type="hidden" name="cmd" value="logout">
 			<input type="submit" value="Logout">
 		</form>';
+
+		$output .= '<br/><table class="history"><caption>Move History</caption>'
+			.'<thead><th>Turn #</th><th>Player</th><th>Pot</th></thead><tbody>';
+		foreach( $_SESSION['gameData']['history'] as $move )
+		{
+			$output .= '<tr><td>'.($move['turn'] + 1)
+				.'</td><td>'.GetPlayerName( 
+					$_SESSION['gameData'],
+					(new Pot( (int)$move['pot'] ))->GetSide()
+				)
+				.'</td><td>'.$move['pot'].'</td></tr>';
+		}
+		$output .= '</tbody></table>';
 
 		if( $_SESSION['gameData']['ourSide'] != $_SESSION['gameData']['activeSide'] &&
 			$_SESSION['gameData']['winState'] == 1 )
@@ -117,6 +147,7 @@ if( isset( $_SESSION['userData'] ) )
 				}
 				$_SESSION['gameData'] = $resp['payload'];
 				$_SESSION['gameData']['id'] = $activeGameIds[0];
+				$_SESSION['skipUpdate'] = true;
 
 				header( 'Location: '.$_SERVER['PHP_SELF'] );
 				die;
@@ -162,13 +193,17 @@ else
 	<head>
 		<title><?=$title ?></title>
 		<style>
-			p.stuff {margin: 2px; padding 3px;}
-			p {margin: 0px;}
-			table {border-collapse: collapse;}
-			td { width: 40px; height:40px; vertical-align: middle; text-align: center;font-size:20px;font-weight:bold;}
-			input[type=submit].pushy {font-size:16px;font-weight:bold;}
-			table, td { border: 2px solid black;}
-			table { margin: 5px; }
+			p { margin: 0px;}
+			p.stuff { margin: 2px; padding 3px;}
+			input[type=submit].pushy { font-size:16px;font-weight:bold;}
+
+			table { border-collapse: collapse; margin: 5px;}
+
+			table.board td { width: 40px; height:40px; vertical-align: middle; text-align: center;font-size:20px;font-weight:bold;}
+			table.board td, th { border: 2px solid black;}
+			
+			table.history td { text-align: center;font-size:14px;}
+			table.history td, th { border: 1px solid black;padding: 3px;}
 		</style>		
 	</head>
 	<body>
