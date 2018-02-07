@@ -1,0 +1,11 @@
+users:
+  -
+    id: 3
+    name: chili
+    email: chili@planetchili.net
+    passwordHash: nothashedohshitwhatup
+  -
+    id: 4
+    name: spoot
+    email: spoot@hotmail.com
+    passwordHash: passwordp

@@ -29,7 +29,7 @@ class GameControllerTest extends ChiliDatabaseTest
 
 	protected function getDataSet()
 	{
-		return new PHPUnit\DbUnit\DataSet\YamlDataSet( dirname(__FILE__)."/DBTestData/ControllerTest.yml" );
+		return new PHPUnit\DbUnit\DataSet\YamlDataSet( dirname(__FILE__)."/_Fixture.yml" );
 	}
 
 	public function setUp()

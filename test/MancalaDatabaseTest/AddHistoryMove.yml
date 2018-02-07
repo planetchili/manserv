@@ -1,0 +1,9 @@
+histories:
+  -
+    gameId: 1
+    turn: 0
+    pot: 3
+  -
+    gameId: 42
+    turn: 0
+    pot: 4

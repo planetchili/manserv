@@ -2,23 +2,16 @@ games:
   -
     id: 1
     turn: 0
-    player0Id: 69
-    player1Id: 420
+    player0Id: 1
+    player1Id: 2
     activeSide: 0
     winState: 1
   -
-    id: 42
-    turn: 13
-    player0Id: 11
-    player1Id: 17
-    activeSide: 1
-    winState: 2
-  -
-    id: 1666666
-    turn: 24
+    id: 2
+    turn: 25
     player0Id: 1
     player1Id: 2
-    activeSide: 1
+    activeSide: 0
     winState: 1
 
 boards:
@@ -81,76 +74,72 @@ boards:
 
     
   -
-    gameId: 42
+    gameId: 2
     potId: 0
-    beads: 4  
+    beads: 0  
   -
-    gameId: 42
+    gameId: 2
     potId: 1
-    beads: 4
+    beads: 1
   -
-    gameId: 42
+    gameId: 2
     potId: 2
-    beads: 4
+    beads: 0
   -
-    gameId: 42
+    gameId: 2
     potId: 3
-    beads: 4
+    beads: 1
   -
-    gameId: 42
+    gameId: 2
     potId: 4
-    beads: 4
+    beads: 0
   -
-    gameId: 42
+    gameId: 2
     potId: 5
-    beads: 4
+    beads: 0
   -
-    gameId: 42
+    gameId: 2
     potId: 6
-    beads: 0
+    beads: 21
   -
-    gameId: 42
+    gameId: 2
     potId: 7
-    beads: 4  
+    beads: 0  
   -
-    gameId: 42
+    gameId: 2
     potId: 8
-    beads: 4
+    beads: 1
   -
-    gameId: 42
+    gameId: 2
     potId: 9
-    beads: 4
-  -
-    gameId: 42
-    potId: 10
-    beads: 4
-  -
-    gameId: 42
-    potId: 11
-    beads: 4
-  -
-    gameId: 42
-    potId: 12
-    beads: 4
-  -
-    gameId: 42
-    potId: 13
     beads: 0
+  -
+    gameId: 2
+    potId: 10
+    beads: 0
+  -
+    gameId: 2
+    potId: 11
+    beads: 0
+  -
+    gameId: 2
+    potId: 12
+    beads: 0
+  -
+    gameId: 2
+    potId: 13
+    beads: 24
 
 histories:
-  -
-    gameId: 42
-    turn: 0
-    pot: 4
 
 users:
   -
-    id: 3
+    id: 1
     name: chili
     email: chili@planetchili.net
-    passwordHash: nothashedohshitwhatup
+    passwordHash: $2y$10$3WPh0YJFiKBJTLe8HFPQXuEdb52Cjve9HTxo7Sqf71fLQe4ZZa4Wm
   -
-    id: 4
-    name: spoot
-    email: spoot@hotmail.com
-    passwordHash: passwordp
+    id: 2
+    name: mom
+    email: dimsum@planetchili.net
+    passwordHash: $2y$10$XOZzHRuIfCKde0uFXejjhOyeK35VXzyq4LyOuoJVNtvexbe3ll64y

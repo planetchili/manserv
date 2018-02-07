@@ -28,7 +28,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     protected function getDataSet()
     {
-        return new PHPUnit\DbUnit\DataSet\YamlDataSet( dirname(__FILE__)."/DBTestData/MancalaTest.yml" );
+        return new PHPUnit\DbUnit\DataSet\YamlDataSet( dirname(__FILE__)."/_Fixture.yml" );
     }
 
     public function setUp()
@@ -66,10 +66,10 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $gameInfo = new GameInfo( 1,1,6969,6969,Side::Bottom() );
         $this->mdb->UpdateGame( $gameInfo );
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
+            dirname(__FILE__)."/UpdateGame.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
-        $this->assertTablesEqual( $expectedDataSet->getTable( 'games' ),$dataSet->getTable( 'games' ) );
+        $dataSet = $this->getConnection()->createDataSet( ['games'] );
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 
     public function testLoadBoard()
@@ -94,10 +94,10 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->mdb->UpdateBoard( $board,$gameId );
 
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectUpdateGame.yml"
+            dirname(__FILE__)."/UpdateBoard.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
-        $this->assertTablesEqual( $expectedDataSet->getTable( 'boards' ),$dataSet->getTable( 'boards' ) );
+        $dataSet = $this->getConnection()->createDataSet( ['boards'] );
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 
     public function testGameWithDb()
@@ -107,9 +107,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $game->DoMove( new Pot( 0 ) );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectAddHistoryMoveFull.yml"
+            dirname(__FILE__)."/AddHistoryMoveFull.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
+        $dataSet = $this->getConnection()->createDataSet( ['users','games','boards','histories'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 
@@ -118,9 +118,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $gameId = $this->mdb->CreateNewGame( 1,2,Side::Top() );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectNewGame.yml"
+            dirname(__FILE__)."/NewGame.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
+        $dataSet = $this->getConnection()->createDataSet( ['games'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
         $this->assertEquals( $gameId,1666667 );
     }
@@ -130,9 +130,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->mdb->ClearBoard( 1 );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectClearBoard.yml"
+            dirname(__FILE__)."/ClearBoard.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
+        $dataSet = $this->getConnection()->createDataSet( ['boards'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 
@@ -147,9 +147,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->mdb->AddHistoryMove( 1,0,new Pot( 3 ) );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectAddHistoryMove.yml"
+            dirname(__FILE__)."/AddHistoryMove.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
+        $dataSet = $this->getConnection()->createDataSet( ['histories'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 
@@ -165,9 +165,9 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->mdb->AddUser( $user );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
-            dirname(__FILE__)."/DBTestData/MancalaExpectAddUser.yml"
+            dirname(__FILE__)."/AddUser.yml"
         );
-        $dataSet = $this->getConnection()->createDataSet();
+        $dataSet = $this->getConnection()->createDataSet( ['users'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
 

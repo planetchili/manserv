@@ -1,10 +1,10 @@
 games:
   -
     id: 1
-    turn: 0
+    turn: 1
     player0Id: 69
     player1Id: 420
-    activeSide: 0
+    activeSide: 1
     winState: 1
   -
     id: 42
@@ -25,23 +25,23 @@ boards:
   -
     gameId: 1
     potId: 0
-    beads: 4  
+    beads: 0  
   -
     gameId: 1
     potId: 1
-    beads: 4
+    beads: 5
   -
     gameId: 1
     potId: 2
-    beads: 4
+    beads: 5
   -
     gameId: 1
     potId: 3
-    beads: 4
+    beads: 5
   -
     gameId: 1
     potId: 4
-    beads: 4
+    beads: 5
   -
     gameId: 1
     potId: 5
@@ -137,19 +137,19 @@ boards:
     potId: 13
     beads: 0
 
-histories:
-  -
-    gameId: 1
-    turn: 0
-    pot: 3
-  -
-    gameId: 42
-    turn: 0
-    pot: 4
-
 users:
   -
     id: 3
     name: chili
     email: chili@planetchili.net
     passwordHash: nothashedohshitwhatup
+
+histories:
+  -
+    gameId: 1
+    turn: 0
+    pot: 0
+  -
+    gameId: 42
+    turn: 0
+    pot: 4

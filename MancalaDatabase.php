@@ -10,6 +10,66 @@ class MancalaDatabase
     /** @var ChiliSql */
     private $conn;
 
+    public function SetupSchema() : void
+    {
+        $this->conn->exec(
+            'CREATE table if not exists games(
+                id int primary key auto_increment,
+                turn int not null default 0,
+                player0Id int not null,
+                player1Id int not null,
+                activeSide int not null,
+                winState int not null default 1
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists boards(
+                gameId int not null,
+                potId int not null,
+                beads int not null,
+                primary key( gameId,potId )
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists histories(
+                gameId int not null,
+                turn int not null,
+                pot int not null,
+                primary key( gameId,turn )
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists users (
+                id int primary key auto_increment,
+                `name` varchar (32) not null unique key,
+                email varchar (255) not null unique key,
+                passwordHash varchar (255) not null
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists rooms (
+                id int primary key auto_increment,
+                `name` varchar (64) not null unique,
+                gameId int unique key,
+                passwordHash varchar (255)
+            );'
+        );
+        $this->conn->exec(
+            'CREATE table if not exists memberships (
+                userId int not null,
+                roomId int not null,
+                isOwner bit (1) not null,
+                isReady bit (1) not null,
+                primary key( userId,roomId )
+            );'
+        );
+    }
+
+    public function ClearSchema() : void
+    {
+        $this->conn->exec( 'DROP table if exists games,boards,histories,users,rooms,memberships;' );
+    }
+
     public function LoadGame( int $gameId ) : GameInfo 
     {
         $gameDataArray = $this->conn->qfetcha( 'SELECT * from games where id = '.$gameId );
@@ -65,49 +125,6 @@ class MancalaDatabase
         $sql .= ' on duplicate key update beads = values(beads);';
         // execute sql command
         $this->conn->exec( $sql );
-    }
-
-    public function SetupSchema() : void
-    {
-        $this->conn->exec(
-            'CREATE table if not exists games(
-                id int primary key auto_increment,
-                turn int not null default 0,
-                player0Id int not null,
-                player1Id int not null,
-                activeSide int not null,
-                winState int not null default 1
-            );'
-        );
-        $this->conn->exec(
-            'CREATE table if not exists boards(
-                gameId int not null,
-                potId int not null,
-                beads int not null,
-                primary key( gameId,potId )
-            );'
-        );
-        $this->conn->exec(
-            'CREATE table if not exists histories(
-                gameId int not null,
-                turn int not null,
-                pot int not null,
-                primary key( gameId,turn )
-            );'
-        );
-        $this->conn->exec(
-            'CREATE table if not exists users (
-                id int primary key auto_increment,
-                `name` varchar (32) not null unique key,
-                email varchar (255) not null unique key,
-                passwordHash varchar (255) not null
-            );'
-        );
-    }
-
-    public function ClearSchema() : void
-    {
-        $this->conn->exec( 'DROP table if exists games,boards,histories,users;' );
     }
 
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
