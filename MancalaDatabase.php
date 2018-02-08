@@ -10,6 +10,11 @@ class MancalaDatabase
     /** @var ChiliSql */
     private $conn;
 
+    public function __construct( ChiliSql $conn )
+    {
+        $this->conn = $conn;
+    }
+
     public function SetupSchema() : void
     {
         $this->conn->exec(
@@ -202,11 +207,6 @@ class MancalaDatabase
     public function LoadNewMoves( int $gameId,int $fromTurn ) : array
     {
         return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );
-    }
-
-    public function __construct( ChiliSql $conn )
-    {
-        $this->conn = $conn;
     }
 }
 ?>

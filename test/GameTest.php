@@ -10,7 +10,6 @@ class GameTest extends PHPUnit\Framework\TestCase
         $playerIds = [420,1337];
         $activeSide = Side::Top();
         $board = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
-        $gameInfo = 
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['LoadGame','LoadBoard'] )
                         ->disableOriginalConstructor()

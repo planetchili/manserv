@@ -1,3 +1,4 @@
+TODO: refactor Game to not store db
 
 
 TODO: move actual sources into own directory

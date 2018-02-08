@@ -4,7 +4,7 @@
 >
     <testsuites>
         <testsuite name="Components">
-            <directory>./test</directory>
+            <directory>.</directory>
         </testsuite>
     </testsuites>
 </phpunit>
