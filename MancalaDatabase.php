@@ -2,6 +2,7 @@
 require_once __DIR__.'/ChiliSql.php';
 require_once __DIR__.'/Side.php';
 require_once __DIR__.'/GameInfo.php';
+require_once __DIR__.'/RoomInfo.php';
 require_once __DIR__.'/Board.php';
 require_once __DIR__.'/User.php';
 
@@ -55,7 +56,7 @@ class MancalaDatabase
             'CREATE table if not exists rooms (
                 id int primary key auto_increment,
                 `name` varchar (64) not null unique,
-                gameId int unique key,
+                gameId int unique key default null,
                 passwordHash varchar (255)
             );'
         );
@@ -63,8 +64,8 @@ class MancalaDatabase
             'CREATE table if not exists memberships (
                 userId int not null,
                 roomId int not null,
-                isOwner bit (1) not null,
-                isReady bit (1) not null,
+                isOwner boolean not null,
+                isReady boolean not null,
                 primary key( userId,roomId )
             );'
         );
@@ -207,6 +208,36 @@ class MancalaDatabase
     public function LoadNewMoves( int $gameId,int $fromTurn ) : array
     {
         return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );
+    }
+
+    public function AddMembership( RoomPlayer $player,int $roomId ) : void
+    {
+        $this->conn->exec( 
+            "INSERT into memberships set
+                userId = {$player->GetUserId()},
+                roomId = {$roomId},
+                isOwner = ".(int)$player->IsOwner().',
+                isReady = '.(int)$player->IsReady().';'
+        );
+    }
+
+    public function CreateNewRoom( string $name,?string $password ) : int
+    {
+        assert( $name != "" );
+        assert( $password != "" );
+
+        if( $password != null )
+        {
+            $password = password_hash( $password,PASSWORD_DEFAULT );
+        }
+
+        $this->conn->exec(
+            "INSERT into rooms set
+                `name` = '{$name}',
+                passwordHash = '{$password}';"
+        );
+
+        return $this->conn->lastInsertId();
     }
 }
 ?>

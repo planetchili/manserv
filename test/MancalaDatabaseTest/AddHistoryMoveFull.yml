@@ -139,6 +139,11 @@ boards:
 
 users:
   -
+    id: 2
+    name: mom
+    email: mom@planetchili.net
+    passwordHash: nothashedohshitwhatup
+  -
     id: 3
     name: chili
     email: chili@planetchili.net

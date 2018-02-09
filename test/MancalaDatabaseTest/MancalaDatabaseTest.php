@@ -217,5 +217,31 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( 1,count( $this->mdb->GetActiveGamesByUserId( 69 ) ) );
         $this->assertEquals( 1,$this->mdb->GetActiveGamesByUserId( 69 )[0] );
     }
+
+    public function testAddMembership()
+    {
+        $player = new RoomPlayer( 3,false );
+        $roomId = 4;
+        $this->mdb->AddMembership( $player,$roomId );
+        
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/AddMembership.yml"
+        );
+        $dataSet = $this->getConnection()->createDataSet( ['memberships'] );
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+    }
+
+    public function testCreateNewRoom()
+    {
+        $roomId = $this->mdb->CreateNewRoom( 'ducks and bitts','password' );
+        
+        $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
+            dirname(__FILE__)."/AddRoom.yml"
+        );
+        $dataSet = new PHPUnit\DbUnit\DataSet\QueryDataSet( $this->getConnection() );
+        $dataSet->addTable( 'rooms','SELECT id,`name`,gameId from rooms' );
+        $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
+        $this->assertEquals( 1,$roomId );
+    }
 }
 ?>

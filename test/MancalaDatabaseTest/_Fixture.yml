@@ -145,7 +145,19 @@ histories:
 
 users:
   -
+    id: 2
+    name: mom
+    email: mom@planetchili.net
+    passwordHash: nothashedohshitwhatup
+  -
     id: 3
     name: chili
     email: chili@planetchili.net
     passwordHash: nothashedohshitwhatup
+
+memberships:
+  -
+    userId: 2
+    roomId: 4
+    isOwner: 1
+    isReady: 0

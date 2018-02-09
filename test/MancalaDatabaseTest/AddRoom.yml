@@ -1,0 +1,5 @@
+rooms:
+  -
+    id: 1
+    name: "ducks and bitts"
+    gameId:
