@@ -1,16 +1,16 @@
 <?php
 require_once __DIR__.'/GameInfo.php';
 require_once __DIR__.'/Board.php';
-require_once __DIR__.'/MancalaDatabase.php';
+require_once __DIR__.'/IMancalaDatabase.php';
 
 class Game extends GameInfo
 {
-    /** @var MancalaDatabase */
+    /** @var IMancalaDatabase */
     private $db;
     /** @var Board */
     private $board;
 
-    public function __construct( MancalaDatabase $db,int $gameId )
+    public function __construct( IMancalaDatabase $db,int $gameId )
     {
         // set members from ctor params
         $this->id = $gameId;
@@ -20,7 +20,7 @@ class Game extends GameInfo
         $this->turn = $gameInfo->GetTurn();
         $this->playerIds = $gameInfo->GetPlayerIds();
         $this->activeSide = $gameInfo->GetActiveSide();
-        assert( $this->playerIds[0] != $this->playerIds[1],"same player may not occupy both slots!" );
+        assert( $this->playerIds[0] != $this->playerIds[1],'same player may not occupy both slots!' );
         $this->winState = $gameInfo->GetWinState();
         // load board state
         $this->board = $db->LoadBoard( $gameId );

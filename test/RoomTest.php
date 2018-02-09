@@ -136,7 +136,15 @@ class RoomTest extends PHPUnit\Framework\TestCase
 			new RoomPlayer( 69,true,true ),
 			new RoomPlayer( 11,false,true )
 		] );
-		$room->ClearGame();
+		// mock db
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['UpdateRoom'] )
+                        ->disableOriginalConstructor()
+						->getMock();
+		$dbMock->expects( $this->once() )
+				->method( 'UpdateRoom' )
+				->with( $room );
+		$room->ClearGame( $dbMock );
 		$this->assertFalse( $room->IsEngaged() );
 	}
 }

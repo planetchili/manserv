@@ -1,19 +1,19 @@
 <?php
 require_once __DIR__.'/IRoom.php';
-require_once __DIR__.'/MancalaDatabase.php';
+require_once __DIR__.'/IMancalaDatabase.php';
 
 class Room implements IRoom
 {
 	/** @var int */
-	protected $id;
+	private $id;
 	/** @var string */
-	protected $name;	
+	private $name;	
 	/** @var int */
-	protected $gameId;
+	private $gameId;
 	/** @var string */
-	protected $passwordHash;
+	private $passwordHash;
 	/** @var RoomPlayer[] */
-	protected $players;
+	private $players;
 
 	public function AddPlayer( int $userId,MancalaDatabase $db ) : void
 	{
@@ -64,10 +64,11 @@ class Room implements IRoom
 		return $this->gameId;
 	}
 
-	public function ClearGame() : void
+	public function ClearGame( IMancalaDatabase $db ) : void
 	{
 		assert( $this->IsEngaged(),'tried to clear game when game not in progress' );		
 		$this->gameId = null;
+		$db->UpdateRoom( $this );
 	}
 
 	public function __construct( int $id,string $name,
