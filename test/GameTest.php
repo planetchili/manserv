@@ -4,35 +4,20 @@ require_once 'Game.php';
 /** @group gComp */
 class GameTest extends PHPUnit\Framework\TestCase
 {
+    /** @doesNotPerformAssertions */
     public function testCtor()
     {
         $gameId = 69;
         $turn = 0;
         $playerIds = [420,1337];
         $activeSide = Side::Top();
-        $board = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
+        $board = Board::MakeFresh();
+        $winState = WinState::InProgress;
+
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
-                        ->setMethods( ['LoadGame','LoadBoard'] )
                         ->disableOriginalConstructor()
-                        ->getMock();
-        $dbMock->expects( $this->once() )
-               ->method( 'LoadGame' )
-               ->with( $gameId )
-               ->willReturn( new GameInfo( 
-                    $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
-               ) );
-        $dbMock->expects( $this->once() )
-               ->method( 'LoadBoard' )
-               ->with( $gameId )
-               ->willReturn( $board );
-        
-        $game = new Game( $dbMock,$gameId );
-        
-        $this->assertAttributeEquals( $gameId,'id',$game );
-        $this->assertAttributeEquals( $turn,'turn',$game );
-        $this->assertAttributeEquals( $playerIds,'playerIds',$game );
-        $this->assertAttributeEquals( $activeSide,'activeSide',$game );
-        $this->assertAttributeEquals( $board,'board',$game );
+                        ->getMock();        
+        new Game( $gameId,$turn,$playerIds,$activeSide,$winState,$board,$dbMock );
     }
 
     public function testFailCtor()
@@ -45,21 +30,15 @@ class GameTest extends PHPUnit\Framework\TestCase
         $activeSide = Side::Top();
         $board = new Board( [4,4,4,4,4,4,0,4,4,4,4,4,4,0] );
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
-                        ->setMethods( ['LoadGame'] )
                         ->disableOriginalConstructor()
                         ->getMock();
-        $dbMock->expects( $this->once() )
-               ->method( 'LoadGame' )
-               ->with( $gameId )
-               ->willReturn( new GameInfo( 
-                   $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
-               ) );
         
-        $game = new Game( $dbMock,$gameId );
+        $game = new Game( $gameId,$turn,$playerIds,$activeSide,WinState::InProgress,$board,$dbMock );
     }
     
     /**
      * @dataProvider dataDoMove
+     * @depends testCtor
      */
     public function testDoMove( Board $board,Side $activeSide,Pot $move,Board $expected_board,int $expect_winState,Side $expected_side )
     {
@@ -70,16 +49,6 @@ class GameTest extends PHPUnit\Framework\TestCase
                         ->setMethods( ['AddHistoryMove','LoadGame','LoadBoard','UpdateBoard','UpdateGame'] )
                         ->disableOriginalConstructor()
                         ->getMock();
-        $dbMock->expects( $this->once() )
-               ->method( 'LoadGame' )
-               ->with( $gameId )
-               ->willReturn( new GameInfo( 
-                    $gameId,$turn,$playerIds[0],$playerIds[1],$activeSide
-               ) );
-        $dbMock->expects( $this->once() )
-               ->method( 'LoadBoard' )
-               ->with( $gameId )
-               ->willReturn( $board );
         $dbMock->expects( $this->once() )
                ->method( 'UpdateBoard' )
                ->with( $expected_board,$gameId );
@@ -96,7 +65,7 @@ class GameTest extends PHPUnit\Framework\TestCase
                 ->method( 'AddHistoryMove' )
                 ->with( $gameId,$turn,$move );
         
-        $game = new Game( $dbMock,$gameId );
+        $game = new Game( $gameId,$turn,$playerIds,$activeSide,WinState::InProgress,$board,$dbMock );
         
         $this->assertEquals( $expect_winState != WinState::InProgress,$game->DoMove( $move ) );
         $this->assertEquals( $expect_winState,$game->GetWinState() );

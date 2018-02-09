@@ -43,15 +43,15 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
      */
     public function testLoadGame( int $gameId,GameInfo $gameInfoExpected )
     {
-        $gameInfoActual = $this->mdb->LoadGame( $gameId );
+        $gameInfoActual = $this->mdb->LoadGameInfo( $gameId );
         $this->assertEquals( $gameInfoExpected,$gameInfoActual );
     }
     public function dataLoadGame() : array
     {
         return [
-            [1,new GameInfo( 1,0,69,420,new Side( 0 ),WinState::InProgress )],
-            [42,new GameInfo( 42,13,11,17,new Side( 1 ),WinState::TopWins )],
-            [1666666,new GameInfo( 1666666,24,1,2,new Side( 1 ),WinState::InProgress )]
+            [1,new GameInfo( 1,0,[69,420],new Side( 0 ),WinState::InProgress )],
+            [42,new GameInfo( 42,13,[11,17],new Side( 1 ),WinState::TopWins )],
+            [1666666,new GameInfo( 1666666,24,[1,2],new Side( 1 ),WinState::InProgress )]
         ];
     }
     
@@ -59,12 +59,12 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     public function testFailLoadGame()
     {
         $gameId = 1337;
-        $this->mdb->LoadGame( $gameId );
+        $this->mdb->LoadGameInfo( $gameId );
     }
 
     public function testUpdateGame()
     {
-        $gameInfo = new GameInfo( 1,1,6969,6969,Side::Bottom() );
+        $gameInfo = new GameInfo( 1,1,[69,420],Side::Bottom() );
         $this->mdb->UpdateGame( $gameInfo );
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/UpdateGame.yml"
@@ -104,7 +104,8 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     public function testGameWithDb()
     {
         $gameId = 1;
-        $game = new Game( $this->mdb,$gameId );
+        $factory = new MancalaFactory( $this->mdb );
+        $game = $factory->LoadGame( $gameId );
         $game->DoMove( new Pot( 0 ) );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
@@ -234,15 +235,16 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testCreateNewRoom()
     {
-        $roomId = $this->mdb->CreateNewRoom( 'ducks and bitts','$hash$test.' );
-        $roomId = $this->mdb->CreateNewRoom( 'sticks and stones',null );
+        $roomId1 = $this->mdb->CreateNewRoom( 'ducks and bitts','$hash$test.' );
+        $roomId2 = $this->mdb->CreateNewRoom( 'sticks and stones',null );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/AddRoom.yml"
         );
         $dataSet = $this->getConnection()->createDataSet( ['rooms'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
-        $this->assertEquals( 1,$roomId );
+        $this->assertEquals( 1,$roomId1 );
+        $this->assertEquals( 2,$roomId2 );
     }
 }
 ?>

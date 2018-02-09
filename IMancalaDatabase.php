@@ -10,7 +10,7 @@ interface IMancalaDatabase
 
     public function ClearSchema() : void;
 
-    public function LoadGame( int $gameId ) : GameInfo;
+    public function LoadGameInfo( int $gameId ) : GameInfo;
 
     public function UpdateGame( GameInfo $gameInfo ) : void;
 

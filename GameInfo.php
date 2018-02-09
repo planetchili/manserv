@@ -24,6 +24,7 @@ class GameInfo
         return $this->turn;
     }
 
+    //TODO: rename getid
     public function GetGameId() : int
     {
         return $this->id;
@@ -60,14 +61,15 @@ class GameInfo
         return $this->winState;
     }
 
-    public function __construct( int $id,int $turn,int $player0Id,int $player1Id,
+    public function __construct( int $id,int $turn,array $userIds,
         Side $activeSide,int $winState = WinState::InProgress )
     {
         $this->id = $id;
         $this->turn = $turn;
-        $this->playerIds = [$player0Id,$player1Id];
+        $this->playerIds = $userIds;
         $this->activeSide = $activeSide;
         $this->winState = $winState;
+        assert( $this->playerIds[0] != $this->playerIds[1],'same player may not occupy both slots!' );
     }
 }
 ?>

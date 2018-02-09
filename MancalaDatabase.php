@@ -77,7 +77,7 @@ class MancalaDatabase implements IMancalaDatabase
         $this->conn->exec( 'DROP table if exists games,boards,histories,users,rooms,memberships;' );
     }
 
-    public function LoadGame( int $gameId ) : GameInfo 
+    public function LoadGameInfo( int $gameId ) : GameInfo 
     {
         $gameDataArray = $this->conn->qfetcha( 'SELECT * from games where id = '.$gameId );
         assert( count( $gameDataArray ) > 0,"LoadGame id not found" );
@@ -86,8 +86,7 @@ class MancalaDatabase implements IMancalaDatabase
         return new GameInfo( 
             (int)$gameData['id'],
             (int)$gameData['turn'],
-            (int)$gameData['player0Id'],
-            (int)$gameData['player1Id'],
+            [(int)$gameData['player0Id'],(int)$gameData['player1Id']],
             new Side( (int)$gameData['activeSide'] ),
             (int)$gameData['winState']
         );
@@ -134,7 +133,6 @@ class MancalaDatabase implements IMancalaDatabase
         $this->conn->exec( $sql );
     }
 
-    // TODO: put in factory
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
     {
         $this->conn->exec( 
@@ -233,7 +231,7 @@ class MancalaDatabase implements IMancalaDatabase
         {
             $this->conn->exec(
                 "INSERT into rooms set
-                    `name` = '{$name};"
+                    `name` = '{$name}';"
             );
         }
         else

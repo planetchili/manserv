@@ -10,20 +10,17 @@ class Game extends GameInfo
     /** @var Board */
     private $board;
 
-    public function __construct( IMancalaDatabase $db,int $gameId )
+    // TODO: playerId -> userId
+    public function __construct( int $gameId,int $turn,array $playerIds,
+        Side $activeSide,int $winState,Board $board,IMancalaDatabase $db )
     {
-        // set members from ctor params
-        $this->id = $gameId;
+        // invoke parent ctor
+        parent::__construct( $gameId,$turn,
+            $playerIds,$activeSide,$winState
+        );
+        // set members unique to Game
+        $this->board = $board;
         $this->db = $db;
-        // load game info
-        $gameInfo = $db->LoadGame( $gameId );
-        $this->turn = $gameInfo->GetTurn();
-        $this->playerIds = $gameInfo->GetPlayerIds();
-        $this->activeSide = $gameInfo->GetActiveSide();
-        assert( $this->playerIds[0] != $this->playerIds[1],'same player may not occupy both slots!' );
-        $this->winState = $gameInfo->GetWinState();
-        // load board state
-        $this->board = $db->LoadBoard( $gameId );
     }
 
     /** returns true if game ended */
@@ -57,6 +54,14 @@ class Game extends GameInfo
     public function DumpBoard() : array
     {
         return $this->board->ToArray();
+    }
+
+    public static function FromInfo( GameInfo $gameInfo,Board $board,IMancalaDatabase $db ) : Game
+    {
+        return new Game( $gameInfo->GetGameId(),$gameInfo->GetTurn(),
+            $gameInfo->GetPlayerIds(),$gameInfo->GetActiveSide(),
+            $gameInfo->GetWinState(),$board,$db
+        );
     }
 }
 ?>

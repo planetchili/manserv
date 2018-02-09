@@ -18,10 +18,27 @@ class MancalaFactory
 
 	public function MakeRoom( string $name,?string $password = null ) : IRoom
 	{
-		$passwordHash = ($password == null) ? null : password_verify( $password,PASSWORD_DEFAULT );
+		$passwordHash = ($password == null) ? null : password_hash( $password,PASSWORD_DEFAULT );
 		$roomId = $this->db->CreateNewRoom( $name,$password );
 		// TODO: reorder room ctor params and add default values
 		return new Room( $roomId,$name,null,$passwordHash );
+	}
+
+	public function MakeGame( int $userId0,int $userId1,Side $startSide ) : Game
+	{
+		$board = Board::MakeFresh();
+		$gameId = $this->db->CreateNewGame( $userId0,$userId1,$startSide );
+		$this->db->UpdateBoard( $board,$gameId );
+		return new Game( $gameId,0,[$userId0,$userId1],$startSide,
+			WinState::InProgress,$board,$this->db
+		);
+	}
+
+	public function LoadGame( int $gameId ) : Game
+	{
+		$gameInfo = $this->db->LoadGameInfo( $gameId );
+		$board = $this->db->LoadBoard( $gameId );
+		return Game::FromInfo( $gameInfo,$board,$this->db );
 	}
 }
 ?>

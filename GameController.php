@@ -9,6 +9,7 @@ try
 	require_once __DIR__.'/MancalaDatabase.php';
 	require_once __DIR__.'/SqlConnect.php';
 	require_once __DIR__.'/Session.php';
+	require_once __DIR__.'/MancalaFactory.php';
 
 	class GameSidePair
 	{
@@ -25,10 +26,10 @@ try
 	}
 
 	// function to establish verify game data/entities
-	function SetupGame( MancalaDatabase $db,Session $s ) : GameSidePair
+	function SetupGame( MancalaFactory $factory,Session $s ) : GameSidePair
 	{
 		assert( isset( $_POST['gameId'] ),'gameId not set in req to gc' );
-		$game = new Game( $db,(int)$_POST['gameId'] );
+		$game = $factory->LoadGame( (int)$_POST['gameId'] );
 		// verify user is in game
 		$side = $game->GetSideFromId( (int)$s->GetUserId() );
 		assert( $side != null,'user is not part of game in gc' );
@@ -43,6 +44,7 @@ try
 	// connect to database
 	$db = new MancalaDatabase( SqlConnect() );
 	$s = new Session( $db );
+	$factory = new MancalaFactory( $db );
 
 	if( !$s->IsLoggedIn() )
 	{
@@ -53,7 +55,7 @@ try
 	{
 	case 'move':
 		// load game and verify user is part of game, etc.
-		$pair = SetupGame( $db,$s );
+		$pair = SetupGame( $factory,$s );
 		$game = $pair->game;
 		$side = $pair->side;
 
@@ -82,7 +84,7 @@ try
 		break;
 	case 'query':
 		// load game and verify user is part of game, etc.
-		$pair = SetupGame( $db,$s );
+		$pair = SetupGame( $factory,$s );
 		$game = $pair->game;
 		$side = $pair->side;
 
@@ -113,7 +115,7 @@ try
 		break;
 	case 'update':
 		// load game and verify user is part of game, etc.
-		$pair = SetupGame( $db,$s );
+		$pair = SetupGame( $factory,$s );
 		$game = $pair->game;
 		$side = $pair->side;
 
