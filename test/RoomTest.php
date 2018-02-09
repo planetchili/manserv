@@ -13,8 +13,54 @@ class RoomTest extends PHPUnit\Framework\TestCase
 			new RoomPlayer( 11,false )
 		] );
 	}
+	
+	/** @depends testCtor */
+	public function testBasicGetters( Room $ri ) : Room
+	{
+		$this->assertEquals( 420,$ri->GetId(),'getid failed' );
+		$this->assertEquals( 'chili game',$ri->GetName(),'getname failed' );
+		$this->assertEquals( 2,$ri->GetPlayerCount(),'getplayercount failed' );
+		$this->assertFalse( $ri->IsEngaged(),'isengaged should be false' );
+		$this->assertFalse( $ri->IsLocked(),'islocked should be false' );
+		$this->assertEquals( new RoomPlayer( 11,false,false ),$ri->GetPlayer( 1 ) );
+		$this->assertEquals( [
+				new RoomPlayer( 69,true,true ),
+				new RoomPlayer( 11,false,false )
+			],$ri->GetPlayers()
+		);
+		return $ri;
+	}
 
-	/** @depends clone testCtor */
+	/** @depends testCtor */
+	public function testEngageLockTrue()
+	{
+		$ri = new Room( 420,'chili game',13,'dummyhash',
+		[
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 1,false,false )
+		] );
+
+		$this->assertTrue( $ri->IsEngaged(),'isengaged should be true' );
+		$this->assertTrue( $ri->IsLocked(),'islocked should be true' );
+	}
+
+	/** @depends testCtor */
+	public function testPasswordVerify()
+	{
+		$ri = new Room( 420,'chili game',13,
+			'$2y$10$.39qCFqFUwiB870rFCXlHOi'.
+			'o3598qLPgPB7IpWRReDeGt755A0v2m',
+		[
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 1,false,false )
+		] );
+		
+		$this->assertTrue( $ri->VerifyPassword( 'chilipass' ) );
+	}
+
+	// TODO: test failures
+
+	/** @depends clone testBasicGetters */
 	public function testAddPlayer( Room $rp )
 	{
 		$player = new RoomPlayer( 13,false );
@@ -30,7 +76,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals( 3,$rp->GetPlayerCount() );
 	}
 
-	/** @depends clone testCtor */
+	/** @depends clone testBasicGetters */
 	public function testRemovePlayer( Room $rp )
 	{
 		$player = $rp->GetPlayer( 0 );
@@ -48,7 +94,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertTrue( $rp->GetPlayer( 0 )->IsOwner() );
 	}
 
-	/** @depends clone testCtor */
+	/** @depends clone testBasicGetters */
 	public function testEngageGame( Room $rp )
 	{
 		// needed for engage game (starting player selection)
@@ -81,7 +127,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals( 1337,$rp->GetGameId() );
 	}
 
-	/** @depends clone testCtor */
+	/** @depends clone testBasicGetters */
 	public function testClearGame()
 	{
 		// make engaged game

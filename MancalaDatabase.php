@@ -2,7 +2,7 @@
 require_once __DIR__.'/ChiliSql.php';
 require_once __DIR__.'/Side.php';
 require_once __DIR__.'/GameInfo.php';
-require_once __DIR__.'/RoomInfo.php';
+require_once __DIR__.'/RoomPlayer.php';
 require_once __DIR__.'/Board.php';
 require_once __DIR__.'/User.php';
 

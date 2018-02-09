@@ -1,5 +1,5 @@
 <?php
-require_once 'RoomInfo.php';
+require_once 'RoomPlayer.php';
 
 /** @group gComp */
 class RoomPlayerTest extends PHPUnit\Framework\TestCase
