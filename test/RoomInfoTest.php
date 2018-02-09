@@ -1,6 +1,7 @@
 <?php
 require_once 'RoomInfo.php';
 
+/** @group gComp */
 class RoomInfoTest extends PHPUnit\Framework\TestCase
 {
 	/** @doesNotPerformAssertions */

@@ -2,6 +2,7 @@
 require_once 'MancalaDatabase.php';
 require_once 'test/ChiliTest.php';
 
+/** @group gDb */
 class MancalaDatabaseTest extends ChiliDatabaseTest
 {
     /** @var MancalaDatabase */

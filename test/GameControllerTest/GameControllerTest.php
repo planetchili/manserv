@@ -3,6 +3,7 @@ require_once 'MancalaDatabase.php';
 require_once 'ChiliGuzz.php';
 require_once 'test/ChiliTest.php';
 
+/** @group gCtrl */
 class GameControllerTest extends ChiliDatabaseTest
 {
 	/** @var MancalaDatabase */

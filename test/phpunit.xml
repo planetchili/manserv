@@ -3,7 +3,7 @@
     verbose="true"
 >
     <testsuites>
-        <testsuite name="Components">
+        <testsuite name="All">
             <directory>.</directory>
         </testsuite>
     </testsuites>

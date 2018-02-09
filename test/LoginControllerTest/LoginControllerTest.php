@@ -2,6 +2,7 @@
 require_once 'ChiliGuzz.php';
 require_once 'test/ChiliTest.php';
 
+/** @group gCtrl */
 class LoginControllerTest extends ChiliDatabaseTest
 {
     /** @var MancalaDatabase */

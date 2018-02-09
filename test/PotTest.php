@@ -1,6 +1,7 @@
 <?php
 require_once 'Pot.php';
 
+/** @group gComp */
 class PotTest extends PHPUnit\Framework\TestCase
 {
     /**

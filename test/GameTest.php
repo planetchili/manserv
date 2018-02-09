@@ -1,6 +1,7 @@
 <?php
 require_once 'Game.php';
 
+/** @group gComp */
 class GameTest extends PHPUnit\Framework\TestCase
 {
     public function testCtor()

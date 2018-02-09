@@ -1,6 +1,7 @@
 <?php
 require_once 'Board.php';
 
+/** @group gComp */
 class BoardTest extends PHPUnit\Framework\TestCase
 {
     /** @var Board */

@@ -1,6 +1,7 @@
 <?php
 require_once 'Side.php';
 
+/** @group gComp */
 class SideTest extends PHPUnit\Framework\TestCase
 {
     /** @var Side */

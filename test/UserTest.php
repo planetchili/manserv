@@ -1,6 +1,7 @@
 <?php
 require_once 'User.php';
 
+/** @group gComp */
 class UserTest extends PHPUnit\Framework\TestCase
 {
     public function testCtorGetters()
