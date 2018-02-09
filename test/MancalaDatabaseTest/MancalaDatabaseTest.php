@@ -234,13 +234,13 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
 
     public function testCreateNewRoom()
     {
-        $roomId = $this->mdb->CreateNewRoom( 'ducks and bitts','password' );
+        $roomId = $this->mdb->CreateNewRoom( 'ducks and bitts','$hash$test.' );
+        $roomId = $this->mdb->CreateNewRoom( 'sticks and stones',null );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
             dirname(__FILE__)."/AddRoom.yml"
         );
-        $dataSet = new PHPUnit\DbUnit\DataSet\QueryDataSet( $this->getConnection() );
-        $dataSet->addTable( 'rooms','SELECT id,`name`,gameId from rooms' );
+        $dataSet = $this->getConnection()->createDataSet( ['rooms'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
         $this->assertEquals( 1,$roomId );
     }

@@ -3,7 +3,7 @@ require_once __DIR__.'/ChiliSql.php';
 require_once __DIR__.'/Side.php';
 require_once __DIR__.'/GameInfo.php';
 require_once __DIR__.'/IMancalaDatabase.php';
-require_once __DIR__.'/RoomPlayer.php';
+require_once __DIR__.'/Room.php';
 require_once __DIR__.'/Board.php';
 require_once __DIR__.'/User.php';
 
@@ -134,6 +134,7 @@ class MancalaDatabase implements IMancalaDatabase
         $this->conn->exec( $sql );
     }
 
+    // TODO: put in factory
     public function CreateNewGame( int $player0Id,int $player1Id,Side $startSide ) : int
     {
         $this->conn->exec( 
@@ -165,6 +166,7 @@ class MancalaDatabase implements IMancalaDatabase
         );
     }
 
+    // TODO: this should be in the factory CreateNewUser
     public function AddUser( User $user ) : void
     {
         $stmt = $this->conn->prepare(
@@ -222,21 +224,26 @@ class MancalaDatabase implements IMancalaDatabase
         );
     }
 
-    public function CreateNewRoom( string $name,?string $password ) : int
+    public function CreateNewRoom( string $name,?string $passwordHash ) : int
     {
         assert( $name != "" );
-        assert( $password != "" );
+        assert( $passwordHash == null || $passwordHash != "" );
 
-        if( $password != null )
+        if( $passwordHash == null )
         {
-            $password = password_hash( $password,PASSWORD_DEFAULT );
+            $this->conn->exec(
+                "INSERT into rooms set
+                    `name` = '{$name};"
+            );
         }
-
-        $this->conn->exec(
-            "INSERT into rooms set
-                `name` = '{$name}',
-                passwordHash = '{$password}';"
-        );
+        else
+        {
+            $this->conn->exec(
+                "INSERT into rooms set
+                    `name` = '{$name}',
+                    passwordHash = '{$passwordHash}';"
+            );            
+        }
 
         return $this->conn->lastInsertId();
     }

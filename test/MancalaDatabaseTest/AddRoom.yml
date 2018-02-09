@@ -3,3 +3,9 @@ rooms:
     id: 1
     name: "ducks and bitts"
     gameId:
+    passwordHash: "$hash$test."
+  -
+    id: 2
+    name: "sticks and stones"
+    gameId:
+    passwordHash:
