@@ -161,3 +161,5 @@ memberships:
     roomId: 4
     isOwner: 1
     isReady: 0
+
+rooms:

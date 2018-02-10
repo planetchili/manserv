@@ -217,6 +217,7 @@ class MancalaDatabase implements IMancalaDatabase
         return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );
     }
 
+    // TODO: this returns roomplayer OR factory returns roomplayer, t his takes scalars
     public function AddMembership( RoomPlayer $player,int $roomId ) : void
     {
         $this->conn->exec( 
@@ -258,6 +259,13 @@ class MancalaDatabase implements IMancalaDatabase
             "DELETE from memberships where
                 userId = {$userId} and
                 roomId = {$roomId};"
+        );
+    }
+
+    public function DestroyRoom( int $roomId ) : void
+    {
+        $this->conn->exec(
+            "DELETE from rooms where id = {$roomId};"
         );
     }
 }

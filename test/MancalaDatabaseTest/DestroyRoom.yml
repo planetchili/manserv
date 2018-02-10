@@ -1,0 +1,6 @@
+rooms:
+  -
+    id: 2
+    name: "sticks and stones"
+    gameId:
+    passwordHash:
