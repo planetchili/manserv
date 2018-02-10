@@ -1,6 +1,9 @@
-TODO: refactor Game to not store db
+TODO: Make all game entities store db and factory construction
+	- maybe make history move into a game entity
+	- next: createuser scalars
+	- board stores db / loadcreate from factory
 
-
+TODO: user name case sensitivity
 TODO: move actual sources into own directory
 TODO: add failure tests for Game::DoMove()
 TODO: more exhaustive tests for basic game/board db ops

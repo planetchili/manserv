@@ -102,5 +102,30 @@ class MancalaFactoryTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals( $gameInfo->GetPlayerId( Side::Bottom() ),$game->GetPlayerId( Side::Bottom() ) );
 		$this->assertEquals( $gameInfo->GetActiveSide(),$game->GetActiveSide() );
 	}
+
+	public function testMakeUser()
+	{
+		$userId = 1;
+		$name = 'chili';
+		$email = "chili@planetchili.net";
+		$password = 'chilipass';
+
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['CreateNewUser'] )
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $dbMock->expects( $this->once() )
+               ->method( 'CreateNewUser' )
+			   ->with( $name,$email,$this->anything() )
+			   ->willReturn( $userId );
+		// the SUT
+		$factory = new MancalaFactory( $dbMock );
+		
+		$user = $factory->MakeUser( $name,$email,$password );
+		$this->assertEquals( $userId,$user->GetId() );
+		$this->assertEquals( $name,$user->GetName() );
+		$this->assertEquals( $email,$user->GetEmail() );
+		$this->assertTrue( $user->VerifyPassword( $password ) );
+	}
 }
 ?>

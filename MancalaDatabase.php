@@ -164,9 +164,13 @@ class MancalaDatabase implements IMancalaDatabase
         );
     }
 
-    // TODO: this should be in the factory CreateNewUser
-    public function AddUser( User $user ) : void
+    // TODO: this should be in the factory CreateNewUser & should pass parameters, not user
+    // TODO: validate these and case sensitivity
+    public function CreateNewUser( string $name,string $email,string $passwordHash ) : int
     {
+        $name = strtolower( $name );
+        $email = strtolower( $email );
+
         $stmt = $this->conn->prepare(
             'INSERT into users set
                 `name` = :n,
@@ -174,10 +178,12 @@ class MancalaDatabase implements IMancalaDatabase
                 passwordHash = :p;'
         );
         $stmt->execute( [
-            ':n'=>$user->GetName(),
-            ':e'=>$user->GetEmail(),
-            ':p'=>$user->GetPasswordHash()
+            ':n'=>$name,
+            ':e'=>$email,
+            ':p'=>$passwordHash
         ] );
+        
+        return $this->conn->lastInsertId();
     }
 
     public function LoadUserById( int $userId ) : User

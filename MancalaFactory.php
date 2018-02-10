@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/Side.php';
 require_once __DIR__.'/GameInfo.php';
+require_once __DIR__.'/Game.php';
 require_once __DIR__.'/IMancalaDatabase.php';
 require_once __DIR__.'/Room.php';
 require_once __DIR__.'/Board.php';
@@ -39,6 +40,27 @@ class MancalaFactory
 		$gameInfo = $this->db->LoadGameInfo( $gameId );
 		$board = $this->db->LoadBoard( $gameId );
 		return Game::FromInfo( $gameInfo,$board,$this->db );
+	}
+
+	public function MakeUser( string $name,string $email,string $password ) : User
+	{
+		$passwordHash = password_hash( $password,PASSWORD_DEFAULT );
+		return new User( 
+			$this->db->CreateNewUser( $name,$email,$passwordHash ),
+			$name,
+			$email,
+			$passwordHash,true
+		);
+	}
+
+	public function LoadUserByName( string $name ) : User
+	{
+		return $this->db->LoadUserByName( $name );
+	}
+
+	public function LoadUserById( int $userId ) : User
+	{
+		return $this->db->LoadUserById( $userId );
 	}
 }
 ?>

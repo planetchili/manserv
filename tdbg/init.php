@@ -5,21 +5,21 @@
 
 <?php
 require_once '../MancalaDatabase.php';
+require_once '../MancalaFactory.php';
 
 $db = new MancalaDatabase( new ChiliSql( 'testschema','testuser','password' ) );
+$factory = new MancalaFactory( $db );
 $db->ClearSchema();
 $db->SetupSchema();
 
-$db->AddUser( new User( -1,'chili','pubes@me.com','chilipass' ) );
-$db->AddUser( new User( -1,'mom','dimsum@me.com','mompass' ) );
+$user0 = $factory->MakeUser( 'chili','pubes@me.com','chilipass' );
+$user1 = $factory->MakeUser( 'mom','dimsum@me.com','mompass' );
 
-$gid = $db->CreateNewGame(
-    $db->LoadUserByName( 'chili' )->GetId(),
-    $db->LoadUserByName( 'mom' )->GetId(),
+$gid = $factory->MakeGame(
+    $user0->GetId(),
+    $user1->GetId(),
     Side::Top()
 );
-
-$db->UpdateBoard( Board::MakeFresh(),$gid );
 ?>
 </html>
 

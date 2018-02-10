@@ -24,7 +24,7 @@ interface IMancalaDatabase
 
     public function AddHistoryMove( int $gameId,int $turn,Pot $move ) : void;
 
-    public function AddUser( User $user ) : void;
+    public function CreateNewUser( string $name,string $email,string $passwordHash ) : int;
 
     public function LoadUserById( int $userId ) : User;
 
