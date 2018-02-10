@@ -1,0 +1,11 @@
+memberships:
+  -
+    userId: 2
+    roomId: 4
+    isOwner: 1
+    isReady: 0
+  -
+    userId: 3
+    roomId: 4
+    isOwner: 0
+    isReady: 1

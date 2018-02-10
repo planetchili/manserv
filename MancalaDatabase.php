@@ -277,5 +277,18 @@ class MancalaDatabase implements IMancalaDatabase
                 roomId = {$roomId};"
         );
     }
+
+    public function UpdateMembership( RoomPlayer $player,int $roomId ) : void
+    {
+        $this->conn->exec(
+            'UPDATE memberships
+            set isOwner = '.(int)$player->IsOwner().',
+                isReady = '.(int)$player->IsReady().' 
+            where
+                userId = '.$player->GetUserId().' and
+                roomId = '.$roomId.';'
+        );
+
+    }
 }
 ?>
