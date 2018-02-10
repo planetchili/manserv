@@ -1,0 +1,6 @@
+memberships:
+  -
+    userId: 3
+    roomId: 4
+    isOwner: 0
+    isReady: 0

@@ -251,5 +251,14 @@ class MancalaDatabase implements IMancalaDatabase
 
         return $this->conn->lastInsertId();
     }
+
+    public function RemoveMembership( int $userId,int $roomId ) : void
+    {
+        $this->conn->exec(
+            "DELETE from memberships where
+                userId = {$userId} and
+                roomId = {$roomId};"
+        );
+    }
 }
 ?>
