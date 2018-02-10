@@ -217,18 +217,6 @@ class MancalaDatabase implements IMancalaDatabase
         return $this->conn->qfetcha( "SELECT turn,pot from histories where gameId = {$gameId} and turn >= {$fromTurn};" );
     }
 
-    // TODO: this returns roomplayer OR factory returns roomplayer, t his takes scalars
-    public function AddMembership( RoomPlayer $player,int $roomId ) : void
-    {
-        $this->conn->exec( 
-            "INSERT into memberships set
-                userId = {$player->GetUserId()},
-                roomId = {$roomId},
-                isOwner = ".(int)$player->IsOwner().',
-                isReady = '.(int)$player->IsReady().';'
-        );
-    }
-
     public function CreateNewRoom( string $name,?string $passwordHash ) : int
     {
         assert( $name != "" );
@@ -253,12 +241,12 @@ class MancalaDatabase implements IMancalaDatabase
         return $this->conn->lastInsertId();
     }
 
-    public function RemoveMembership( int $userId,int $roomId ) : void
-    {
-        $this->conn->exec(
-            "DELETE from memberships where
-                userId = {$userId} and
-                roomId = {$roomId};"
+    public function UpdateRoom( IRoom $room ) : void
+    {        
+        $this->conn->exec( 
+            "UPDATE rooms
+             set    gameId = {$room->GetGameId()}
+             where  id = {$room->GetId()}"
         );
     }
 
@@ -266,6 +254,27 @@ class MancalaDatabase implements IMancalaDatabase
     {
         $this->conn->exec(
             "DELETE from rooms where id = {$roomId};"
+        );
+    }
+
+    // TODO: this returns roomplayer OR factory returns roomplayer, t his takes scalars
+    public function AddMembership( RoomPlayer $player,int $roomId ) : void
+    {
+        $this->conn->exec( 
+            "INSERT into memberships set
+                userId = {$player->GetUserId()},
+                roomId = {$roomId},
+                isOwner = ".(int)$player->IsOwner().',
+                isReady = '.(int)$player->IsReady().';'
+        );
+    }
+
+    public function RemoveMembership( int $userId,int $roomId ) : void
+    {
+        $this->conn->exec(
+            "DELETE from memberships where
+                userId = {$userId} and
+                roomId = {$roomId};"
         );
     }
 }
