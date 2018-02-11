@@ -41,5 +41,10 @@ interface IMancalaDatabase
     public function RemoveMembership( int $userId,int $roomId ) : void;
 
     public function UpdateMembership( RoomPlayer $player,int $roomId ) : void;
+
+    /** @return RoomPlayer[] */
+    public function LoadPlayers( int $roomId ) : array;
+
+    public function LoadRoom( int $roomId ) : IRoom;
 }
 ?>

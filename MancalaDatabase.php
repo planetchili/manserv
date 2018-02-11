@@ -250,6 +250,29 @@ class MancalaDatabase implements IMancalaDatabase
         );
     }
 
+    /** @return RoomPlayer[] */
+    public function LoadPlayers( int $roomId ) : array
+    {
+        $rows = $this->conn->qfetcha( 
+            "SELECT * from memberships
+             where  roomId = {$roomId};"
+        );
+        foreach( $rows as $col )
+        {
+            $players[] = new RoomPlayer( $col['userId'],(bool)$col['isOwner'],(bool)$col['isReady'] );
+        }
+        return $players;
+    }
+
+    public function LoadRoom( int $roomId ) : IRoom
+    {        
+        $cols = $this->conn->qfetcha( 
+            "SELECT * from rooms
+             where  id = {$roomId};"
+        )[0];
+        return new Room( $roomId,$cols['name'],$cols['gameId'],$cols['passwordHash'],$this,$this->LoadPlayers( $roomId ) );
+    }
+
     public function DestroyRoom( int $roomId ) : void
     {
         $this->conn->exec(

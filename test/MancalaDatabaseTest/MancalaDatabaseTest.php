@@ -301,5 +301,29 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $dataSet = $this->getConnection()->createDataSet( ['memberships'] );
         $this->assertDataSetsEqual( $expectedDataSet,$dataSet );
     }
+
+    /** @depends testAddMembership */
+    public function testLoadPlayers()
+    {
+        $roomId = 4;
+        $this->mdb->AddMembership( new RoomPlayer( 5,false ),$roomId );
+        $players = $this->mdb->LoadPlayers( $roomId );
+        
+        $this->assertEquals( [new RoomPlayer( 2,true ),new RoomPlayer( 5,false )],$players );
+    }
+
+    /** @depends testLoadPlayers */
+    /** @depends testCreateNewRoom */
+    public function testLoadRoom()
+    {
+        $roomId = $this->mdb->CreateNewRoom( 'test game',null );
+        $this->mdb->AddMembership( new RoomPlayer( 2,false,true ),$roomId );
+        $this->mdb->AddMembership( new RoomPlayer( 5,false ),$roomId );
+        $room = $this->mdb->LoadRoom( $roomId );
+        
+        $this->assertEquals( 
+            new Room( $roomId,'test game',null,null,$this->mdb,[new RoomPlayer( 2,false,true ),new RoomPlayer( 5,false )] ),
+            $room );
+    } 
 }
 ?>
