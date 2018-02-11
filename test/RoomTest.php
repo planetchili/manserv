@@ -7,8 +7,11 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	/** @doesNotPerformAssertions */
     public function testCtor() : Room
     {
-        return new Room( 420,'chili game',null,null,
-		[
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        return new Room( 420,'chili game',null,null,$dbMock,
+		[			
 			new RoomPlayer( 69,true,true ),
 			new RoomPlayer( 11,false )
 		] );
@@ -34,7 +37,10 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	/** @depends testCtor */
 	public function testEngageLockTrue()
 	{
-		$ri = new Room( 420,'chili game',13,'dummyhash',
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->disableOriginalConstructor()
+                        ->getMock();
+		$ri = new Room( 420,'chili game',13,'dummyhash',$dbMock,
 		[
 			new RoomPlayer( 69,true,true ),
 			new RoomPlayer( 1,false,false )
@@ -47,9 +53,12 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	/** @depends testCtor */
 	public function testPasswordVerify()
 	{
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->disableOriginalConstructor()
+                        ->getMock();
 		$ri = new Room( 420,'chili game',13,
 			'$2y$10$.39qCFqFUwiB870rFCXlHOi'.
-			'o3598qLPgPB7IpWRReDeGt755A0v2m',
+			'o3598qLPgPB7IpWRReDeGt755A0v2m',$dbMock,
 		[
 			new RoomPlayer( 69,true,true ),
 			new RoomPlayer( 1,false,false )
@@ -61,13 +70,18 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	// TODO: test failures
 
 	/** @depends clone testBasicGetters */
-	public function testAddPlayer( Room $rp )
+	public function testAddPlayer()
 	{
 		$player = new RoomPlayer( 13,false );
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['AddMembership'] )
                         ->disableOriginalConstructor()
                         ->getMock();
+		$rp = new Room( 420,'chili game',null,null,$dbMock,
+		[			
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false )
+		] );
         $dbMock->expects( $this->once() )
                ->method( 'AddMembership' )
                ->with( $player,$rp->GetId() );
@@ -77,16 +91,22 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	}
 
 	/** @depends clone testBasicGetters */
-	public function testRemovePlayer( Room $rp )
+	public function testRemovePlayer()
 	{
-		$player = $rp->GetPlayer( 0 );
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['RemoveMembership'] )
                         ->disableOriginalConstructor()
                         ->getMock();
+		
+		$rp = new Room( 420,'chili game',null,null,$dbMock,
+		[			
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false )
+		] );
+		$player = $rp->GetPlayer( 0 );
         $dbMock->expects( $this->once() )
                ->method( 'RemoveMembership' )
-               ->with( $player->GetUserId(),$rp->GetId() );
+			   ->with( $player->GetUserId(),$rp->GetId() );
 		
 		$rp->RemovePlayer( $player->GetUserId(),$dbMock );
 		$this->assertEquals( 1,$rp->GetPlayerCount() );
@@ -95,24 +115,22 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	}
 
 	/** @depends clone testBasicGetters */
-	public function testEngageGame( Room $rp )
+	public function testEngageGame()
 	{
 		// needed for engage game (starting player selection)
 		srand( 69 );
 		$exSide = new Side( rand( 0,1 ) );
-		// make expected room
-		$exRoom = new Room( 420,'chili game',1337,null,
-		[
-			new RoomPlayer( 69,true,true ),
-			new RoomPlayer( 11,false,true )
-		] );
-		// ready player 1
-		$rp->GetPlayer( 1 )->MakeReady();
 		// mock the db
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['UpdateRoom','CreateNewGame'] )
                         ->disableOriginalConstructor()
 						->getMock();
+		// make expected room
+		$exRoom = new Room( 420,'chili game',1337,null,$dbMock,
+		[
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false,true )
+		] );
 		$dbMock->expects( $this->once() )
 				->method( 'CreateNewGame' )
 				->with( 69,11,$exSide )
@@ -120,6 +138,15 @@ class RoomTest extends PHPUnit\Framework\TestCase
         $dbMock->expects( $this->once() )
                ->method( 'UpdateRoom' )
 			   ->with( $exRoom );
+	
+		$rp = new Room( 420,'chili game',null,null,$dbMock,
+		[			
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false )
+		] );
+		// ready player 1
+		$rp->GetPlayer( 1 )->MakeReady();
+
 		// seed with same to ensure expected start side
 		srand( 69 );
 		$this->assertEquals( 1337,$rp->EngageGame( $dbMock ) );
@@ -130,22 +157,67 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	/** @depends clone testBasicGetters */
 	public function testClearGame()
 	{
-		// make engaged game
-		$room = new Room( 420,'chili game',1337,null,
-		[
-			new RoomPlayer( 69,true,true ),
-			new RoomPlayer( 11,false,true )
-		] );
 		// mock db
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
                         ->setMethods( ['UpdateRoom'] )
                         ->disableOriginalConstructor()
 						->getMock();
+
+		$room = new Room( 420,'chili game',69,null,$dbMock,
+		[			
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false,true )
+		] );
 		$dbMock->expects( $this->once() )
 				->method( 'UpdateRoom' )
 				->with( $room );
+
 		$room->ClearGame( $dbMock );
 		$this->assertFalse( $room->IsEngaged() );
+	}
+
+	public function testReadyPlayerIndex()
+	{
+		// mock the db
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['UpdateMembership'] )
+                        ->disableOriginalConstructor()
+						->getMock();
+		// make expected room
+		$rp = new Room( 420,'chili game',1337,null,$dbMock,
+		[
+			new RoomPlayer( 69,true ),
+			new RoomPlayer( 11,false )
+		] );
+		$dbMock->expects( $this->once() )
+				->method( 'UpdateMembership' )
+				->with( new RoomPlayer( 69,true,true ),420 );	
+	
+		// ready player 0
+		$rp->ReadyPlayerIndex( 0 );
+		$this->assertTrue( $rp->GetPlayer( 0 )->IsReady() );
+	}
+
+	public function testUnreadyPlayerIndex()
+	{
+		// mock the db
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['UpdateMembership'] )
+                        ->disableOriginalConstructor()
+						->getMock();
+		// make expected room
+		$rp = new Room( 420,'chili game',1337,null,$dbMock,
+		[
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false,true )
+		] );
+		$dbMock->expects( $this->once() )
+				->method( 'UpdateMembership' )
+				->with( new RoomPlayer( 69,true,false ),420 );	
+	
+		// ready player 0
+		$rp->UnreadyPlayerIndex( 0 );
+		$this->assertFalse( $rp->GetPlayer( 0 )->IsReady() );
 	}
 }
 ?>

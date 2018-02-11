@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__.'/RoomPlayer.php';
+require_once __DIR__.'/IReadonlyRoomPlayer.php';
 
 interface IRoom
 {
-	public function GetPlayer( int $index ) : RoomPlayer;
+	public function GetPlayer( int $index ) : IReadonlyRoomPlayer;
 
-	/** @return RoomPlayer[] */
+	/** @return IReadonlyRoomPlayer[] */
 	public function GetPlayers() : array;
 
 	public function GetPlayerCount() : int;
@@ -21,5 +21,9 @@ interface IRoom
 	public function VerifyPassword( string $password ) : bool;
 
 	public function GetGameId() : int;
+
+	public function ReadyPlayerIndex( int $index ) : void;
+
+	public function UnreadyPlayerIndex( int $index ) : void;
 }
 ?>

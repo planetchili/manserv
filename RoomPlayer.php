@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__.'/User.php';
+require_once __DIR__.'/IReadonlyRoomPlayer.php';
+require_once __DIR__.'/IMancalaDatabase.php';
 
-class RoomPlayer
+class RoomPlayer implements IReadonlyRoomPlayer
 {
 	/** @var int */
 	protected $userId;
@@ -17,7 +19,7 @@ class RoomPlayer
 		$this->isReady = $isReady;
 	}
 
-	public function GetUser( MancalaDatabase $db ) : User
+	public function GetUser( IMancalaDatabase $db ) : User
 	{
 		return $db->LoadUserById( $this->userId );
 	}

@@ -288,7 +288,6 @@ class MancalaDatabase implements IMancalaDatabase
                 userId = '.$player->GetUserId().' and
                 roomId = '.$roomId.';'
         );
-
     }
 }
 ?>

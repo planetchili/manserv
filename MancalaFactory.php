@@ -22,7 +22,7 @@ class MancalaFactory
 		$passwordHash = ($password == null) ? null : password_hash( $password,PASSWORD_DEFAULT );
 		$roomId = $this->db->CreateNewRoom( $name,$password );
 		// TODO: reorder room ctor params and add default values
-		return new Room( $roomId,$name,null,$passwordHash );
+		return new Room( $roomId,$name,null,$passwordHash,$this->db );
 	}
 
 	public function MakeGame( int $userId0,int $userId1,Side $startSide ) : Game

@@ -37,5 +37,9 @@ interface IMancalaDatabase
     public function AddMembership( RoomPlayer $player,int $roomId ) : void;
 
     public function CreateNewRoom( string $name,?string $password ) : int;
+
+    public function RemoveMembership( int $userId,int $roomId ) : void;
+
+    public function UpdateMembership( RoomPlayer $player,int $roomId ) : void;
 }
 ?>

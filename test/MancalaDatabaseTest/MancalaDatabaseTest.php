@@ -277,7 +277,7 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
     {
         $roomId1 = $this->mdb->CreateNewRoom( 'ducks and bitts','$hash$test.' );
         $roomId2 = $this->mdb->CreateNewRoom( 'sticks and stones',null );
-        $room2 = new Room( $roomId2,'sticks and stones',69,null,[] );
+        $room2 = new Room( $roomId2,'sticks and stones',69,null,$this->mdb,[] );
         $this->mdb->UpdateRoom( $room2 );
         
         $expectedDataSet = new PHPUnit\DbUnit\DataSet\YamlDataSet(
