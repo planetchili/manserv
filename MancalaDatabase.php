@@ -257,6 +257,7 @@ class MancalaDatabase implements IMancalaDatabase
             "SELECT * from memberships
              where  roomId = {$roomId};"
         );
+        $players = [];
         foreach( $rows as $col )
         {
             $players[] = new RoomPlayer( $col['userId'],(bool)$col['isOwner'],(bool)$col['isReady'] );
@@ -271,6 +272,36 @@ class MancalaDatabase implements IMancalaDatabase
              where  id = {$roomId};"
         )[0];
         return new Room( $roomId,$cols['name'],$cols['gameId'],$cols['passwordHash'],$this,$this->LoadPlayers( $roomId ) );
+    }
+
+    public function ListRooms() : array
+    {
+        $user_data = $this->conn->qfetcha( 
+            'SELECT roomId,`name` from memberships
+             right join users on memberships.userId = users.id
+             order by roomId, users.id asc;'
+        );
+
+        $room_data =  $this->conn->qfetcha( 
+            'SELECT id,`name`,gameId from rooms
+             order by id asc;'
+        );
+
+        $rooms = [];
+        foreach( $room_data as $room )
+        {
+            $players = array_filter( $user_data,function( array $user ) use ( $room )
+                { return $user['roomId'] == $room['id'];}
+            );
+            $rooms[] = [
+                'id'=>(int)$room['id'],
+                'name'=>$room['name'],
+                'engaged'=>($room['gameId'] == null) ? false : true,
+                'players'=>array_column( $players,'name' )
+            ];
+        }
+
+        return $rooms;
     }
 
     public function DestroyRoom( int $roomId ) : void

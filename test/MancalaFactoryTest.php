@@ -15,7 +15,7 @@ class MancalaFactoryTest extends PHPUnit\Framework\TestCase
                         ->getMock();
         $dbMock->expects( $this->once() )
                ->method( 'CreateNewRoom' )
-			   ->with( $roomName,$roomPassword )
+			   ->with( $roomName,$this->stringContains( '$2y$' ) )
 			   ->willReturn( $roomId );
 		// the SUT
 		$factory = new MancalaFactory( $dbMock );

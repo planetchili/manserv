@@ -11,7 +11,7 @@ try
 	$s = new Session( $db );
 
 	// need a cmd at least
-	assert( isset( $_POST['cmd'] ),'cmd not set in req to testsc' );
+	assert( isset( $_POST['cmd'] ),'cmd not set in req to loginctrl' );
 
 	switch( $_POST['cmd'] )
 	{
@@ -29,7 +29,7 @@ try
 		$resp = $s->GetUser()->ToArray();
 		break;
 	default:
-		throw new ChiliException( 'bad command in testsc' );
+		throw new ChiliException( 'bad command in loginctrl' );
 	}
 
 	// return result

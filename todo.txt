@@ -10,3 +10,4 @@ TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
 TODO: testing wrong user login name for game operations (necessary after authentication additions)
 TODO: restrict user names etc
+TODO: investigate potential problem with accessing RoomPlayers by index (index not stable via query??)

@@ -53,5 +53,14 @@ class RoomPlayer implements IReadonlyRoomPlayer
 	{
 		$this->isOwner = true;
 	}
+
+	public function ToAssociative() : array
+	{
+		return [
+			'userId'=>$this->userId,
+			'isOwner'=>$this->isOwner,
+			'isReady'=>$this->isReady
+		];
+	}
 }
 ?>

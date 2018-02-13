@@ -32,6 +32,8 @@ interface IMancalaDatabase
 
     public function GetActiveGamesByUserId( int $userId ) : array;
 
+    public function ListRooms() : array;
+
     public function LoadNewMoves( int $gameId,int $fromTurn ) : array;
 
     public function AddMembership( RoomPlayer $player,int $roomId ) : void;

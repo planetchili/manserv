@@ -11,5 +11,7 @@ interface IReadonlyRoomPlayer
 	public function IsOwner() : bool;
 
 	public function IsReady() : bool;
+
+	public function ToAssociative() : array;
 }
 ?>

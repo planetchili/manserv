@@ -25,7 +25,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals( 2,$ri->GetPlayerCount(),'getplayercount failed' );
 		$this->assertFalse( $ri->IsEngaged(),'isengaged should be false' );
 		$this->assertFalse( $ri->IsLocked(),'islocked should be false' );
-		$this->assertEquals( new RoomPlayer( 11,false,false ),$ri->GetPlayer( 1 ) );
+		$this->assertEquals( new RoomPlayer( 11,false,false ),$ri->GetPlayers()[1] );
 		$this->assertEquals( [
 				new RoomPlayer( 69,true,true ),
 				new RoomPlayer( 11,false,false )
@@ -94,7 +94,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	public function testRemovePlayer()
 	{
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
-                        ->setMethods( ['RemoveMembership'] )
+                        ->setMethods( ['RemoveMembership','UpdateMembership'] )
                         ->disableOriginalConstructor()
                         ->getMock();
 		
@@ -103,15 +103,18 @@ class RoomTest extends PHPUnit\Framework\TestCase
 			new RoomPlayer( 69,true,true ),
 			new RoomPlayer( 11,false )
 		] );
-		$player = $rp->GetPlayer( 0 );
+		$player = $rp->GetPlayers()[0];
         $dbMock->expects( $this->once() )
                ->method( 'RemoveMembership' )
 			   ->with( $player->GetUserId(),$rp->GetId() );
+		$dbMock->expects( $this->once() )
+			   ->method( 'UpdateMembership' )
+			   ->with( new RoomPlayer( 11,true,false ),420 );
 		
 		$rp->RemovePlayer( $player->GetUserId(),$dbMock );
 		$this->assertEquals( 1,$rp->GetPlayerCount() );
-		$this->assertEquals( 11,$rp->GetPlayer( 0 )->GetUserId() );
-		$this->assertTrue( $rp->GetPlayer( 0 )->IsOwner() );
+		$this->assertEquals( 11,$rp->GetPlayers()[0]->GetUserId() );
+		$this->assertTrue( $rp->GetPlayers()[0]->IsOwner() );
 	}
 
 	/** @depends clone testBasicGetters */
@@ -145,7 +148,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 			new RoomPlayer( 11,false )
 		] );
 		// ready player 1
-		$rp->GetPlayer( 1 )->MakeReady();
+		$rp->GetPlayers()[1]->MakeReady();
 
 		// seed with same to ensure expected start side
 		srand( 69 );
@@ -176,7 +179,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertFalse( $room->IsEngaged() );
 	}
 
-	public function testReadyPlayerIndex()
+	public function testReadyPlayer()
 	{
 		// mock the db
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
@@ -194,11 +197,11 @@ class RoomTest extends PHPUnit\Framework\TestCase
 				->with( new RoomPlayer( 69,true,true ),420 );	
 	
 		// ready player 0
-		$rp->ReadyPlayerIndex( 0 );
-		$this->assertTrue( $rp->GetPlayer( 0 )->IsReady() );
+		$rp->ReadyPlayer( 69 );
+		$this->assertTrue( $rp->GetPlayers()[0]->IsReady() );
 	}
 
-	public function testUnreadyPlayerIndex()
+	public function testUnreadyPlayer()
 	{
 		// mock the db
         $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
@@ -216,8 +219,33 @@ class RoomTest extends PHPUnit\Framework\TestCase
 				->with( new RoomPlayer( 69,true,false ),420 );	
 	
 		// ready player 0
-		$rp->UnreadyPlayerIndex( 0 );
-		$this->assertFalse( $rp->GetPlayer( 0 )->IsReady() );
+		$rp->UnreadyPlayer( 69 );
+		$this->assertFalse( $rp->GetPlayers()[0]->IsReady() );
+	}
+	
+	/** @depends testBasicGetters */
+	public function testToAssociative( Room $ri )
+	{
+		$this->assertEquals( [
+				'id'=>'420',
+				'name'=>'chili game',
+				'gameId'=>null,
+				'players'=>
+					[			
+						[
+							'userId'=>69,
+							'isOwner'=>true,
+							'isReady'=>true
+						],			
+						[
+							'userId'=>11,
+							'isOwner'=>false,
+							'isReady'=>false
+						]
+					]
+			],
+			$ri->ToAssociative()
+		);
 	}
 }
 ?>

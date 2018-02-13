@@ -324,6 +324,46 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         $this->assertEquals( 
             new Room( $roomId,'test game',null,null,$this->mdb,[new RoomPlayer( 2,false,true ),new RoomPlayer( 5,false )] ),
             $room );
-    } 
+    }
+
+    /** @depends testCreateNewRoom */
+    public function testListRoom()
+    {
+        $oneId = $this->mdb->CreateNewUser( 'one','onemail','onepass' );
+        $twoId = $this->mdb->CreateNewUser( 'two','twomail','twopass' );
+
+        $roomaId = $this->mdb->CreateNewRoom( 'room a',null );
+        $roombId = $this->mdb->CreateNewRoom( 'room b','bpass' );
+
+        $this->mdb->AddMembership( new RoomPlayer( 2,true,true ),$roomaId );
+        $this->mdb->AddMembership( new RoomPlayer( 3,false ),$roomaId );
+        $this->mdb->AddMembership( new RoomPlayer( $oneId,true,true ),$roombId );
+        $this->mdb->AddMembership( new RoomPlayer( $twoId,false,true ),$roombId );
+
+        $roomb = $this->mdb->LoadRoom( $roombId );
+        $roomb->EngageGame();
+
+        $list = $this->mdb->ListRooms();
+        
+        $this->assertEquals( 
+            [
+                [
+                    'id'=>1,
+                    'name'=>'room a',
+                    'engaged'=>false,
+                    'players'=>['mom','chili']
+                ],
+                [
+                    'id'=>2,
+                    'name'=>'room b',
+                    'engaged'=>true,
+                    'players'=>['one','two']
+                ]
+            ],
+            $list
+        );
+    }
+
+    // TODO: add more involved tests for room stuff
 }
 ?>

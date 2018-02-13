@@ -57,6 +57,7 @@ class Room implements IRoom
 		if( $owner_removed && $this->GetPlayerCount() > 0 )
 		{
 			$this->players[0]->MakeOwner();
+			$this->db->UpdateMembership( $this->players[0],$this->id );
 		}
 
 		$this->db->RemoveMembership( $userId,$this->id );
@@ -66,11 +67,12 @@ class Room implements IRoom
 	{
 		assert( !$this->IsEngaged(),'tried to engage when game in progress' );
 		assert( $this->GetPlayerCount() >= 2,'not enough players to engage game' );
-		assert( $this->GetPlayer( 0 )->IsReady() && $this->GetPlayer( 1 )->IsReady(),'tried to engage when both players not ready' );
+		$players = $this->GetPlayers();
+		assert( $players[0]->IsReady() && $players[1]->IsReady(),'tried to engage when both players not ready' );
 
 		$this->gameId = $this->db->CreateNewGame( 
-			$this->GetPlayer( 0 )->GetUserId(),
-			$this->GetPlayer( 1 )->GetUserId(),
+			$players[0]->GetUserId(),
+			$players[1]->GetUserId(),
 			new Side( rand( 0,1 ) )
 		);
 
@@ -86,9 +88,24 @@ class Room implements IRoom
 		$this->db->UpdateRoom( $this );
 	}
 
-	public function GetPlayer( int $index ) : IReadonlyRoomPlayer
+	public function GetPlayer( int $userId ) : IReadonlyRoomPlayer
 	{
-		return $this->players[$index];
+		$target = false;
+		foreach( $this->players as $player )
+		{
+			if( $player->GetUserId() === $userId )
+			{
+				$target = $player;
+				break;
+			}
+		}
+
+		if( !$target )
+		{
+			throw new ChiliException( 'getplayer: userid does not exist in room' );
+		}
+		
+		return $target;
 	}
 
 	/** @return IReadonlyRoomPlayer[] */
@@ -97,16 +114,18 @@ class Room implements IRoom
 		return $this->players;
 	}
 
-	public function ReadyPlayerIndex( int $index ) : void
+	public function ReadyPlayer( int $userId ) : void
 	{
-		$this->players[$index]->MakeReady();
-		$this->db->UpdateMembership( $this->players[$index],$this->GetId() );
+		$player = $this->GetPlayer( $userId );
+		$player->MakeReady();
+		$this->db->UpdateMembership( $player,$this->GetId() );
 	}
 
-	public function UnreadyPlayerIndex( int $index ) : void
+	public function UnreadyPlayer( int $userId ) : void
 	{
-		$this->players[$index]->ClearReady();
-		$this->db->UpdateMembership( $this->players[$index],$this->GetId() );
+		$player = $this->GetPlayer( $userId );
+		$player->ClearReady();
+		$this->db->UpdateMembership( $player,$this->GetId() );
 	}
 
 	public function GetPlayerCount() : int
@@ -143,6 +162,20 @@ class Room implements IRoom
 	{
 		assert( $this->gameId != null,'get gameid called when room not engaged' );
 		return $this->gameId;
+	}
+
+	public function ToAssociative() : array
+	{
+		return [
+			'id'=>$this->id,
+			'name'=>$this->name,
+			'gameId'=>$this->gameId,
+			'players'=>array_map( 
+				function( IReadonlyRoomPlayer $player ) 
+					{ return $player->ToAssociative();},
+				$this->players
+			)
+		];
 	}
 }
 ?>

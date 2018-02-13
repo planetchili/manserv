@@ -20,9 +20,14 @@ class MancalaFactory
 	public function MakeRoom( string $name,?string $password = null ) : IRoom
 	{
 		$passwordHash = ($password == null) ? null : password_hash( $password,PASSWORD_DEFAULT );
-		$roomId = $this->db->CreateNewRoom( $name,$password );
+		$roomId = $this->db->CreateNewRoom( $name,$passwordHash );
 		// TODO: reorder room ctor params and add default values
 		return new Room( $roomId,$name,null,$passwordHash,$this->db );
+	}
+
+	public function LoadRoom( int $roomId ) : IRoom
+	{
+		return $this->db->LoadRoom( $roomId );
 	}
 
 	public function MakeGame( int $userId0,int $userId1,Side $startSide ) : Game

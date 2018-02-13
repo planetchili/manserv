@@ -49,5 +49,16 @@ class RoomPlayerTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals( $rp->GetUserId(),$user->GetId(),'bad userid' );
 		$this->assertEquals( 'chili',$user->GetName(),'bad name' );
 	}
+
+	/** @depends testBasicGetters */
+	public function testToAssociative( RoomPlayer $rp )
+	{		
+		$this->assertEquals( [
+			'userId'=>69,
+			'isOwner'=>false,
+			'isReady'=>true
+		],
+		$rp->ToAssociative() );
+	}
 }
 ?>
