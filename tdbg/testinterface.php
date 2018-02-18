@@ -2,6 +2,7 @@
 require_once '../ChiliGuzz.php';
 require_once 'DebugRender.php';
 
+
 session_start();
 
 $title = 'Mancala Tester';
@@ -15,13 +16,16 @@ function GetPlayerName( array $gameData,Side $side ) : string
 if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'logout' )
 {
 	unset( $_SESSION['userData'] );
+	unset( $_SESSION['roomData'] );
 	unset( $_SESSION['gameData'] );
 	unset( $_SESSION['jar'] );
 	unset( $_SESSION['skipUpdate'] );
+	unset( $_SESSION['initialized'] );
 }
 
 if( isset( $_SESSION['userData'] ) )
 {
+	// player is sessioned in a game already
 	if( isset( $_SESSION['gameData'] ) )
 	{		
 		$winStateNames = [
@@ -124,40 +128,256 @@ if( isset( $_SESSION['userData'] ) )
 			header( 'Refresh: 0' );
 		}
 	}
-	else
+	// player is sessioned in a room already
+	else if( isset( $_SESSION['roomData'] ) )
 	{
-		$resp = GuzzPost( 'GameController',['cmd'=>'getactive'],$_SESSION['jar'] );
-		if( $resp['status']['isFail'] )
+		// check for ready command / leave room command
+		// otherwise update
+		if( isset( $_POST['cmd'] ) )
 		{
-			$output .= '<p>'.$resp['status']['message'].'</p>';
-		}
-		else
-		{
-			$activeGameIds = $resp['payload'];
-			if( count( $activeGameIds ) == 0 )
+			if( $_POST['cmd'] == 'ready' )
 			{
-				$output .= '<h2>No active games for this user!</h2>';
+				$resp = GuzzPost( 'RoomController',
+					[
+						'cmd'=>'ready',
+						'roomId'=>$_SESSION['roomData']['id']
+					],
+					$_SESSION['jar']
+				);			
+				if( $resp['status']['isFail'] )
+				{
+					$output .= '<p>'.$resp['status']['message'].'</p>';
+				}
+				else
+				{
+					header( 'Location: '.$_SERVER['PHP_SELF'] );
+					die;					
+				}
+			}
+			else if( $_POST['cmd'] == 'unready' )
+			{
+				$resp = GuzzPost( 'RoomController',
+					[
+						'cmd'=>'unready',
+						'roomId'=>$_SESSION['roomData']['id']
+					],
+					$_SESSION['jar']
+				);			
+				if( $resp['status']['isFail'] )
+				{
+					$output .= '<p>'.$resp['status']['message'].'</p>';
+				}
+				else
+				{
+					header( 'Location: '.$_SERVER['PHP_SELF'] );
+					die;					
+				}
+			}
+			else if( $_POST['cmd'] == 'leave' )
+			{
+				$resp = GuzzPost( 'RoomController',
+					[
+						'cmd'=>'leave',
+						'roomId'=>$_SESSION['roomData']['id']
+					],
+					$_SESSION['jar']
+				);			
+				if( $resp['status']['isFail'] )
+				{
+					$output .= '<p>'.$resp['status']['message'].'</p>';
+				}
+				else
+				{
+					unset( $_SESSION['roomData'] );
+					header( 'Location: '.$_SERVER['PHP_SELF'] );
+					die;					
+				}
 			}
 			else
 			{
-				$resp = GuzzPost( 'GameController',['cmd'=>'query','gameId'=>$activeGameIds[0]],$_SESSION['jar'] );
+				$output .= '<p>Bad cmd: '.$_POST['cmd'].'</p>';
+			}
+		}
+		else
+		{
+			$resp = GuzzPost( 'RoomController',
+				[
+					'cmd'=>'update',
+					'roomId'=>$_SESSION['roomData']['id']
+				],
+				$_SESSION['jar']
+			);			
+			if( $resp['status']['isFail'] )
+			{
+				$output .= '<p>'.$resp['status']['message'].'</p>';
+			}
+			else
+			{
+				$room = $resp['payload'];
+				$output .= '<h2>'.$room['name'].'</h2>';
+				foreach( $room['players'] as $player )
+				{
+					$output .= '<p>'.$player['name'].($player['isOwner']?'&#x1f528':'').($player['isReady']?'&#x2714;':'').'</p>';
+				}
+				$output .= '
+				<form method="POST">
+					<input type="hidden" name="cmd" value="ready">
+					<input type="submit" value="Ready">
+				</form><br/>';
+				$output .= '
+				<form method="POST">
+					<input type="hidden" name="cmd" value="unready">
+					<input type="submit" value="Unready">
+				</form><br/>';
+				$output .= '
+				<form method="POST">
+					<input type="hidden" name="cmd" value="leave">
+					<input type="submit" value="Leave">
+				</form><br/>';
+			}
+		}
+	}
+	else
+	{
+		if( !isset( $_SESSION['initialized'] ) )
+		{
+			$resp = GuzzPost( 'RoomController',
+				[
+					'cmd'=>'check'
+				],
+				$_SESSION['jar']
+			);			
+			if( $resp['status']['isFail'] )
+			{
+				$output .= '<p>'.$resp['status']['message'].'</p>';
+			}
+			else if( $resp['payload'] != [] )
+			{
+				$_SESSION['roomData'] = $resp['payload'];
+				if( $_SESSION['roomData']['gameId'] != null )
+				{
+					$resp = GuzzPost( 'GameController',['cmd'=>'query','gameId'=>$_SESSION['roomData']['gameId']],$_SESSION['jar'] );
+					if( $resp['status']['isFail'] )
+					{
+						throw new ChiliException( $resp['status']['message'] );
+					}
+					$_SESSION['gameData'] = $resp['payload'];
+					$_SESSION['gameData']['id'] = (int)$_SESSION['roomData']['gameId'];
+					$_SESSION['skipUpdate'] = true;
+				}
+			}
+
+			$_SESSION['initialized'] = true;
+			header( 'Location: '.$_SERVER['PHP_SELF'] );
+			die;
+		}
+		else // logged in and initialized, no room
+		{
+			if( isset( $_POST['cmd'] ) )
+			{
+				if( $_POST['cmd'] == 'join' )
+				{
+					$resp = GuzzPost( 'RoomController',
+						[
+							'cmd'=>'join',
+							'roomId'=>$_POST['roomId'],
+							'password'=>$_POST['password']
+						],
+						$_SESSION['jar']
+					);			
+					if( $resp['status']['isFail'] )
+					{
+						$output .= '<p>'.$resp['status']['message'].'</p>';
+					}
+					$_SESSION['roomData'] = $resp['payload'];
+	
+					header( 'Location: '.$_SERVER['PHP_SELF'] );
+					die;
+
+				}
+				else if( $_POST['cmd'] == 'create' )
+				{
+					$resp = GuzzPost( 'RoomController',
+						[
+							'cmd'=>'create',
+							'name'=>$_POST['name'],
+							'password'=>$_POST['password']
+						],
+						$_SESSION['jar']
+					);			
+					if( $resp['status']['isFail'] )
+					{
+						$output .= '<p>'.$resp['status']['message'].'</p>';
+					}
+					else
+					{
+						$_SESSION['roomData'] = $resp['payload'];	
+						header( 'Location: '.$_SERVER['PHP_SELF'] );
+						die;
+					}
+				}
+				else
+				{
+					$output .= '<p>Bad cmd: '.$_POST['cmd'].'</p>';
+				}
+			}
+			else
+			{
+				// otherwise just list
+				// output create form
+				$output .= '
+				<form method="POST">
+					<h3>Create Room</h3>
+					<input type="hidden" name="cmd" value="create">
+					<input type="text" name="name">
+					<input type="text" name="password">
+					<input type="submit" value="Create Room">
+				</form><br/>';
+
+				// output refresh form
+				$output .= '
+				<form method="POST">
+					<input type="submit" value="Refresh">
+				</form><br/>';
+
+				// output room list/join forms
+				$resp = GuzzPost( 'RoomController',
+					[
+						'cmd'=>'list'
+					],
+					$_SESSION['jar']
+				);			
 				if( $resp['status']['isFail'] )
 				{
-					throw new ChiliException( $resp['status']['message'] );
+					$output .= '<p>'.$resp['status']['message'].'</p>';
 				}
-				$_SESSION['gameData'] = $resp['payload'];
-				$_SESSION['gameData']['id'] = $activeGameIds[0];
-				$_SESSION['skipUpdate'] = true;
 
-				header( 'Location: '.$_SERVER['PHP_SELF'] );
-				die;
-			}				
+				$output .= '<h2>Rooms</h2>';
+				$rooms = $resp['payload'];
+				foreach( $rooms as $room )
+				{
+					// TODO: add player roles
+					$output .= '
+					<form method="POST">
+						<h3>'.$room['name'].($room['locked'] ? '&#x1f512;' : '').'</h3>';
+					foreach( $room['players'] as $player_name )
+					{
+						$output .= '<p>'.$player_name.'</p>';
+					}
+					$output .=	
+					   '<input type="hidden" name="cmd" value="join">
+						<input type="hidden" name="roomId" value="'.$room['id'].'">
+						<input type="text" name="password">
+						<input type="submit" value="Join">
+					</form><br/>';
+				}				
+			}
 		}
 	}
 }
 else
 {
-	if( isset( $_POST['username'] ) && isset( $_POST['password'] ) )
+	if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'login' && isset( $_POST['username'] ) && isset( $_POST['password'] ) )
 	{
 		$_SESSION['jar'] = GuzzMakeJar();
 		$response = GuzzPost( 'LoginController',[
@@ -180,6 +400,7 @@ else
 		$output .= '
 		<h2>Login to play Mancala!</h2>
 		<form method="POST">
+			<input type="hidden" name="cmd" value="login">
 			<input type="text" name="username">
 			<input type="text" name="password">
 			<input type="submit" value="Login">

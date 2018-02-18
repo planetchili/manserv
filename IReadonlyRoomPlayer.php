@@ -12,6 +12,6 @@ interface IReadonlyRoomPlayer
 
 	public function IsReady() : bool;
 
-	public function ToAssociative() : array;
+	public function ToAssociative( IMancalaDatabase $db ) : array;
 }
 ?>

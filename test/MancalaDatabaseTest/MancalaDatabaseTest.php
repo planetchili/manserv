@@ -364,6 +364,32 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
         );
     }
 
+    /** @depends testCreateNewRoom */
+    public function testLoadRoomFromUserId()
+    {
+        $oneId = $this->mdb->CreateNewUser( 'one','onemail','onepass' );
+        $twoId = $this->mdb->CreateNewUser( 'two','twomail','twopass' );
+
+        $roomaId = $this->mdb->CreateNewRoom( 'room a',null );
+        $roombId = $this->mdb->CreateNewRoom( 'room b','bpass' );
+
+        $this->mdb->AddMembership( new RoomPlayer( 2,true,true ),$roomaId );
+        $this->mdb->AddMembership( new RoomPlayer( 3,false ),$roomaId );
+        $this->mdb->AddMembership( new RoomPlayer( $oneId,true,true ),$roombId );
+        $this->mdb->AddMembership( new RoomPlayer( $twoId,false,true ),$roombId );
+
+        $roomb = $this->mdb->LoadRoom( $roombId );
+        $gameId = $roomb->EngageGame();
+        
+
+        $roomt1 = $this->mdb->LoadRoomFromUserId( 3 );
+        $this->assertEquals( $roomaId,$roomt1->GetId() );
+
+        $roomt2 = $this->mdb->LoadRoomFromUserId( $oneId );
+        $this->assertEquals( $roombId,$roomt2->GetId() );
+        $this->assertEquals( $gameId,$roomt2->GetGameId() );
+    }
+
     // TODO: add more involved tests for room stuff
 }
 ?>

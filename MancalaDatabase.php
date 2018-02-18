@@ -224,18 +224,25 @@ class MancalaDatabase implements IMancalaDatabase
 
         if( $passwordHash == null )
         {
-            $this->conn->exec(
-                "INSERT into rooms set
-                    `name` = '{$name}';"
+            $stmt = $this->conn->prepare(
+                'INSERT into rooms set
+                    `name` = :n;'
             );
+            $stmt->execute( [
+                ':n'=>$name
+            ] );
         }
         else
         {
-            $this->conn->exec(
-                "INSERT into rooms set
-                    `name` = '{$name}',
-                    passwordHash = '{$passwordHash}';"
-            );            
+            $stmt = $this->conn->prepare(
+                'INSERT into rooms set
+                    `name` = :n
+                    passwordHash = :p;'
+            );
+            $stmt->execute( [
+                ':n'=>$name,
+                ':p'=>$passwordHash
+            ] );        
         }
 
         return $this->conn->lastInsertId();
@@ -274,6 +281,7 @@ class MancalaDatabase implements IMancalaDatabase
         return new Room( $roomId,$cols['name'],$cols['gameId'],$cols['passwordHash'],$this,$this->LoadPlayers( $roomId ) );
     }
 
+    // TODO: update test to check locked result key
     public function ListRooms() : array
     {
         $user_data = $this->conn->qfetcha( 
@@ -283,7 +291,7 @@ class MancalaDatabase implements IMancalaDatabase
         );
 
         $room_data =  $this->conn->qfetcha( 
-            'SELECT id,`name`,gameId from rooms
+            'SELECT id,`name`,gameId,passwordHash from rooms
              order by id asc;'
         );
 
@@ -297,11 +305,32 @@ class MancalaDatabase implements IMancalaDatabase
                 'id'=>(int)$room['id'],
                 'name'=>$room['name'],
                 'engaged'=>($room['gameId'] == null) ? false : true,
+                'locked'=>($room['passwordHash'] == null) ? false : true,
                 'players'=>array_column( $players,'name' )
             ];
         }
 
         return $rooms;
+    }
+
+    public function LoadRoomFromUserId( int $userId ) : ?IRoom
+    {
+        $qresult = $this->conn->qfetchi( 
+            "SELECT roomId from memberships
+             where userId = {$userId};"
+        );
+
+        $rcount = count( $qresult );
+        if( $rcount == 0 )
+        {
+            return null;
+        }
+        else if( $rcount != 1 )
+        {
+            throw new ChiliException( 'roomfromuserid: bad number of room memberships for user' );
+        }
+
+        return $this->LoadRoom( $qresult[0][0] );
     }
 
     public function DestroyRoom( int $roomId ) : void

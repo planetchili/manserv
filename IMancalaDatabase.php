@@ -48,5 +48,7 @@ interface IMancalaDatabase
     public function LoadPlayers( int $roomId ) : array;
 
     public function LoadRoom( int $roomId ) : IRoom;
+
+    public function LoadRoomFromUserId( int $userId ) : ?IRoom;
 }
 ?>

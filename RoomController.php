@@ -28,7 +28,9 @@ try
 	// TODO: should make sure not already in room before doing this
 	case 'create':
 		$password = ($_POST['password'] == '' ) ? null : $_POST['password'];
-		$resp = $f->MakeRoom( $_POST['name'],$password )->ToAssociative();
+		$room = $f->MakeRoom( $_POST['name'],$password );
+		$room->AddPlayer( $s->GetUserId() );
+		$resp = $room->ToAssociative();
 		break;
 	case 'join':
 		$room = $f->LoadRoom( (int)$_POST['roomId'] );
@@ -49,6 +51,10 @@ try
 		// maybe return room list when leave table??
 		$room = $f->LoadRoom( (int)$_POST['roomId'] );
 		$room->RemovePlayer( $s->GetUserId() );
+		if( $room->GetPlayerCount() == 0 )
+		{
+			$db->DestroyRoom( $room->GetId() );
+		}
 		$resp = [];
 		break;
 	case 'list':
@@ -59,6 +65,18 @@ try
 		$room->ReadyPlayer( $s->GetUserId() );
 		// start game if ready?
 		$resp = [];
+		break;
+	// TODO: test this
+	case 'unready':
+		$room = $f->LoadRoom( (int)$_POST['roomId'] );
+		$room->UnreadyPlayer( $s->GetUserId() );
+		// start game if ready?
+		$resp = [];
+		break;
+	// check if we are in a room, if so return it
+	case 'check':
+		$room = $db->LoadRoomFromUserId( $s->GetUserId() );
+		$resp = ($room != null) ? $room->ToAssociative() : [];
 		break;
 	default:
 		throw new ChiliException( 'bad command in rmctrl' );

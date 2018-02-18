@@ -7,6 +7,9 @@
 require_once '../MancalaDatabase.php';
 require_once '../MancalaFactory.php';
 
+session_start();
+session_destroy();
+
 $db = new MancalaDatabase( new ChiliSql( 'testschema','testuser','password' ) );
 $factory = new MancalaFactory( $db );
 $db->ClearSchema();
@@ -14,12 +17,6 @@ $db->SetupSchema();
 
 $user0 = $factory->MakeUser( 'chili','pubes@me.com','chilipass' );
 $user1 = $factory->MakeUser( 'mom','dimsum@me.com','mompass' );
-
-$gid = $factory->MakeGame(
-    $user0->GetId(),
-    $user1->GetId(),
-    Side::Top()
-);
 ?>
 </html>
 

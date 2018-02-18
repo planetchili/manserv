@@ -481,5 +481,68 @@ class RoomControllerTest extends ChiliDatabaseTest
 			$room
 		);			
 	}
+
+	/** @depends testJoin2RoomPass */
+	public function testCheck()
+	{
+		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
+		$jar = GuzzMakeJar();
+		$resp = GuzzPost( 'LoginController.php',$req,$jar );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
+		}
+		
+		$req = ['cmd' => 'create','name' => 'Dog Farts','password' => 'password'];
+		$resp = GuzzPost( 'RoomController.php',$req,$jar );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
+		}
+
+		$room = $resp['payload'];
+		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
+		$resp = GuzzPost( 'RoomController.php',$req,$jar );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
+		}
+		
+		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
+		$jar2 = GuzzMakeJar();
+		$resp = GuzzPost( 'LoginController.php',$req,$jar2 );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'login: response status [fail] with: '.$resp['status']['message'] );
+		}
+
+		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
+		$resp = GuzzPost( 'RoomController.php',$req,$jar2 );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
+		}
+
+		$req = ['cmd' => 'check'];
+		$resp = GuzzPost( 'RoomController.php',$req,$jar2 );
+		if( $resp['status']['isFail'] )
+		{
+			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
+		}
+
+		$room = $resp['payload'];
+		$this->assertEquals( 
+			[
+				'id'=>1,
+				'name'=>'Dog Farts',
+				'gameId'=>null,
+				'players'=>[
+					['userId'=>1,'isOwner'=>true,'isReady'=>false],
+					['userId'=>2,'isOwner'=>false,'isReady'=>false]
+				]
+			],
+			$room
+		);			
+	}
 }
 ?>

@@ -172,7 +172,7 @@ class Room implements IRoom
 			'gameId'=>$this->gameId,
 			'players'=>array_map( 
 				function( IReadonlyRoomPlayer $player ) 
-					{ return $player->ToAssociative();},
+					{ return $player->ToAssociative( $this->db );},
 				$this->players
 			)
 		];
