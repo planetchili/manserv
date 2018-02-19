@@ -213,9 +213,32 @@ if( isset( $_SESSION['userData'] ) )
 			}
 			else
 			{
-				$room = $resp['payload'];
-				$output .= '<h2>'.$room['name'].'</h2>';
-				foreach( $room['players'] as $player )
+				$_SESSION['roomData'] = $resp['payload'];
+				if( $_SESSION['roomData']['gameId'] != null )
+				{
+					$resp = GuzzPost( 'GameController',
+						[
+							'cmd'=>'query',
+							'gameId'=>$_SESSION['roomData']['gameId']
+						],
+						$_SESSION['jar']
+					);			
+					if( $resp['status']['isFail'] )
+					{
+						$output .= '<p>'.$resp['status']['message'].'</p>';
+					}
+					else
+					{
+						$_SESSION['gameData'] = $resp['payload'];
+						$_SESSION['gameData']['id'] = (int)$_SESSION['roomData'];
+						$_SESSION['skipUpdate'] = true;
+						header( 'Location: '.$_SERVER['PHP_SELF'] );
+						die;
+					}
+				}
+
+				$output .= '<h2>'.$_SESSION['roomData']['name'].'</h2>';
+				foreach( $_SESSION['roomData']['players'] as $player )
 				{
 					$output .= '<p>'.$player['name'].($player['isOwner']?'&#x1f528':'').($player['isReady']?'&#x2714;':'').'</p>';
 				}

@@ -236,7 +236,7 @@ class MancalaDatabase implements IMancalaDatabase
         {
             $stmt = $this->conn->prepare(
                 'INSERT into rooms set
-                    `name` = :n
+                    `name` = :n,
                     passwordHash = :p;'
             );
             $stmt->execute( [

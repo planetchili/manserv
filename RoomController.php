@@ -63,8 +63,15 @@ try
 	case 'ready':
 		$room = $f->LoadRoom( (int)$_POST['roomId'] );
 		$room->ReadyPlayer( $s->GetUserId() );
-		// start game if ready?
 		$resp = [];
+		// start game if ready
+		if( array_reduce( $room->GetPlayers(),function( bool $carry,RoomPlayer $item )
+		{
+			return $carry && $item->IsReady();
+		},true ) )
+		{
+			$room->EngageGame();
+		}
 		break;
 	// TODO: test this
 	case 'unready':
