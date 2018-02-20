@@ -351,13 +351,15 @@ class MancalaDatabaseTest extends ChiliDatabaseTest
                     'id'=>1,
                     'name'=>'room a',
                     'engaged'=>false,
-                    'players'=>['mom','chili']
+                    'players'=>['mom','chili'],
+                    'locked'=>false
                 ],
                 [
                     'id'=>2,
                     'name'=>'room b',
                     'engaged'=>true,
-                    'players'=>['one','two']
+                    'players'=>['one','two'],
+                    'locked'=>true
                 ]
             ],
             $list

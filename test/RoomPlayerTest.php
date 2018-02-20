@@ -52,13 +52,25 @@ class RoomPlayerTest extends PHPUnit\Framework\TestCase
 
 	/** @depends testBasicGetters */
 	public function testToAssociative( RoomPlayer $rp )
-	{		
+	{	
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+                        ->setMethods( ['LoadUserById'] )
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $dbMock->expects( $this->once() )
+               ->method( 'LoadUserById' )
+               ->with( $rp->GetUserId() )
+               ->willReturn( new User( 
+				   69,'chili',
+				   'chili@planetchili.net','qqqqqqq',true
+			   ) );	
+
 		$this->assertEquals( [
-			'userId'=>69,
+			'name'=>'chili',
 			'isOwner'=>false,
 			'isReady'=>true
 		],
-		$rp->ToAssociative() );
+		$rp->ToAssociative( $dbMock ) );
 	}
 }
 ?>

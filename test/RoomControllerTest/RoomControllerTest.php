@@ -61,7 +61,13 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'id'=>1,
 				'name'=>'Dog Farts',
 				'gameId'=>null,
-				'players'=>[]
+				'players'=>[
+					[
+						'name'=>'chili',
+						'isOwner'=>true,
+						'isReady'=>false
+					]
+				]
 			],			
 			$room
 		);		
@@ -90,7 +96,13 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'id'=>1,
 				'name'=>'Dog Farts',
 				'gameId'=>null,
-				'players'=>[]
+				'players'=>[
+					[
+						'name'=>'chili',
+						'isOwner'=>true,
+						'isReady'=>false
+					]
+				]
 			],
 			$room
 		);		
@@ -115,20 +127,12 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => ''];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
-
-		$room = $resp['payload'];
 		$this->assertEquals( 
 			[
 				'id'=>1,
 				'name'=>'Dog Farts',
 				'gameId'=>null,
-				'players'=>[['userId'=>1,'isOwner'=>true,'isReady'=>false]]
+				'players'=>[['name'=>'chili','isOwner'=>true,'isReady'=>false]]
 			],
 			$room
 		);		
@@ -153,12 +157,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -182,8 +180,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['userId'=>1,'isOwner'=>true,'isReady'=>false],
-					['userId'=>2,'isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room
@@ -236,12 +234,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -272,8 +264,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['userId'=>1,'isOwner'=>true,'isReady'=>false],
-					['userId'=>2,'isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room
@@ -299,12 +291,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -342,7 +328,7 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['userId'=>2,'isOwner'=>true,'isReady'=>false]
+					['name'=>'mom','isOwner'=>true,'isReady'=>false]
 				]
 			],
 			$room
@@ -369,12 +355,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -405,7 +385,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 					'id'=>1,
 					'name'=>'Dog Farts',
 					'engaged'=>false,
-					'players'=>['chili','mom']
+					'players'=>['chili','mom'],
+					'locked'=>true
 				]
 			],
 			$room
@@ -431,12 +412,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -474,8 +449,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['userId'=>1,'isOwner'=>true,'isReady'=>false],
-					['userId'=>2,'isOwner'=>false,'isReady'=>true]
+					['name'=>'chili','isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','isOwner'=>false,'isReady'=>true]
 				]
 			],
 			$room
@@ -501,12 +476,6 @@ class RoomControllerTest extends ChiliDatabaseTest
 		}
 
 		$room = $resp['payload'];
-		$req = ['cmd' => 'join','roomId' => $room['id'],'password' => 'password'];
-		$resp = GuzzPost( 'RoomController.php',$req,$jar );
-		if( $resp['status']['isFail'] )
-		{
-			$this->fail( 'create: response status [fail] with: '.$resp['status']['message'] );
-		}
 		
 		$req = ['cmd' => 'login','userName' => 'mom','password' => 'mompass'];
 		$jar2 = GuzzMakeJar();
@@ -537,8 +506,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['userId'=>1,'isOwner'=>true,'isReady'=>false],
-					['userId'=>2,'isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room

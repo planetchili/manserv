@@ -201,6 +201,7 @@ class RoomTest extends PHPUnit\Framework\TestCase
 		$this->assertTrue( $rp->GetPlayers()[0]->IsReady() );
 	}
 
+	// might be a problem
 	public function testUnreadyPlayer()
 	{
 		// mock the db
@@ -224,21 +225,38 @@ class RoomTest extends PHPUnit\Framework\TestCase
 	}
 	
 	/** @depends testBasicGetters */
-	public function testToAssociative( Room $ri )
+	public function testToAssociative()
 	{
+        $dbMock = $this ->getMockBuilder( MancalaDatabase::class )
+						->disableOriginalConstructor()
+						->setMethods( ['LoadUserById'] )
+						->getMock();		
+		$dbMock ->expects( $this->exactly( 2 ) )
+				->method( 'LoadUserById' )
+				->withConsecutive( [69],[11] )
+				->willReturnOnConsecutiveCalls(
+					new User( 69,'chili','diiik','$hash',true ),
+					new User( 11,'mom','diiik','$hash',true )
+				);
+        $ri = new Room( 420,'chili game',null,null,$dbMock,
+		[			
+			new RoomPlayer( 69,true,true ),
+			new RoomPlayer( 11,false )
+		] );
+
 		$this->assertEquals( [
-				'id'=>'420',
+				'id'=>420,
 				'name'=>'chili game',
 				'gameId'=>null,
 				'players'=>
 					[			
 						[
-							'userId'=>69,
+							'name'=>'chili',
 							'isOwner'=>true,
 							'isReady'=>true
 						],			
 						[
-							'userId'=>11,
+							'name'=>'mom',
 							'isOwner'=>false,
 							'isReady'=>false
 						]
