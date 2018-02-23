@@ -5,6 +5,8 @@ interface IRoom
 {
 	public function GetPlayer( int $userId ) : IReadonlyRoomPlayer;
 
+	public function GetOtherPlayer( int $userId ) : IReadonlyRoomPlayer;
+
 	public function AddPlayer( int $userId ) : void;
 
 	public function RemovePlayer( int $userId ) : void;
@@ -20,13 +22,17 @@ interface IRoom
 	
 	public function EngageGame() : int;
 
+	public function DisengageGame() : void;
+
+	public function CountEngagedPlayers() : int;
+
 	public function IsEngaged() : bool;
 
 	public function IsLocked() : bool;
 
 	public function VerifyPassword( string $password ) : bool;
 
-	public function GetGameId() : int;
+	public function GetGameId() : ?int;
 
 	public function ReadyPlayer( int $userId ) : void;
 

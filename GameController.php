@@ -65,11 +65,23 @@ try
 		// verify user has active turn
 		assert( $game->GetActiveSide() == $side,'not user turn for move in gc' );
 
-		// verify game is still in progress
-		assert( $game->GetWinState() == WinState::InProgress,"cannot move: game over in gc" );
-
-		// execute the move
-		$game->DoMove( new Pot( (int)$_POST['pot'] ) );
+		$opponentPresent = true;
+		// verify game is still in progress (check if over, then need presence check)
+		if( $game->GetWinState() != WinState::InProgress )
+		{
+			$roomId = $db->GetActiveGamesByUserId( $s->GetUserId() )[0];
+			$room = $factory->LoadRoom( $roomId );
+			$op = $room->GetOtherPlayer( $s->GetUserId() );
+			if( !$op->IsReady() )
+			{
+				$opponentPresent = false;
+			}
+		}
+		else
+		{
+			// execute the move
+			$game->DoMove( new Pot( (int)$_POST['pot'] ) );			
+		}
 		
 		// respond with current game state (changes only)
 		$resp = [
@@ -78,7 +90,8 @@ try
 				'board' => $game->DumpBoard(),
 				'winState' => $game->GetWinState(),
 				'activeSide' => $game->GetActiveSide()->GetIndex(),
-				'turn' => $game->GetTurn()
+				'turn' => $game->GetTurn(),
+				'opponentPresent' => $opponentPresent
 			]
 		];
 		break;
@@ -98,6 +111,17 @@ try
 				'user does not belong to this game'
 		);
 
+		$opponentPresent = true;
+		if( $game->GetWinState() != WinState::InProgress )
+		{
+			$room = $factory->LoadRoom( $_POST['roomId'] );
+			$op = $room->GetOtherPlayer( $s->GetUserId() );
+			if( !$op->IsReady() )
+			{
+				$opponentPresent = false;
+			}
+		}
+
 		// respond with full game info
 		$resp = [
 			'board' => $game->DumpBoard(),
@@ -110,7 +134,8 @@ try
 			[
 				['name'=>$player0->GetName(),'id'=>$player0->GetId()],
 				['name'=>$player1->GetName(),'id'=>$player1->GetId()]
-			]
+			],
+			'opponentPresent' => $opponentPresent
 		];
 		break;
 	case 'update':
@@ -118,11 +143,19 @@ try
 		$pair = SetupGame( $factory,$s );
 		$game = $pair->game;
 		$side = $pair->side;
+		
+		$opponentPresent = true;
+		if( $game->GetWinState() != WinState::InProgress )
+		{
+			$room = $factory->LoadRoom( $_POST['roomId'] );
+			$op = $room->GetOtherPlayer( $s->GetUserId() );
+			$opponentPresent = $op->IsReady();
+		}
 
 		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );
 		assert( $_POST['turn'] <= $game->GetTurn(),'bad turn; client ahead of server' );
 		$history = $db->LoadNewMoves( $game->GetGameId(),(int)$_POST['turn'] );
-		if( count( $history ) > 0 )
+		if( count( $history ) > 0 || $_POST['winState'] != $game->GetWinState() )
 		{
 			$resp = [
 				'upToDate' => false,
@@ -131,7 +164,8 @@ try
 					'board' => $game->DumpBoard(),
 					'winState' => $game->GetWinState(),
 					'activeSide' => $game->GetActiveSide()->GetIndex(),
-					'turn' => $game->GetTurn()
+					'turn' => $game->GetTurn(),
+					'opponentPresent' => $opponentPresent
 				]
 			];
 		}

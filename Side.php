@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/ChiliUtil.php';
+require_once __DIR__.'/WinState.php';
 
 class Side
 {
@@ -40,6 +41,11 @@ class Side
     {
         assert( in_range( $side,0,1 ),'Side value must be 0 or 1' );
         $this->side = $side;
+    }
+
+    public function GetWinState() : int
+    {
+        return ($this->side == 0) ? WinState::TopWins : WinState::BottomWins;
     }
 
     public function __toString() : string

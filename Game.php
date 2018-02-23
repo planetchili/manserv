@@ -56,6 +56,12 @@ class Game extends GameInfo
         return $this->board->ToArray();
     }
 
+    public function ForfeitUserId( int $userId ) : void
+    {
+        $this->winState = $this->GetSideFromId( $userId )->GetOpposite()->GetWinState();
+        $this->db->UpdateGame( $this );        
+    }
+
     public static function FromInfo( GameInfo $gameInfo,Board $board,IMancalaDatabase $db ) : Game
     {
         return new Game( $gameInfo->GetGameId(),$gameInfo->GetTurn(),

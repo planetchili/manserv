@@ -43,8 +43,10 @@ try
 		$resp = $room->ToAssociative();
 		break;
 	case 'update':
-		$resp = $f->LoadRoom( (int)$_POST['roomId'] )
-			->ToAssociative();
+		$room = $f->LoadRoom( (int)$_POST['roomId'] );
+		$resp = $room->ToAssociative();
+		$resp['engaged'] = 
+			$room->GetPlayer( (int)$_POST['userId'] )->IsReady();
 		break;
 	case 'leave':		
 		// TODO: what if leave when game already starts?
@@ -54,6 +56,27 @@ try
 		if( $room->GetPlayerCount() == 0 )
 		{
 			$db->DestroyRoom( $room->GetId() );
+		}
+		$resp = [];
+		break;
+	case 'quitgame':
+		// TODO: verify that engaged in game
+		$room = $f->LoadRoom( (int)$_POST['roomId'] );
+		$room->UnreadyPlayer( $s->GetUserId() );
+		// process game ending stuff
+		$nEngaged = $room->CountEngagedPlayers();
+		if( $nEngaged == 1 )
+		{
+			$game = $f->LoadGame( $room->GetGameId() );
+			
+			if( $game->GetWinState() == WinState::InProgress )
+			{
+				$game->ForfeitUserId( $s->GetUserId() );
+			}
+		}
+		else
+		{
+			$room->DisengageGame();
 		}
 		$resp = [];
 		break;
@@ -72,6 +95,7 @@ try
 		{
 			$room->EngageGame();
 		}
+		// TODO: not allowed to ready if previous game not ended
 		break;
 	// TODO: test this
 	case 'unready':

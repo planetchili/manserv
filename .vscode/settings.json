@@ -1,5 +1,6 @@
 {
     "php.suggest.basic":false,
     "explorer.sortOrder": "type",
-    "editor.insertSpaces": false
+    "editor.insertSpaces": false,
+    "todo-tree.flat": false
 }

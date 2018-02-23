@@ -81,6 +81,28 @@ class Room implements IRoom
 		return $this->gameId;
 	}
 
+	public function DisengageGame() : void
+	{
+		assert( $this->IsEngaged() );
+		assert( $this->CountEngagedPlayers() == 0 );
+
+		$this->gameId = null;
+		$this->db->UpdateRoom( $this );
+	}
+
+	public function CountEngagedPlayers() : int
+	{
+		$nEngaged = 0;
+		foreach( $this->GetPlayers() as $player )
+		{
+			if( $player->IsReady() )
+			{
+				$nEngaged++;
+			}
+		}
+		return $nEngaged;
+	}
+
 	public function ClearGame() : void
 	{
 		assert( $this->IsEngaged(),'tried to clear game when game not in progress' );		
@@ -104,6 +126,23 @@ class Room implements IRoom
 		{
 			throw new ChiliException( 'getplayer: userid does not exist in room' );
 		}
+		
+		return $target;
+	}
+
+	public function GetOtherPlayer( int $userId ) : IReadonlyRoomPlayer
+	{
+		$target = false;
+		foreach( $this->players as $player )
+		{
+			if( $player->GetUserId() !== $userId )
+			{
+				$target = $player;
+				break;
+			}
+		}
+
+		// TODO: make sure that $userId actually exists first?
 		
 		return $target;
 	}
@@ -158,9 +197,8 @@ class Room implements IRoom
 		return password_verify( $password,$this->passwordHash );
 	}
 
-	public function GetGameId() : int
+	public function GetGameId() : ?int
 	{
-		assert( $this->gameId != null,'get gameid called when room not engaged' );
 		return $this->gameId;
 	}
 

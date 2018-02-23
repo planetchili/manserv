@@ -1,7 +1,6 @@
-TODO: Make all game entities store db and factory construction
-	- maybe make history move into a game entity
-	- next: createuser scalars
-	- board stores db / loadcreate from factory
+TODO: disengage from game (testiface - only during own turn)
+	- show player left status in game
+	- return to room on left game
 
 TODO: user name case sensitivity
 TODO: move actual sources into own directory
@@ -10,4 +9,4 @@ TODO: more exhaustive tests for basic game/board db ops
 TODO: encode board state as single row
 TODO: testing wrong user login name for game operations (necessary after authentication additions)
 TODO: restrict user names etc
-TODO: investigate potential problem with accessing RoomPlayers by index (index not stable via query??)
+TODO: remove board when done

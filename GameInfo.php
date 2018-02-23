@@ -61,6 +61,11 @@ class GameInfo
         return $this->winState;
     }
 
+    public function HasUserId( int $userId ) : bool
+    {
+        array_search( $userId,$this->playerIds ) !== false;
+    }
+
     public function __construct( int $id,int $turn,array $userIds,
         Side $activeSide,int $winState = WinState::InProgress )
     {

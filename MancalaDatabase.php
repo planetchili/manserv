@@ -252,7 +252,7 @@ class MancalaDatabase implements IMancalaDatabase
     {        
         $this->conn->exec( 
             "UPDATE rooms
-             set    gameId = {$room->GetGameId()}
+             set    gameId = ".($room->GetGameId() ?? 'null')."
              where  id = {$room->GetId()}"
         );
     }

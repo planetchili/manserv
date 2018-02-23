@@ -35,12 +35,33 @@ if( isset( $_SESSION['userData'] ) )
 			'tie'
 		];
 
-		if( isset( $_POST['pot'] ) )
+		if( isset( $_POST['cmd'] ) && $_POST['cmd'] == 'quitgame' )
+		{
+			$resp = GuzzPost( 'RoomController',
+				[
+					'cmd'=>'quitgame',
+					'roomId'=>$_SESSION['roomData']['id'],
+					'gameId'=>$_SESSION['gameData']['id']
+				],
+				$_SESSION['jar']
+			);
+			if( $resp['status']['isFail'] )
+			{
+				throw new ChiliException( $resp['status']['message'] );
+			}
+
+			unset( $_SESSION['gameData'] );			
+			header( 'Location: '.$_SERVER['PHP_SELF'] );
+			die;
+
+		}
+		else if( isset( $_POST['pot'] ) )
 		{
 			$resp = GuzzPost( 'GameController',
 				[
 					'cmd'=>'move',
 					'gameId'=>$_SESSION['gameData']['id'],
+					'roomId'=>$_SESSION['roomData']['id'],
 					'pot'=>(int)$_POST['pot']
 				],
 				$_SESSION['jar']
@@ -62,6 +83,8 @@ if( isset( $_SESSION['userData'] ) )
 				[
 					'cmd'=>'update',
 					'gameId'=>$_SESSION['gameData']['id'],
+					'roomId'=>$_SESSION['roomData']['id'],
+					'winState'=>$_SESSION['gameData']['winState'],
 					'turn'=>$_SESSION['gameData']['turn']
 				],
 				$_SESSION['jar']
@@ -91,8 +114,15 @@ if( isset( $_SESSION['userData'] ) )
 			.'\'s</strong> turn.</p>';		
 		$output .= '<p class="stuff" style="background-color: CornflowerBlue">Game state: <strong>'
 			.$winStateNames[$_SESSION['gameData']['winState'] - 1]
-			.'</strong>.</p>';
+			.'</strong>';
+		
+		if( !$_SESSION['gameData']['opponentPresent'] )
+		{
+			$output .= '<h2>Opponent Left!</h2>';
+		}
 
+		$output .= '</p>';
+ 
 		$output .= '<br/><p>'.$_SESSION['gameData']['players'][0]['name'].'\'s side</p>';
 		// display board
 		$output .= DebugRender( 
@@ -102,11 +132,11 @@ if( isset( $_SESSION['userData'] ) )
 		);
 		$output .= '<p>'.$_SESSION['gameData']['players'][1]['name'].'\'s side</p><br/>';
 
-		// logout button
+		// quitout button
 		$output .= '
 		<form method="POST">
-			<input type="hidden" name="cmd" value="logout">
-			<input type="submit" value="Logout">
+			<input type="hidden" name="cmd" value="quitgame">
+			<input type="submit" value="Forfeit">
 		</form>';
 
 		$output .= '<br/><table class="history"><caption>Move History</caption>'
@@ -121,6 +151,9 @@ if( isset( $_SESSION['userData'] ) )
 				.'</td><td>'.$move['pot'].'</td></tr>';
 		}
 		$output .= '</tbody></table>';
+
+		// TODO: TEST
+		$output .= '<pre>'.print_r( $_SESSION,true ).'</pre>';
 
 		if( $_SESSION['gameData']['ourSide'] != $_SESSION['gameData']['activeSide'] &&
 			$_SESSION['gameData']['winState'] == 1 )
@@ -198,12 +231,13 @@ if( isset( $_SESSION['userData'] ) )
 				$output .= '<p>Bad cmd: '.$_POST['cmd'].'</p>';
 			}
 		}
-		else
+		else // roomData is set / no cmd
 		{
 			$resp = GuzzPost( 'RoomController',
 				[
 					'cmd'=>'update',
-					'roomId'=>$_SESSION['roomData']['id']
+					'roomId'=>$_SESSION['roomData']['id'],
+					'userId'=>$_SESSION['userData']['id']
 				],
 				$_SESSION['jar']
 			);			
@@ -214,7 +248,7 @@ if( isset( $_SESSION['userData'] ) )
 			else
 			{
 				$_SESSION['roomData'] = $resp['payload'];
-				if( $_SESSION['roomData']['gameId'] != null )
+				if( $_SESSION['roomData']['gameId'] != null && (bool)$_SESSION['roomData']['engaged'] )
 				{
 					$resp = GuzzPost( 'GameController',
 						[
@@ -229,11 +263,16 @@ if( isset( $_SESSION['userData'] ) )
 					}
 					else
 					{
-						$_SESSION['gameData'] = $resp['payload'];
-						$_SESSION['gameData']['id'] = (int)$_SESSION['roomData'];
-						$_SESSION['skipUpdate'] = true;
-						header( 'Location: '.$_SERVER['PHP_SELF'] );
-						die;
+						$gameData = $resp['payload'];
+						// only enter game if it is in progress
+						if( $gameData['winState'] == 1 )
+						{
+							$_SESSION['gameData'] = $gameData;
+							$_SESSION['gameData']['id'] = (int)$_SESSION['roomData']['gameId'];
+							$_SESSION['skipUpdate'] = true;
+							header( 'Location: '.$_SERVER['PHP_SELF'] );
+							die;						
+						}
 					}
 				}
 
@@ -257,6 +296,9 @@ if( isset( $_SESSION['userData'] ) )
 					<input type="hidden" name="cmd" value="leave">
 					<input type="submit" value="Leave">
 				</form><br/>';
+
+				// TODO: TEST
+				$output .= '<pre>'.print_r( $_SESSION,true ).'</pre>';
 			}
 		}
 	}
@@ -285,6 +327,7 @@ if( isset( $_SESSION['userData'] ) )
 						throw new ChiliException( $resp['status']['message'] );
 					}
 					$_SESSION['gameData'] = $resp['payload'];
+					// TODO: here is game over problem???
 					$_SESSION['gameData']['id'] = (int)$_SESSION['roomData']['gameId'];
 					$_SESSION['skipUpdate'] = true;
 				}
