@@ -43,10 +43,8 @@ try
 		$resp = $room->ToAssociative();
 		break;
 	case 'update':
-		$room = $f->LoadRoom( (int)$_POST['roomId'] );
-		$resp = $room->ToAssociative();
-		$resp['engaged'] = 
-			$room->GetPlayer( (int)$_POST['userId'] )->IsReady();
+		$resp = $f->LoadRoom( (int)$_POST['roomId'] )
+			->ToAssociative();
 		break;
 	case 'leave':		
 		// TODO: what if leave when game already starts?
@@ -86,15 +84,17 @@ try
 	case 'ready':
 		$room = $f->LoadRoom( (int)$_POST['roomId'] );
 		$room->ReadyPlayer( $s->GetUserId() );
-		$resp = [];
-		// start game if ready
-		if( array_reduce( $room->GetPlayers(),function( bool $carry,RoomPlayer $item )
+		// start game if ready (2 players and all ready)
+		$players = $room->GetPlayers();
+		if( count( $players ) === 2 &&
+			array_reduce( $room->GetPlayers(),function( bool $carry,RoomPlayer $item )
 		{
 			return $carry && $item->IsReady();
 		},true ) )
 		{
 			$room->EngageGame();
-		}
+		}		
+		$resp = $room->ToAssociative();
 		// TODO: not allowed to ready if previous game not ended
 		break;
 	// TODO: test this
@@ -102,7 +102,7 @@ try
 		$room = $f->LoadRoom( (int)$_POST['roomId'] );
 		$room->UnreadyPlayer( $s->GetUserId() );
 		// start game if ready?
-		$resp = [];
+		$resp = $room->ToAssociative();
 		break;
 	// check if we are in a room, if so return it
 	case 'check':

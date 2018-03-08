@@ -25,7 +25,7 @@ try
 		$resp = [];
 		break;
 	case 'getuser':
-		// respond with user id
+		// respond with user info
 		$resp = $s->GetUser()->ToArray();
 		break;
 	default:

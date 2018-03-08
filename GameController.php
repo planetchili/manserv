@@ -148,8 +148,15 @@ try
 		if( $game->GetWinState() != WinState::InProgress )
 		{
 			$room = $factory->LoadRoom( $_POST['roomId'] );
-			$op = $room->GetOtherPlayer( $s->GetUserId() );
-			$opponentPresent = $op->IsReady();
+			if( $room->GetPlayerCount() === 2 )
+			{
+				$op = $room->GetOtherPlayer( $s->GetUserId() );
+				$opponentPresent = $op->IsReady();
+			}
+			else
+			{
+				$opponentPresent = false;
+			}
 		}
 
 		assert( isset( $_POST['turn'] ),'turn not set in update req to gc' );

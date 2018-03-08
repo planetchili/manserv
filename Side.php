@@ -43,9 +43,9 @@ class Side
         $this->side = $side;
     }
 
-    public function GetWinState() : int
+    public function GetForfeitState() : int
     {
-        return ($this->side == 0) ? WinState::TopWins : WinState::BottomWins;
+        return ($this->side == 0) ? WinState::TopForfeits : WinState::BottomForfeits;
     }
 
     public function __toString() : string

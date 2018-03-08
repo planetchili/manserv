@@ -14,7 +14,6 @@ class Game extends GameInfo
     public function __construct( int $gameId,int $turn,array $playerIds,
         Side $activeSide,int $winState,Board $board,IMancalaDatabase $db )
     {
-        // invoke parent ctor
         parent::__construct( $gameId,$turn,
             $playerIds,$activeSide,$winState
         );
@@ -58,7 +57,7 @@ class Game extends GameInfo
 
     public function ForfeitUserId( int $userId ) : void
     {
-        $this->winState = $this->GetSideFromId( $userId )->GetOpposite()->GetWinState();
+        $this->winState = $this->GetSideFromId( $userId )->GetForfeitState();
         $this->db->UpdateGame( $this );        
     }
 

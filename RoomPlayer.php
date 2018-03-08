@@ -56,8 +56,10 @@ class RoomPlayer implements IReadonlyRoomPlayer
 
 	public function ToAssociative( IMancalaDatabase $db ) : array
 	{
+		$user = $this->GetUser( $db );
 		return [
-			'name'=>$this->GetUser( $db )->GetName(),
+			'name'=>$user->GetName(),
+			'id'=>$user->GetId(),
 			'isOwner'=>$this->isOwner,
 			'isReady'=>$this->isReady
 		];

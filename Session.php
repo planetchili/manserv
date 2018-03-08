@@ -22,23 +22,19 @@ class Session
 
 	public function Login( string $userName,string $password ) : void
 	{
-		if( !$this->IsLoggedIn() )
+		try
 		{
-			try
+			$this->user = $this->db->LoadUserByName( $userName );
+			if( password_verify( $password,$this->user->GetPasswordHash() ) )
 			{
-				$this->user = $this->db->LoadUserByName( $userName );
-				if( password_verify( $password,$this->user->GetPasswordHash() ) )
-				{
-					$_SESSION['user'] = $this->user;
-					return;
-				}
+				$_SESSION['user'] = $this->user;
 			}
-			catch( ChiliException $e )
-			{}
 		}
-		
-		$this->ClearSession();
-		throw new ChiliException( 'failed to login (bad name/pass)' );
+		catch( ChiliException $e )
+		{
+			$this->ClearSession();
+			throw new ChiliException( 'failed to login (bad name/pass)' );
+		}		
 	}
 
 	private function ClearSession() : void
