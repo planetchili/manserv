@@ -76,7 +76,7 @@ try
 		{
 			$room->DisengageGame();
 		}
-		$resp = [];
+		$resp = [ 'firstOut' => $nEngaged === 1 ];
 		break;
 	case 'list':
 		$resp = $db->ListRooms();
