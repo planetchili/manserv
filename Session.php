@@ -29,6 +29,10 @@ class Session
 			{
 				$_SESSION['user'] = $this->user;
 			}
+			else
+			{
+				throw new Exception();
+			}
 		}
 		catch( ChiliException $e )
 		{
