@@ -58,12 +58,13 @@ class RoomControllerTest extends ChiliDatabaseTest
 		$room = $resp['payload'];
 		$this->assertEquals( 
 			[
-				'id'=>1,
 				'name'=>'Dog Farts',
+				'id'=>1,
 				'gameId'=>null,
 				'players'=>[
 					[
 						'name'=>'chili',
+						'id'=>1,
 						'isOwner'=>true,
 						'isReady'=>false
 					]
@@ -99,6 +100,7 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'players'=>[
 					[
 						'name'=>'chili',
+						'id'=>1,
 						'isOwner'=>true,
 						'isReady'=>false
 					]
@@ -132,7 +134,7 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'id'=>1,
 				'name'=>'Dog Farts',
 				'gameId'=>null,
-				'players'=>[['name'=>'chili','isOwner'=>true,'isReady'=>false]]
+				'players'=>[['name'=>'chili','id'=>1,'isOwner'=>true,'isReady'=>false]]
 			],
 			$room
 		);		
@@ -180,8 +182,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['name'=>'chili','isOwner'=>true,'isReady'=>false],
-					['name'=>'mom','isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','id'=>1,'isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','id'=>2,'isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room
@@ -264,8 +266,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['name'=>'chili','isOwner'=>true,'isReady'=>false],
-					['name'=>'mom','isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','id'=>1,'isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','id'=>2,'isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room
@@ -328,7 +330,7 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['name'=>'mom','isOwner'=>true,'isReady'=>false]
+					['name'=>'mom','id'=>2,'isOwner'=>true,'isReady'=>false]
 				]
 			],
 			$room
@@ -449,8 +451,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['name'=>'chili','isOwner'=>true,'isReady'=>false],
-					['name'=>'mom','isOwner'=>false,'isReady'=>true]
+					['name'=>'chili','id'=>1,'isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','id'=>2,'isOwner'=>false,'isReady'=>true]
 				]
 			],
 			$room
@@ -506,8 +508,8 @@ class RoomControllerTest extends ChiliDatabaseTest
 				'name'=>'Dog Farts',
 				'gameId'=>null,
 				'players'=>[
-					['name'=>'chili','isOwner'=>true,'isReady'=>false],
-					['name'=>'mom','isOwner'=>false,'isReady'=>false]
+					['name'=>'chili','id'=>1,'isOwner'=>true,'isReady'=>false],
+					['name'=>'mom','id'=>2,'isOwner'=>false,'isReady'=>false]
 				]
 			],
 			$room

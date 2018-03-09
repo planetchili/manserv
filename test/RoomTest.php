@@ -252,11 +252,13 @@ class RoomTest extends PHPUnit\Framework\TestCase
 					[			
 						[
 							'name'=>'chili',
+							'id'=>69,
 							'isOwner'=>true,
 							'isReady'=>true
 						],			
 						[
 							'name'=>'mom',
+							'id'=>11,
 							'isOwner'=>false,
 							'isReady'=>false
 						]

@@ -106,18 +106,6 @@ class LoginControllerTest extends ChiliDatabaseTest
 		$this->assertTrue( $resp['status']['isFail'],'should have failed bad name' );
 	}
 
-	public function testFailDoubleLogin()
-	{
-		$jar = GuzzMakeJar();
-		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
-		$resp = GuzzPost( 'LoginController.php',$req,$jar );
-		$this->assertFalse( $resp['status']['isFail'],'failed to login correctly' );
-
-		$req = ['cmd' => 'login','userName' => 'chili','password' => 'chilipass'];
-		$resp = GuzzPost( 'LoginController.php',$req,$jar );
-		$this->assertTrue( $resp['status']['isFail'],'should have failed double login' );
-	}
-
 	public function testFailLogout()
 	{
 		$jar = GuzzMakeJar();

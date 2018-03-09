@@ -240,7 +240,7 @@ class GameControllerTest extends ChiliDatabaseTest
 		GuzzPost( 'LoginController',['cmd'=>'login','userName'=>'mom','password'=>'mompass'],$jar2 );
 
 		// execute command under test, check for error
-		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','gameId' => 1,'turn' => 2],$jar2 );
+		$resp = GuzzPost( 'GameController.php',['cmd' => 'update','gameId' => 1,'turn' => 2,'winState'=>WinState::InProgress],$jar2 );
 		if( $resp['status']['isFail'] )
 		{
 			$this->fail( 'response status [fail] with: '.$resp['status']['message'] );

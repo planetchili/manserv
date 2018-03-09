@@ -67,6 +67,7 @@ class RoomPlayerTest extends PHPUnit\Framework\TestCase
 
 		$this->assertEquals( [
 			'name'=>'chili',
+			'id'=>69,
 			'isOwner'=>false,
 			'isReady'=>true
 		],
